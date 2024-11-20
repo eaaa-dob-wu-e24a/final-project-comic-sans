@@ -15,20 +15,20 @@ if ($mysqli->connect_error) {
     die('Connect Error (' . $mysqli->connect_errno . ') ' . $mysqli->connect_error);
 }
 
-//Example of how to query the database
+// //Example of how to query the database
 
-$sql = "SELECT * FROM Eventually_User"; // Replace `Eventually_User` with your table name
-$result = $mysqli->query($sql);
+// $sql = "SELECT * FROM Eventually_User"; // Replace `Eventually_User` with your table name
+// $result = $mysqli->query($sql);
 
-if ($result && $result->num_rows > 0) {
-    $users = [];
-    while ($row = $result->fetch_assoc()) {
-        $users[] = $row; // Add each row to the users array
-    }
+// if ($result && $result->num_rows > 0) {
+//     $users = [];
+//     while ($row = $result->fetch_assoc()) {
+//         $users[] = $row; // Add each row to the users array
+//     }
 
-    // Output as JSON (e.g., for use in an API)
-    header('Content-Type: application/json');
-    echo json_encode($users, JSON_PRETTY_PRINT);
-} else {
-    echo "No records found.";
-}
+//     // Output as JSON (e.g., for use in an API)
+//     header('Content-Type: application/json');
+//     echo json_encode($users, JSON_PRETTY_PRINT);
+// } else {
+//     echo "No records found.";
+// }

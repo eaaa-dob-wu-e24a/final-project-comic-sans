@@ -1,7 +1,8 @@
 <?php
 
-function loadenv($path) {
-    $config = []; // start with empy array
+function loadenv($path)
+{
+    $config = []; // start with empty array
     if (file_exists($path)) { // check if file exists
         foreach (explode("\n", file_get_contents($path)) as $line) { // split into new lines
             list($key, $value) = explode('=', trim($line)); // split into key value pairs using "=" as separator

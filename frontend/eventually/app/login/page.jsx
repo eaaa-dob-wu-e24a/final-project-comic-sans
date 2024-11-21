@@ -7,9 +7,11 @@ const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/login";
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const response = await fetch("/api/login", {
+    const response = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -17,7 +19,12 @@ const LoginPage = () => {
       body: JSON.stringify({ username, password }),
     });
     const data = await response.json();
-    if (data.success) {
+    console.log(data);
+
+    if (data.status === "success") {
+      console.log("Login successful");
+      localStorage.setItem("user", JSON.stringify(data.user));
+
       router.push("/loginsite");
     }
   };

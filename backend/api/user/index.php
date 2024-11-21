@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . "/../../../database/dbconn.php";
+require_once __DIR__ . "/../../database/dbconn.php";
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {

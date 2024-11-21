@@ -10,7 +10,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     //Gets the last component of the URL array e.g., /user/id/1 => 1
     $id = end($urlComponents);
 
-    function showError($msgString) {
+    function showError($msgString)
+    {
         $msg = [
             "Error" => $msgString,
         ];

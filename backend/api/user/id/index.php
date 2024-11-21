@@ -10,6 +10,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     //Gets the last component of the URL array e.g., /user/id/1 => 1
     $id = end($urlComponents);
 
+    function showError($msgString) {
+        $msg = [
+            "Error" => $msgString,
+        ];
+        echo json_encode($msg, JSON_PRETTY_PRINT);
+    }
+
     if (is_numeric($id)) {
         //Query the database for the user with the given ID
         $sql = "SELECT * FROM Eventually_User WHERE PK_ID = $id";
@@ -23,13 +30,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             header('Content-Type: application/json');
             echo json_encode($user, JSON_PRETTY_PRINT);
         } else {
-            echo "No records found.";
+            showError("No users found with matching ID $id");
         }
     } else {
         http_response_code(400);
-        echo "Invalid ID.";
+        showError("Invalid ID");
     }
 } else {
     http_response_code(405);
-    echo "Invalid request method.";
+    showError("Invalid request method.");
 }

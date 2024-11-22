@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 
 const LoginPage = () => {
   const router = useRouter();
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/login";
@@ -18,7 +18,7 @@ const LoginPage = () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ email, password }),
     });
     const data = await response.json();
     console.log(data);
@@ -37,12 +37,12 @@ const LoginPage = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Username:
+              Email:
             </label>
             <input
               type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
             />
           </div>

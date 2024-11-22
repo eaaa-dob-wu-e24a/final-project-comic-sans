@@ -6,6 +6,7 @@ const LoginSite = () => {
   const router = useRouter();
   const [user, setUser] = useState(null);
 
+  //check if user is logged in
   const checkSession = async () => {
     const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/check_session";
     const response = await fetch(url, {
@@ -23,8 +24,6 @@ const LoginSite = () => {
   };
 
   useEffect(() => {
-    console.log("Checking session...");
-
     checkSession();
   }, []);
 

@@ -9,6 +9,7 @@ const LoginPage = () => {
 
   const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/login";
 
+  //Login function
   const handleSubmit = async (event) => {
     event.preventDefault();
     const response = await fetch(url, {
@@ -24,7 +25,6 @@ const LoginPage = () => {
 
     if (data.status === "success") {
       console.log("Login successful");
-      localStorage.setItem("user", JSON.stringify(data.user));
 
       router.push("/loginsite");
     }

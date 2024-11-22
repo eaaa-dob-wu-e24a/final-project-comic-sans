@@ -10,11 +10,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     //Gets the last component of the URL array e.g., /user/id/1 => 1
     $id = end($urlComponents);
 
-    function showError($msgString)
-    {
-        $msg = [
-            "Error" => $msgString,
-        ];
+    function showError($msgString) {
+        $msg = ["Error" => $msgString];
+        header('Content-Type: application/json');
         echo json_encode($msg, JSON_PRETTY_PRINT);
     }
 

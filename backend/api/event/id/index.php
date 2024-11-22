@@ -1,9 +1,9 @@
 <?php
 require_once __DIR__ . "/../../../database/dbconn.php";
 
-function showError($msgString)
-{
-    $msg = ["Error" => $msgString,];
+function showError($msgString) {
+    $msg = ["Error" => $msgString];
+    header('Content-Type: application/json');
     echo json_encode($msg, JSON_PRETTY_PRINT);
 }
 
@@ -19,20 +19,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $eventQuery = "SELECT * FROM Eventually_Event WHERE PK_ID = $id";
         $eventResult = $mysqli->query($eventQuery);
 
-
-
+        //make sure there is a response with data, otherwise show error
         if ($eventResult && $eventResult->num_rows > 0) {
             $event = $eventResult->fetch_assoc();
 
+            // fetch the associated dates for the event
             $dateQuery = "SELECT * FROM Eventually_Event_Dates WHERE FK_Event = $id";
             $dateResult = $mysqli->query($dateQuery);
 
+            //add all fetched dates to a new array
             $datesArray = array();
             while ($row = $dateResult->fetch_assoc()) {
                 array_push($datesArray, $row);
             }
 
-            //array_push($event, $datesArray);
+            //assign the dates to a new key in the event array
             $event['EventDates'] = $datesArray;
 
             header('Content-Type: application/json');

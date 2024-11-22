@@ -9,12 +9,12 @@ session_start();
 
 // Decode JSON input
 $data = json_decode(file_get_contents("php://input"), true);
-$username = isset($data['username']) ? $data['username'] : null;
+$email = isset($data['email']) ? $data['email'] : null;
 $password = isset($data['password']) ? $data['password'] : null;
 
 
-if (empty($username) || empty($password)) {
-    echo json_encode(["status" => "error", "message" => "Username and password are required."]);
+if (empty($email) || empty($password)) {
+    echo json_encode(["status" => "error", "message" => "Email and password are required."]);
     exit;
 }
 
@@ -23,14 +23,15 @@ if ($mysqli->connect_error) {
     exit;
 }
 
-$sql = "SELECT * FROM Eventually_User WHERE Name = ?";
+$sql = "SELECT * FROM Eventually_User WHERE Email = ?";
 $stmt = $mysqli->prepare($sql);
-$stmt->bind_param("s", $username);
+//binds the parameter to the SQL query ? placeholder in $sql
+$stmt->bind_param("s", $email);
 $stmt->execute();
 $result = $stmt->get_result();
 
 if ($result->num_rows === 0) {
-    echo json_encode(["status" => "error", "message" => "Invalid username or password."]);
+    echo json_encode(["status" => "error", "message" => "Invalid email or password."]);
     exit;
 }
 
@@ -39,7 +40,7 @@ $user = $result->fetch_assoc();
 // Check if 'password' is set in $user and verify the password
 //the $user Password is the hashed COLUMN NAME password from the database
 if (!isset($user['Password']) || !password_verify($password, $user['Password'])) {
-    echo json_encode(["status" => "error", "message" => "Invalid username or password."]);
+    echo json_encode(["status" => "error", "message" => "Invalid email or password."]);
     exit;
 }
 

@@ -13,6 +13,7 @@ const LoginPage = () => {
     event.preventDefault();
     const response = await fetch(url, {
       method: "POST",
+      credentials: "include", // Include cookies for session handling
       headers: {
         "Content-Type": "application/json",
       },

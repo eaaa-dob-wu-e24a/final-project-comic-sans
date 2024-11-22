@@ -1,5 +1,6 @@
 <?php
 header("Access-Control-Allow-Origin: http://localhost:3000");
+header("Access-Control-Allow-Credentials: true"); // Allow credentials
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 require_once __DIR__ . "/../../../database/dbconn.php";
@@ -42,7 +43,12 @@ if (!isset($user['Password']) || !password_verify($password, $user['Password']))
     exit;
 }
 
-$_SESSION['user'] = $user['Name']; // Store the actual username or another unique identifier
+$_SESSION['user'] = [
+    'name' => $user['Name'],
+    'id' => $user['PK_ID'],
+    'email' => $user['Email'],
+    'imagePath' => $user['ImagePath']
+]; // Store the actual username, primary key ID, email, and image path
 
 http_response_code(200);
 echo json_encode(["status" => "success", "user" => $_SESSION["user"]]);

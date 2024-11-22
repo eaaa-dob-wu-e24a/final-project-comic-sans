@@ -24,6 +24,7 @@ const Register = () => {
     });
   };
 
+  // creates a user and redirects to login page
   const handleSubmit = async (e) => {
     e.preventDefault();
     const response = await fetch(url, {

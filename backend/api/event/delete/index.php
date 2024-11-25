@@ -1,7 +1,6 @@
 <?php
 require_once __DIR__ . "/../../../database/dbconn.php";
 
-
 function showError($msgString)
 {
     $msg = ["Error" => $msgString];
@@ -9,7 +8,7 @@ function showError($msgString)
     echo json_encode($msg, JSON_PRETTY_PRINT);
 }
 
-if ($_SERVER['REQUEST_METHOD'] == ! 'DELETE') {
+if ($_SERVER['REQUEST_METHOD'] !== 'DELETE') {
     http_response_code(405);
     showError("Invalid request method.");
     exit;
@@ -23,6 +22,29 @@ if ($_SERVER['REQUEST_METHOD'] == ! 'DELETE') {
 
     if (empty($id)) {
         showError("Event ID is required.");
+        exit;
+    }
+
+    // Assuming you have a way to get the current user's ID
+    if (isset($_SESSION['user']['id'])) {
+        $currentUserId = $_SESSION['user']['id'];
+    } else {
+        showError("User not authenticated.");
+        exit;
+    }
+
+    // Check if the current user is the creator of the event
+    $ownershipQuery = "SELECT FK_User FROM Eventually_Event WHERE PK_ID = $id";
+    $ownershipResult = $mysqli->query($ownershipQuery);
+
+    if ($ownershipResult && $ownershipResult->num_rows > 0) {
+        $row = $ownershipResult->fetch_assoc();
+        if ($row['FK_User'] != $currentUserId) {
+            showError("You do not have permission to delete this event.");
+            exit;
+        }
+    } else {
+        showError("Event not found.");
         exit;
     }
 

@@ -60,11 +60,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Bind the parameters to the SQL query
     $stmt->bind_param("sssisss", $title, $description, $location, $ownerUserId, $joinCode, $userName, $finalDate);
 
-    // Log the parameters for debugging
-    file_put_contents('debug_sql.txt', "Parameters: " . print_r([
-        $title, $description, $location, $ownerUserId, $joinCode, $userName, $finalDate
-    ], true), FILE_APPEND);
-
     // Execute the SQL query
     if ($stmt->execute()) {
         http_response_code(201);

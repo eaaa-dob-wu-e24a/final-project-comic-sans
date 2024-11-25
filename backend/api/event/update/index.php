@@ -1,5 +1,9 @@
 <?php
 require_once __DIR__ . "/../../../database/dbconn.php";
+header("Access-Control-Allow-Origin: http://localhost:3000"); // Only allow specific origin
+header("Access-Control-Allow-Credentials: true"); // Allow credentials
+header("Access-Control-Allow-Methods: PATCH, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
 session_start();
 $user = $_SESSION['user'];
@@ -17,7 +21,7 @@ function showError($msgString)
 if ($_SERVER['REQUEST_METHOD'] !== 'PATCH') {
     http_response_code(405);
     showError("Invalid request method.");
-    exit();
+    exit;
 } else {
 
     // get the request body
@@ -57,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'PATCH') {
     if ($event['FK_Owner_UserID'] != $user['id']) {
         http_response_code(401);
         showError("Authentication failed");
-        exit();
+        exit;
     } else {
         // prepare the update query with placeholders
         $sql = "UPDATE Eventually_Event SET Title = ?, Description = ?, Location = ? WHERE PK_ID = ?";
@@ -65,11 +69,12 @@ if ($_SERVER['REQUEST_METHOD'] !== 'PATCH') {
         $stmt->bind_param("sssi", $newTitle, $newDesc, $newLoc, $eventID);
 
         if ($stmt->execute()) {
+            http_response_code(200);
             echo json_encode(["message" => "Event updated successfully."]);
         } else {
             http_response_code(500);
             showError("Failed to update event.");
-            exit();
+            exit;
         }
     }
 }

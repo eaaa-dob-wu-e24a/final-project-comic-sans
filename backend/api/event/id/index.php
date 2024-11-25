@@ -1,7 +1,8 @@
 <?php
 require_once __DIR__ . "/../../../database/dbconn.php";
 
-function showError($msgString) {
+function showError($msgString)
+{
     $msg = ["Error" => $msgString];
     header('Content-Type: application/json');
     echo json_encode($msg, JSON_PRETTY_PRINT);

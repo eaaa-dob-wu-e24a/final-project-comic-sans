@@ -6,21 +6,50 @@ import EventUpdateForm from "@/components/event-update-form";
 const LoginSite = () => {
   const router = useRouter();
   const [user, setUser] = useState(null);
+  const [events, setEvents] = useState([]);
+  const [error, setError] = useState(null);
 
-  //check if user is logged in
+  // Check if user is logged in
   const checkSession = async () => {
     const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/check_session";
-    const response = await fetch(url, {
-      method: "GET",
-      credentials: "include", // Include cookies for session handling
-    });
-    const data = await response.json();
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        credentials: "include", // Include cookies for session handling
+      });
+      const data = await response.json();
 
-    if (data.status === "success") {
-      setUser(data.user);
-    } else {
-      // Redirect to login page if not logged in
+      if (data.status === "success") {
+        setUser(data.user);
+        // Now fetch events
+        fetchEvents();
+      } else {
+        // Redirect to login page if not logged in
+        router.push("/login");
+      }
+    } catch (err) {
+      console.error("Error checking session:", err);
       router.push("/login");
+    }
+  };
+
+  const fetchEvents = async () => {
+    const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/events";
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        credentials: "include", // Include cookies for session handling
+      });
+      const data = await response.json();
+
+      if (data.status === "success") {
+        setEvents(data.events);
+      } else {
+        setError(data.message || "Failed to fetch events.");
+      }
+    } catch (err) {
+      console.error("Error fetching events:", err);
+      setError("An error occurred while fetching events.");
     }
   };
 

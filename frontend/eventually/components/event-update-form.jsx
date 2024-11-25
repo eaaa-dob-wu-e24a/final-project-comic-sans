@@ -5,7 +5,12 @@ export default function EventUpdateForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const url = process.env.NEXT_PUBLIC_API_URL + "/api/event/update/";
-    let formValues = {};
+    let formValues = {
+      ID: document.getElementById("eventid").value,
+      Title: document.getElementById("newtitle").value,
+      Description: document.getElementById("newdesc").value,
+      Location: document.getElementById("newloc").value,
+    };
     try {
       response = await fetch(url, {
         method: "PATCH",

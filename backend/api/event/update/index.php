@@ -1,24 +1,29 @@
 <?php
 require_once __DIR__ . "/../../../database/dbconn.php";
-header("Access-Control-Allow-Origin: http://localhost:3000"); // Only allow specific origin
-header("Access-Control-Allow-Credentials: true"); // Allow credentials
+header("Access-Control-Allow-Origin: *"); // Only allow specific origin
+header("Access-Control-Allow-Credentials: false"); // Allow credentials
 header("Access-Control-Allow-Methods: PATCH, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
 session_start();
 $user = $_SESSION['user'];
-$user['id'] = 3; //debug for auth testing
+// $user['id'] = 9; //debug for auth testing
 
 function showError($msgString)
 {
-    $msg = ["Error" => $msgString];
+    $msg = ["Etruerror" => $msgString];
     header('Content-Type: application/json');
     echo json_encode($msg, JSON_PRETTY_PRINT);
 }
-
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    header("Access-Control-Allow-Origin: *");
+    header("Access-Control-Allow-Methods: PATCH, OPTIONS");
+    header("Access-Control-Allow-Headers: Content-Type, Authorization");
+    http_response_code(200);
+}
 
 // check request method
-if ($_SERVER['REQUEST_METHOD'] !== 'PATCH') {
+else if ($_SERVER['REQUEST_METHOD'] !== 'PATCH') {
     http_response_code(405);
     showError("Invalid request method.");
     exit;
@@ -60,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'PATCH') {
     // check if the owner matches the user
     if ($event['FK_Owner_UserID'] != $user['id']) {
         http_response_code(401);
-        showError("Authentication failed");
+        showError("Authentication failed for user");
         exit;
     } else {
         // prepare the update query with placeholders

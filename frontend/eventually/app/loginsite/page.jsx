@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import EventUpdateForm from "@/components/event-update-form";
+import ParentComponent from "@/components/parentevent";
 
 const LoginSite = () => {
   const router = useRouter();
@@ -86,7 +87,7 @@ const LoginSite = () => {
       >
         Logout
       </button>
-      <EventUpdateForm></EventUpdateForm>
+      <ParentComponent></ParentComponent>
     </div>
   );
 };

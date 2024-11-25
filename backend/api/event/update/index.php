@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . "/../../../database/dbconn.php";
 header("Access-Control-Allow-Origin: *"); // Only allow specific origin
-header("Access-Control-Allow-Credentials: false"); // Allow credentials
+header("Access-Control-Allow-Credentials: true"); // Allow credentials
 header("Access-Control-Allow-Methods: PATCH, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 

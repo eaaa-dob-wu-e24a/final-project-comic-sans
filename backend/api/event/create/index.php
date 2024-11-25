@@ -1,20 +1,6 @@
 <?php
-header("Access-Control-Allow-Origin: http://localhost:3000");
-header("Access-Control-Allow-Credentials: true");
-header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type");
-require_once __DIR__ . "/../../../database/dbconn.php";
-
-session_start();
-
-// Initialize $pdo with a PDO instance
-try {
-    $pdo = new PDO('mysql:host=your_host;dbname=your_db', 'your_username', 'your_password');
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    echo json_encode(["status" => "error", "message" => "Database connection failed: " . $e->getMessage()]);
-    exit();
-}
+// Include the database connection
+require_once __DIR__ . "/../../../database/dbconn.php";  // Ensure the correct path to your dbconn.php
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Decode incoming JSON request
@@ -53,63 +39,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    try {
-        // Prepare the SQL query for inserting the event
-        $stmt = $pdo->prepare("INSERT INTO Eventually_Event (
-            `Title`, 
-            `Description`, 
-            `Location`, 
-            `FK_Owner_UserID`, 
-            `JoinCode`, 
-            `UserName`, 
-            `FinalDate`
-        ) VALUES (
-            :title, 
-            :description, 
-            :location, 
-            :ownerUserId, 
-            :joinCode, 
-            :userName, 
-            :finalDate
-        )");
+    // Prepare the SQL query for inserting the event
+    $stmt = $mysqli->prepare("INSERT INTO Eventually_Event (
+        `Title`, 
+        `Description`, 
+        `Location`, 
+        `FK_Owner_UserID`, 
+        `JoinCode`, 
+        `UserName`, 
+        `FinalDate`
+    ) VALUES (?, ?, ?, ?, ?, ?, ?)");
 
-        // Bind the parameters to the SQL query
-        $stmt->bindParam(':title', $title);
-        $stmt->bindParam(':description', $description);
-        $stmt->bindParam(':location', $location);
-        $stmt->bindParam(':ownerUserId', $ownerUserId);
-        $stmt->bindParam(':joinCode', $joinCode);
-        $stmt->bindParam(':userName', $userName);
-        $stmt->bindParam(':finalDate', $finalDate);
-
-        // Log SQL query and parameters for debugging
-        file_put_contents('debug_sql.txt', "SQL Query: " . $stmt->queryString . "\n", FILE_APPEND);
-        file_put_contents('debug_sql.txt', "Parameters: " . print_r([
-            ':title' => $title,
-            ':description' => $description,
-            ':location' => $location,
-            ':ownerUserId' => $ownerUserId,
-            ':joinCode' => $joinCode,
-            ':userName' => $userName,
-            ':finalDate' => $finalDate,
-        ], true), FILE_APPEND);
-
-        // Execute the SQL query
-        $stmt->execute();
-
-        // Check if the query affected any rows
-        $rowCount = $stmt->rowCount();
-        if ($rowCount > 0) {
-            http_response_code(201);
-            echo json_encode(["message" => "Event created successfully"]);
-        } else {
-            http_response_code(500);
-            echo json_encode(["error" => "Event not inserted"]);
-        }
-    } catch (PDOException $e) {
+    // Check if the statement was prepared successfully
+    if ($stmt === false) {
         http_response_code(500);
-        echo json_encode(["error" => "Database error: " . $e->getMessage()]);
+        echo json_encode(["error" => "Failed to prepare statement"]);
+        exit;
     }
+
+    // Bind the parameters to the SQL query
+    $stmt->bind_param("sssiiss", $title, $description, $location, $ownerUserId, $joinCode, $userName, $finalDate);
+
+    // Log the parameters for debugging
+    file_put_contents('debug_sql.txt', "Parameters: " . print_r([
+        $title, $description, $location, $ownerUserId, $joinCode, $userName, $finalDate
+    ], true), FILE_APPEND);
+
+    // Execute the SQL query
+    if ($stmt->execute()) {
+        http_response_code(201);
+        echo json_encode(["message" => "Event created successfully"]);
+    } else {
+        // Log the SQL error
+        file_put_contents('debug_sql.txt', "SQL Error: " . $stmt->error . "\n", FILE_APPEND);
+        http_response_code(500);
+        echo json_encode(["error" => "Event not inserted"]);
+    }
+
+    // Close the statement
+    $stmt->close();
 } else {
     // Handle unsupported request methods
     http_response_code(405);

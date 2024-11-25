@@ -17,6 +17,7 @@ function showError($msgString)
 if ($_SERVER['REQUEST_METHOD'] !== 'PATCH') {
     http_response_code(405);
     showError("Invalid request method.");
+    exit();
 } else {
 
     // get the request body
@@ -56,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'PATCH') {
     if ($event['FK_Owner_UserID'] != $user['id']) {
         http_response_code(401);
         showError("Authentication failed");
+        exit();
     } else {
         // prepare the update query with placeholders
         $sql = "UPDATE Eventually_Event SET Title = ?, Description = ?, Location = ? WHERE PK_ID = ?";
@@ -67,6 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'PATCH') {
         } else {
             http_response_code(500);
             showError("Failed to update event.");
+            exit();
         }
     }
 }

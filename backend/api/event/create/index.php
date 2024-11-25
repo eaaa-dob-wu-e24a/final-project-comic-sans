@@ -65,8 +65,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         http_response_code(201);
         echo json_encode(["message" => "Event created successfully"]);
     } else {
-        // Log the SQL error
-        file_put_contents('debug_sql.txt', "SQL Error: " . $stmt->error . "\n", FILE_APPEND);
         http_response_code(500);
         echo json_encode(["error" => "Event not inserted"]);
     }

@@ -22,9 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Decode incoming JSON request
     $_POST = json_decode(file_get_contents('php://input'), true);
 
-    // Debug incoming POST data
-    file_put_contents('debug_log.txt', "POST Data: " . print_r($_POST, true), FILE_APPEND);
-
     // Check if JSON decoding was successful
     if (json_last_error() !== JSON_ERROR_NONE) {
         http_response_code(400);
@@ -84,8 +81,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->close();
 
     } catch (mysqli_sql_exception $e) {
-        // Log the SQL exception
-        file_put_contents('debug_sql.txt', "SQL Error: " . $e->getMessage() . "\n", FILE_APPEND);
         http_response_code(500); // Internal Server Error
         echo json_encode(["error" => "Database error: " . $e->getMessage()]);
     }

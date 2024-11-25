@@ -1,0 +1,50 @@
+POST Data: Array
+(
+    [title] => Sample Event
+    [description] => This is a sample event.
+    [location] => Sample Location
+    [ownerUserId] => 12
+    [joinCode] => ABC147
+    [userName] => JohnDoe
+    [finalDate] => 2024-12-31
+)
+POST Data: Array
+(
+    [title] => Sample Event
+    [description] => This is a sample event.
+    [location] => Sample Location
+    [ownerUserId] => 12
+    [joinCode] => ABC147
+    [userName] => JohnDoe
+    [finalDate] => 2024-12-31
+)
+POST Data: Array
+(
+    [title] => Sample Event
+    [description] => This is a sample event.
+    [location] => Sample Location
+    [ownerUserId] => 12
+    [joinCode] => ABC147
+    [userName] => JohnDoe
+    [finalDate] => 2024-12-31
+)
+POST Data: Array
+(
+    [title] => Sample Event
+    [description] => This is a sample event.
+    [location] => Sample Location
+    [ownerUserId] => 5
+    [joinCode] => ABC147
+    [userName] => JohnDoe
+    [finalDate] => 2024-12-31
+)
+POST Data: Array
+(
+    [title] => Event
+    [description] => This is also a sample event
+    [location] => Sample Location
+    [ownerUserId] => 5
+    [joinCode] => ABBC147
+    [userName] => JohnDoe
+    [finalDate] => 2024-12-31
+)

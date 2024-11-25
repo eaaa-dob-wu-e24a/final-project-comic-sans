@@ -18,3 +18,13 @@ Parameters: Array
     [5] => JohnDoe
     [6] => 2024-12-31
 )
+Parameters: Array
+(
+    [0] => Event
+    [1] => This is also a sample event
+    [2] => Sample Location
+    [3] => 5
+    [4] => ABBC147
+    [5] => JohnDoe
+    [6] => 2024-12-31
+)

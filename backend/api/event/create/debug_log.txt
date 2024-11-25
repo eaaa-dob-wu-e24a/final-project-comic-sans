@@ -38,3 +38,13 @@ POST Data: Array
     [userName] => JohnDoe
     [finalDate] => 2024-12-31
 )
+POST Data: Array
+(
+    [title] => Event
+    [description] => This is also a sample event
+    [location] => Sample Location
+    [ownerUserId] => 5
+    [joinCode] => ABBC147
+    [userName] => JohnDoe
+    [finalDate] => 2024-12-31
+)

@@ -1,6 +1,6 @@
 <?php
 // Include the database connection
-require_once __DIR__ . "/../../../database/dbconn.php";  // Ensure the correct path to your dbconn.php
+require_once __DIR__ . "/../../../database/dbconn.php";  
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Decode incoming JSON request
@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Bind the parameters to the SQL query
-    $stmt->bind_param("sssiiss", $title, $description, $location, $ownerUserId, $joinCode, $userName, $finalDate);
+    $stmt->bind_param("sssisss", $title, $description, $location, $ownerUserId, $joinCode, $userName, $finalDate);
 
     // Log the parameters for debugging
     file_put_contents('debug_sql.txt', "Parameters: " . print_r([

@@ -60,18 +60,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Bind the parameters to the SQL query
     $stmt->bind_param("sssisss", $title, $description, $location, $ownerUserId, $joinCode, $userName, $finalDate);
 
-    // Log the parameters for debugging
-    file_put_contents('debug_sql.txt', "Parameters: " . print_r([
-        $title, $description, $location, $ownerUserId, $joinCode, $userName, $finalDate
-    ], true), FILE_APPEND);
-
     // Execute the SQL query
     if ($stmt->execute()) {
         http_response_code(201);
         echo json_encode(["message" => "Event created successfully"]);
     } else {
-        // Log the SQL error
-        file_put_contents('debug_sql.txt', "SQL Error: " . $stmt->error . "\n", FILE_APPEND);
         http_response_code(500);
         echo json_encode(["error" => "Event not inserted"]);
     }

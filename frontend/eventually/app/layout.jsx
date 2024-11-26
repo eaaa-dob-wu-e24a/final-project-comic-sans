@@ -11,6 +11,17 @@ const geistMono = localFont({
   variable: "--font-geist-mono",
   weight: "100 900",
 });
+const montserrat = localFont({
+  src: "./fonts/Montserrat-VariableFont_wght.ttf",
+  variable: "--font-montserrat",
+  weight: "100 900",
+});
+
+const dancingScript = localFont({
+  src: "./fonts/DancingScript-VariableFont_wght.ttf",
+  variable: "--font-dancing-script",
+  weight: "100 900",
+});
 
 export const metadata = {
   title: "Create Next App",
@@ -21,8 +32,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${dancingScript.variable} ${montserrat.variable} antialiased`}
       >
+        
         {children}
       </body>
     </html>

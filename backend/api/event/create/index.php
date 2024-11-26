@@ -4,11 +4,16 @@ require_once __DIR__ . "/../../../database/dbconn.php";
 // Start the session to check if the user is logged in
 session_start();
 
-header("Access-Control-Allow-Origin: http://localhost:3000"); // Only allow specific origin
+header("Access-Control-Allow-Origin: *"); // Only allow specific origin
 header("Access-Control-Allow-Credentials: true"); // Allow credentials
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 header('Content-Type: application/json');
+
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    http_response_code(200); // OK
+    exit();
+}
 
 // Check if user is logged in (check if user data is in session)
 if (isset($_SESSION['user'])) {

@@ -32,9 +32,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${dancingScript.variable} ${montserrat.variable} antialiased`}
+        className={`${dancingScript.variable} ${montserrat.variable} antialiased font-[family-name:var(--font-montserrat)]`}
       >
-        
         {children}
       </body>
     </html>

@@ -1,11 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 const ProfileAvatar = ({ name, imageUrl }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
+  // Toggle the dropdown state
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleLogout = () => {
     console.log("Log out clicked");
@@ -13,7 +30,7 @@ const ProfileAvatar = ({ name, imageUrl }) => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative" ref={dropdownRef}>
       {/* Avatar and Chevron */}
       <div
         className="flex items-center cursor-pointer"
@@ -31,7 +48,9 @@ const ProfileAvatar = ({ name, imageUrl }) => {
           </div>
         )}
         <svg
-          className="w-4 h-4 ml-2 text-white"
+          className={`w-4 h-4 ml-2 text-white transition-transform duration-200 ${
+            isOpen ? "rotate-180" : "rotate-0"
+          }`}
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 20 20"
           fill="currentColor"

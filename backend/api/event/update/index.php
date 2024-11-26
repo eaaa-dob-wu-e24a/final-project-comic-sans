@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . "/../../../database/dbconn.php";
-header("Access-Control-Allow-Origin: *"); // Only allow specific origin
+header("Access-Control-Allow-Origin: http://localhost:3000"); // Only allow specific origin
 header("Access-Control-Allow-Credentials: true"); // Allow credentials
 header("Access-Control-Allow-Methods: PATCH, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
@@ -11,12 +11,14 @@ $user = $_SESSION['user'];
 
 function showError($msgString)
 {
-    $msg = ["Etruerror" => $msgString];
+    $msg = ["Error" => $msgString];
     header('Content-Type: application/json');
     echo json_encode($msg, JSON_PRETTY_PRINT);
 }
+
+// handle preflight. Idk why but this is needed :(
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    header("Access-Control-Allow-Origin: *");
+    header("Access-Control-Allow-Origin: http://localhost:3000");
     header("Access-Control-Allow-Methods: PATCH, OPTIONS");
     header("Access-Control-Allow-Headers: Content-Type, Authorization");
     http_response_code(200);
@@ -27,40 +29,22 @@ else if ($_SERVER['REQUEST_METHOD'] !== 'PATCH') {
     http_response_code(405);
     showError("Invalid request method.");
     exit;
-} else {
 
+} else {
     // get the request body
     $request = file_get_contents('php://input');
     $input = json_decode($request, TRUE); //convert JSON into array
     $eventID = $input['ID'];
-
-
 
     // get the event info
     $sql = "SELECT * FROM Eventually_Event WHERE PK_ID = $eventID";
     $result = $mysqli->query($sql);
     $event = $result->fetch_assoc();
 
-
-    // if no title is provided, set the title to be the old one
-    if (isset($input['Title'])) {
-        $newTitle = $input['Title'];
-    } else {
-        $newTitle = $event['Title'];
-    }
-    // do the same for Description
-    if (isset($input['Description'])) {
-        $newDesc = $input['Description'];
-    } else {
-        $newDesc = $event['Description'];
-    }
-
-    // do the same for Location
-    if (isset($input['Location'])) {
-        $newLoc = $input['Location'];
-    } else {
-        $newLoc = $event['Location'];
-    }
+    // if no title/desc/location is provided, set them to be the old one
+    $newTitle = isset($input['Title']) ? $input['Title'] : $event['Title'];
+    $newDesc = isset($input['Description']) ? $input['Description'] : $event['Description'];
+    $newLoc = isset($input['Location']) ? $input['Location'] : $event['Location'];
 
     // check if the owner matches the user
     if ($event['FK_Owner_UserID'] != $user['id']) {

@@ -9,7 +9,7 @@ export default function EventUpdateForm() {
 
     const url = process.env.NEXT_PUBLIC_API_URL + "/api/event/update/";
     const formValues = {
-      ID: document.getElementById("eventid").value,
+      ID: document.getElementById("eventid").value, //change this to be fetched automatically on event page
       Title: document.getElementById("newtitle").value,
       Description: document.getElementById("newdesc").value,
       Location: document.getElementById("newloc").value,

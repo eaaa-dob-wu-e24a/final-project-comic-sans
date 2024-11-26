@@ -75,32 +75,16 @@ const LoginSite = () => {
   }
 
   return (
-    <div className="flex flex-col p-5 bg-gray-100 rounded-lg shadow-md text-black">
-      <div className="flex justify-between items-center">
-        <h1 className="m-0 text-2xl">
-          Hello, {user.name}! Your email is {user.email}
-        </h1>
-        <button
-          className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700 transition-colors"
-          onClick={handleLogout}
-        >
-          Logout
-        </button>
-      </div>
-      {/* Display events here */}
-      <div className="mt-4">
-        {error && <p className="text-red-500">Error: {error}</p>}
-        {events.length === 0 && !error && <p>No events found.</p>}
-        <div>
-          {events.map((event) => (
-            <div key={event.PK_ID} className="mb-2">
-              <h2>My events:</h2>
-              <h3>{event.Title}</h3>
-              <p>{event.Description}</p>
-            </div>
-          ))}
-        </div>
-      </div>
+    <div className="flex justify-between items-center p-5 bg-gray-100 rounded-lg shadow-md">
+      <h1 className="m-0 text-2xl text-gray-800">
+        Hello, {user.name} your email is {user.email}
+      </h1>
+      <button
+        className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700 transition-colors"
+        onClick={handleLogout}
+      >
+        Logout
+      </button>
     </div>
   );
 };

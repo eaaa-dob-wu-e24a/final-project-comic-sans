@@ -52,7 +52,7 @@ $_SESSION['user'] = [
 ]; // Store the actual username, primary key ID, email, and image path
 
 http_response_code(200);
-echo json_encode(["status" => "success", "user" => $_SESSION["user"]]);
+echo json_encode(["status" => "success", "user" => $_SESSION['user']]);
 
 $stmt->close();
 $mysqli->close();

@@ -1,8 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import EventUpdateForm from "@/components/event-update-form";
-import ParentComponent from "@/components/parentevent";
 
 const LoginSite = () => {
   const router = useRouter();
@@ -87,7 +85,6 @@ const LoginSite = () => {
       >
         Logout
       </button>
-      <ParentComponent></ParentComponent>
     </div>
   );
 };

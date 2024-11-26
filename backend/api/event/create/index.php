@@ -8,6 +8,7 @@ header("Access-Control-Allow-Origin: http://localhost:3000"); // Only allow spec
 header("Access-Control-Allow-Credentials: true"); // Allow credentials
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
+header('Content-Type: application/json');
 
 // Check if user is logged in (check if user data is in session)
 if (isset($_SESSION['user'])) {
@@ -36,6 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $joinCode = $_POST['joinCode'] ?? null;
     $userName = $_POST['userName'] ?? null;
     $finalDate = $_POST['finalDate'] ?? null;
+    $proposedDates = $_POST['proposedDates'] ?? []; // Array of dates
 
     // Validate required fields
     if (!$title || !$description || !$joinCode) {
@@ -49,6 +51,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         http_response_code(400);
         echo json_encode(["error" => "Invalid date format"]);
         exit;
+    }
+
+    // Validate proposedDates
+    foreach ($proposedDates as $date) {
+        if (!isset($date['start']) || !isset($date['end']) || !strtotime($date['start']) || !strtotime($date['end'])) {
+            http_response_code(400);
+            echo json_encode(["error" => "Invalid date format in proposedDates"]);
+            exit;
+        }
     }
 
     try {
@@ -67,18 +78,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Bind the parameters to the SQL query
         $stmt->bind_param('sssssss', $title, $description, $location, $userID, $joinCode, $userName, $finalDate);
+        $stmt->execute();
+        $eventID = $mysqli->insert_id; // Get the ID of the inserted event
+        $stmt->close(); // Close the event creation statement
 
-        // Execute the SQL query
-        if ($stmt->execute()) {
-            http_response_code(201); // Created successfully
-            echo json_encode(["message" => "Event created successfully"]);
-        } else {
-            http_response_code(500); // Internal Server Error
-            echo json_encode(["error" => "Event creation failed"]);
+        // Insert into Eventually_Event_Dates
+        $stmtDate = $mysqli->prepare("INSERT INTO Eventually_Event_Dates (
+            `FK_Event`, `DateTimeStart`, `DateTimeEnd`
+        ) VALUES (?, ?, ?)");
+
+        foreach ($proposedDates as $date) {
+            $start = $date['start'];
+            $end = $date['end'];
+            $stmtDate->bind_param('iss', $eventID, $start, $end);
+            $stmtDate->execute();
         }
 
-        // Close the statement
-        $stmt->close();
+        $stmtDate->close(); // Close the date insertion statement
+
+        // Respond with success message after all operations
+        http_response_code(201);
+        echo json_encode(["message" => "Event and dates created successfully"]);
 
     } catch (mysqli_sql_exception $e) {
         http_response_code(500); // Internal Server Error
@@ -89,4 +109,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     http_response_code(405); // Method Not Allowed
     echo json_encode(["error" => "Method not allowed"]);
 }
+
 ?>

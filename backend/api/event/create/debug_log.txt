@@ -1,9 +1,0 @@
-POST Data: Array
-(
-    [title] => Event
-    [description] => This is also a sample event
-    [location] => Sample Location
-    [joinCode] => ABBC147
-    [userName] => JohnDoe
-    [finalDate] => 2024-12-31
-)

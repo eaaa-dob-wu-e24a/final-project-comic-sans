@@ -12,6 +12,7 @@ module.exports = {
         foreground: "var(--foreground)",
         gradientstart: "var(--gradient-start)",
         gradientend: "var(--gradient-end)",
+        primarypurple: "var(--primary-purple)",
       },
     },
   },

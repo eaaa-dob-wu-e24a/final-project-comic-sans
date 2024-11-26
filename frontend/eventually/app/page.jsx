@@ -1,4 +1,9 @@
 import Link from "next/link";
+import Button from "@/components/ui/button";
+import JoinForm from "@/components/ui/joinform";
+import GradientCurve from "@/components/gradientcurve";
+
+
 export default function Home() {
   return (
     <>
@@ -8,26 +13,14 @@ export default function Home() {
             Eventually
           </h1>
           <p className="text-2xl my-6 font-semibold">Let’s make it happen..eventually.</p>
-          <form action=""
-          className="max-w-md mx-auto flex flex-col"
-          >
-            <input
-              type="text"
-              placeholder="JX6S7Y"
-              maxLength={6}
-              className="rounded-full h-14 w-full text-background uppercase font-semibold text-4xl py-2 px-8"
-              name="joincode"
-              id="joincode"
-            />
-            <button className="mt-[-3.125rem] h-11 mb-6 mr-2 place-self-end relative bg-primary text-xl font-bold py-2 px-8  uppercase rounded-full shadow-md">Join</button>
-          </form>
+          <JoinForm></JoinForm>
           <p>
             Join an event with a code now, no account required. Or make an
             account for more features.
           </p>
         </section>
       </div>
-      <div className="curve-gradient"></div>
+      <GradientCurve></GradientCurve>
 
       <section className="text-center mt-12 mx-auto max-w-lg">
         <h2 className="font-bold text-2xl my-4">
@@ -37,9 +30,7 @@ export default function Home() {
           Schedule an event with your friends, family, co-workers, or anyone
           else. For free.
         </p>
-        <button className="bg-primary text-white text-xl font-bold py-2 px-8  uppercase rounded-full shadow-md">
-          Create
-        </button>
+        <Button>Create</Button>
       </section>
     </>
   );

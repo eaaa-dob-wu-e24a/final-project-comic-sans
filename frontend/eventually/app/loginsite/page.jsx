@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import UserEventList from "@/components/user-event-list";
 
 const LoginSite = () => {
   const router = useRouter();
@@ -75,6 +76,7 @@ const LoginSite = () => {
   }
 
   return (
+    <main>
     <div className="flex justify-between items-center p-5 bg-gray-100 rounded-lg shadow-md">
       <h1 className="m-0 text-2xl text-gray-800">
         Hello, {user.name} your email is {user.email}
@@ -86,6 +88,8 @@ const LoginSite = () => {
         Logout
       </button>
     </div>
+      <UserEventList></UserEventList>
+      </main>
   );
 };
 

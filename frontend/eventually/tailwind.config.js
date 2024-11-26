@@ -10,6 +10,8 @@ module.exports = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        gradientstart: "var(--gradient-start)",
+        gradientend: "var(--gradient-end)",
       },
     },
   },

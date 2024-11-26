@@ -1,5 +1,6 @@
 import localFont from "next/font/local";
 import "./globals.css";
+import Navbar from "../components/navbar";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -34,6 +35,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${dancingScript.variable} ${montserrat.variable} antialiased font-[family-name:var(--font-montserrat)]`}
       >
+        <Navbar />
         {children}
       </body>
     </html>

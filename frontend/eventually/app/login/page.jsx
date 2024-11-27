@@ -7,7 +7,7 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/login"; 
+  const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/login";
 
   //Login function
   const handleSubmit = async (event) => {
@@ -26,7 +26,7 @@ const LoginPage = () => {
     if (data.status === "success") {
       console.log("Login successful");
 
-      router.push("/loginsite");
+      router.push("/dashboard");
     }
   };
 

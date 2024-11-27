@@ -79,15 +79,16 @@ const LoginSite = () => {
 
   return (
     <main className="pt-20">
-      <section className="bg-gradient-to-r from-gradientstart to-gradientend">
-        <div className="max-w-6xl mx-auto  flex">
-          <h1 className="font-bold text-2xl mx-auto max-w-6xl mt-4 text-white">
+      <section className="bg-gradient-to-r from-gradientstart to-gradientend"></section>
+      <GradientCurve className={"max-h-24"}>
+        <div className="max-w-6xl mx-auto flex">
+          <h1 className="font-bold text-2xl mx-auto max-w-6xl pb-12 text-white">
             Hello, {user.name}
           </h1>
         </div>
-      </section>
-      <GradientCurve></GradientCurve>
+      </GradientCurve>
       <section className="max-w-6xl mx-auto">
+        <UserEventList></UserEventList>
         <UserEventList></UserEventList>
       </section>
     </main>

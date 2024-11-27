@@ -3,11 +3,13 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Button from "../components/button";
 import ProfileAvatar from "../components/profile-avatar";
+import { AuthContext } from "../app/authcontext";
+import { useContext } from "react";
 
 
 export default function Navbar() {
-  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { user, setUser } = useContext(AuthContext);
 
   // Fetch authentication status
   useEffect(() => {
@@ -43,7 +45,7 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav className="flex justify-between items-center px-20 py-5 text-white bg-transparent fixed top-0 left-0 w-full z-50">
+    <nav className="flex justify-between items-center px-20 py-5 text-white bg-gradient-to-r from-gradientstart to-gradientend fixed top-0 left-0 w-full z-50">
       <div className="flex items-center gap-6">
         {/* Conditionally render the "Eventually" text when user is logged in */}
         {user && (
@@ -59,7 +61,7 @@ export default function Navbar() {
           // Render this if the user is logged in
 
           <>
-            <ProfileAvatar user={user} setUser={setUser} />
+            <ProfileAvatar user={user} />
             <Button label="CREATE EVENT" className="m-10" />
           </>
         ) : (

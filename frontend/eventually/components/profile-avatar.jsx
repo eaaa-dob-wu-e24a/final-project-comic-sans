@@ -2,8 +2,11 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { AuthContext } from "../app/authcontext";
+import { useContext } from "react";
 
-const ProfileAvatar = ({ user, setUser }) => {
+const ProfileAvatar = () => {
+  const { user, setUser } = useContext(AuthContext);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
   const router = useRouter();

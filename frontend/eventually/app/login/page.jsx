@@ -1,9 +1,12 @@
 "use client";
-import React, { useState } from "react";
+
+import React, { useState, useContext } from "react";
 import { useRouter } from "next/navigation";
+import { AuthContext } from "../authcontext";
 import GradientCurve from "../../components/gradientcurve";
 
 const LoginPage = () => {
+  const { setUser } = useContext(AuthContext);
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -13,20 +16,29 @@ const LoginPage = () => {
   // Login function
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const response = await fetch(url, {
-      method: "POST",
-      credentials: "include", // Include cookies for session handling
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
-    const data = await response.json();
-    console.log(data);
 
-    if (data.status === "success") {
-      console.log("Login successful");
-      router.push("/loginsite");
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        credentials: "include", // Include cookies for session handling
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (data.status === "success") {
+        console.log("Login successful");
+        setUser(data.user); // Update the global user state
+        router.push("/dashboard"); // Redirect to dashboard or desired page
+      } else {
+        console.error("Login failed:", data.message);
+        // Handle login failure (e.g., show an error message)
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
     }
   };
 

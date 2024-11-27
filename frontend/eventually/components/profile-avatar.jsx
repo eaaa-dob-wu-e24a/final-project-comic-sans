@@ -78,8 +78,8 @@ const ProfileAvatar = ({ user, setUser }) => {
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg z-50">
-          <div className="px-4 py-2 bg-primaryred text-white bg-background rounded-t-lg">
+        <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg overflow-hidden shadow-lg z-50">
+          <div className="px-4 py-2 bg-primaryred text-foreground bg-background rounded-t-lg">
             <p className="font-bold">{user.name}</p>
             <p className="text-sm">{user.email}</p>
           </div>
@@ -111,7 +111,7 @@ const ProfileAvatar = ({ user, setUser }) => {
             <li>
               <button
                 onClick={handleLogout}
-                className="block w-full text-left px-4 py-2 bg-primarypurple text-white hover:bg-gray-100"
+                className="block w-full text-left px-4 py-2 bg- text-foreground bg-primary hover:bg-gray-100"
               >
                 Log out
               </button>

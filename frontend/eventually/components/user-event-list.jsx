@@ -1,6 +1,8 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import DateCard from "./event-date-card";
+import Link from "next/link";
+import Image from "next/image";
 
 export default function UserEventList(id) {
   const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/events";
@@ -29,16 +31,33 @@ export default function UserEventList(id) {
   }, []);
 
   return (
-    <section className="mx-auto flex flex-col">
-      <div>
-        <h2>Your Events</h2>
+    <section className="mx-auto flex flex-col gap-4 bg-background p-6 my-12 rounded-2xl">
+      <div className="flex place-content-between align-center flex-row">
+        <h2 className="text-xl font-bold">Your Events</h2>
+        <Link
+          href="/dashboard/events/"
+          className="flex flex-row gap-2 font-bold"
+        >
+          All your events
+          <Image
+            alt="arrow"
+            src="arrow.svg"
+            width={16}
+            height={16}
+            className="-rotate-90"
+          ></Image>
+        </Link>
       </div>
       {loading ? (
         <p>Loading...</p>
       ) : (
         <ul className="flex flex-row  gap-4">
           {events.map((event) => (
-            <DateCard time={event.EventDates[0]?.DateTimeStart} title={event.Title} key={event.PK_ID} />        
+            <DateCard
+              time={event.EventDates[0]?.DateTimeStart}
+              title={event.Title}
+              key={event.PK_ID}
+            />
           ))}
         </ul>
       )}

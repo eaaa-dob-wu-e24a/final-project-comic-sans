@@ -9,10 +9,12 @@ module.exports = {
     extend: {
       colors: {
         background: "var(--background)",
+        pagebackground: "var(--page-background)",
         foreground: "var(--foreground)",
         gradientstart: "var(--gradient-start)",
         gradientend: "var(--gradient-end)",
-        primarypurple: "var(--primary-purple)",
+        primary: "var(--primary)",
+        secondary: "var(--secondary)"
       },
     },
   },

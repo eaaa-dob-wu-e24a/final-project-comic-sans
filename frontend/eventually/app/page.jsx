@@ -1,18 +1,37 @@
 import Link from "next/link";
+import Button from "@/components/ui/button";
+import JoinForm from "@/components/ui/joinform";
+import GradientCurve from "@/components/gradientcurve";
+
 
 export default function Home() {
   return (
-    <main className="relative top-0 min-h-screen pt-36 bg-[url('/background1.svg')] bg-top bg-no-repeat flex flex-col items-center justify-start text-white">
-      <h1 className="font-[family-name:var(--font-dancing-script)] text-7xl mb-4">
-        Eventually
-      </h1>
-      <p className="text-lg mb-6">Let’s make it happen..eventually.</p>
-      <Link
-        href="/login/"
-        className="border p-2 rounded-full bg-white text-black"
-      >
-        Placeholder Login Button
-      </Link>
-    </main>
+    <>
+      <div className="bg-gradient-to-r from-gradientstart to-gradientend pb-0">
+        <section className="max-w-lg mx-auto flex flex-col text-white place-content-center text-center  ">
+          <h1 className="font-[family-name:var(--font-dancing-script)] text-8xl mt-28">
+            Eventually
+          </h1>
+          <p className="text-2xl my-6 font-semibold">Let’s make it happen..eventually.</p>
+          <JoinForm></JoinForm>
+          <p>
+            Join an event with a code now, no account required. Or make an
+            account for more features.
+          </p>
+        </section>
+      </div>
+      <GradientCurve></GradientCurve>
+
+      <section className="text-center mt-12 mx-auto max-w-lg">
+        <h2 className="font-bold text-2xl my-4">
+          Want to create <span className="text-primary">your own</span> event?
+        </h2>
+        <p className="text-md mb-12">
+          Schedule an event with your friends, family, co-workers, or anyone
+          else. For free.
+        </p>
+        <Button>Create</Button>
+      </section>
+    </>
   );
 }

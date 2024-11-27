@@ -2,7 +2,7 @@ import Link from "next/link";
 import Button from "@/components/ui/button";
 import JoinForm from "@/components/ui/joinform";
 import GradientCurve from "@/components/gradientcurve";
-
+import ComponentTest from "@/components/component-test";
 
 export default function Home() {
   return (
@@ -12,7 +12,9 @@ export default function Home() {
           <h1 className="font-[family-name:var(--font-dancing-script)] text-8xl mt-28">
             Eventually
           </h1>
-          <p className="text-2xl my-6 font-semibold">Let’s make it happen..eventually.</p>
+          <p className="text-2xl my-6 font-semibold">
+            Let’s make it happen.. eventually.
+          </p>
           <JoinForm></JoinForm>
           <p>
             Join an event with a code now, no account required. Or make an
@@ -21,6 +23,8 @@ export default function Home() {
         </section>
       </div>
       <GradientCurve></GradientCurve>
+
+      {/* <ComponentTest></ComponentTest> */}
 
       <section className="text-center mt-12 mx-auto max-w-lg">
         <h2 className="font-bold text-2xl my-4">

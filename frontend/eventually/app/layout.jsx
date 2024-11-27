@@ -1,6 +1,7 @@
 import localFont from "next/font/local";
 import "./globals.css";
-import Link from "next/link";
+import Navbar from "../components/navbar";
+import Footer from "../components/footer";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -35,20 +36,9 @@ export default function RootLayout({ children }) {
       <body
         className={`${dancingScript.variable} ${montserrat.variable} antialiased font-[family-name:var(--font-montserrat)] bg-pagebackground`}
       >
-        <header className=" p-4 w-full flex text-white flex-row place-content-between bg-gradient-to-r from-gradientstart to-gradientend">
-          <h1 className="text-lg font-bold">Placeholder Navbar</h1>
-          <Link href="/login/" className="border py-2 px-6 rounded-full">
-            placeholder login button
-          </Link>
-        </header>
-
-        <main className="">
-          {children}
-          </main>
-
-        <footer>
-          <p>placeholder footer</p>
-        </footer>
+        <Navbar />
+        {children}
+        <Footer />
       </body>
     </html>
   );

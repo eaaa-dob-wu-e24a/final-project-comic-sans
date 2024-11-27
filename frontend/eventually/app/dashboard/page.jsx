@@ -76,20 +76,20 @@ const LoginSite = () => {
   }
 
   return (
-    <main>
-    <div className="flex justify-between items-center p-5 bg-gray-100 rounded-lg shadow-md">
-      <h1 className="m-0 text-2xl text-gray-800">
-        Hello, {user.name} your email is {user.email}
-      </h1>
-      <button
-        className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700 transition-colors"
-        onClick={handleLogout}
-      >
-        Logout
-      </button>
-    </div>
+    <main className="pt-20"> {/* 5rem padding top */}
+      <div className="flex justify-between items-center p-5 bg-gray-100 rounded-lg shadow-md">
+        <h1 className="m-0 text-2xl text-gray-800">
+          Hello, {user.name} your email is {user.email}
+        </h1>
+        <button
+          className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700 transition-colors"
+          onClick={handleLogout}
+        >
+          Logout
+        </button>
+      </div>
       <UserEventList></UserEventList>
-      </main>
+    </main>
   );
 };
 

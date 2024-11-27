@@ -59,7 +59,7 @@ const ProfileAvatar = () => {
             className="w-8 h-8 rounded-full object-cover"
           />
         ) : (
-          <div className="w-8 h-8 rounded-full bg-gray-400 text-white flex items-center justify-center text-sm font-bold">
+          <div className="w-8 h-8 rounded-full bg-secondary text-white flex items-center justify-center text-sm font-bold">
             {user.name ? user.name.charAt(0).toUpperCase() : "?"}
           </div>
         )}

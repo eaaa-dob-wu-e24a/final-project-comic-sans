@@ -4,7 +4,7 @@ import Button from "../components/button";
 import ProfileAvatar from "../components/profile-avatar";
 import { AuthContext } from "../app/authcontext";
 import { useContext } from "react";
-
+import Image from "next/image";
 
 export default function Navbar() {
   const { user, loading } = useContext(AuthContext);
@@ -14,9 +14,17 @@ export default function Navbar() {
       <div className="flex items-center gap-6">
         {/* Conditionally render the "Eventually" text when user is logged in */}
         {user && (
-          <h1 className="font-[family-name:var(--font-dancing-script)] text-3xl">
-            Eventually
-          </h1>
+          <div className="flex flex-row gap-4">
+            <Image
+              src="/logo.svg"
+              alt="Eventually"
+              width={40} 
+              height={40}
+            />
+            <h1 className="font-[family-name:var(--font-dancing-script)] text-3xl">
+              Eventually
+            </h1>
+          </div>
         )}
       </div>
       <div className="flex gap-10 items-center">

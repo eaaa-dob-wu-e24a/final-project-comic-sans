@@ -4,7 +4,7 @@
 
 :root {
   --background: #ffffff;
-  --page-background: #FBF9FA;
+  --page-background: #fbf9fa;
   --foreground: #171717;
   --primary-pink: #D44757;
   --primary-purple: #484395;
@@ -12,21 +12,25 @@
   --gradient-end: hsl(353 62% 55%);
   --secondary: hsl(244 38% 42%);
   --primary: hsl(353 62% 55%);
-  --gradient: linear-gradient(to right, var(--gradient-start), var(--gradient-end))
+  --gradient: linear-gradient(
+    to right,
+    var(--gradient-start),
+    var(--gradient-end)
+  );
 }
 
 .curve-gradient {
-    height: 10rem;
-    width: 100vw;
-    background-image: var(--gradient);
-    clip-path: ellipse(110% 100% at 0% 0%);
-    z-index: -1;
+  height: 10rem;
+  width: 100%;
+  background-image: var(--gradient);
+  clip-path: ellipse(110% 100% at 0% 0%);
+  z-index: -1;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #23203B;
-    --page-background: #1A192C;
+    --background: #23203b;
+    --page-background: #1a192c;
     --foreground: #ffffff;
   }
 }

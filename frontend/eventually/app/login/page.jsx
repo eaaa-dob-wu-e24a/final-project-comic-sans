@@ -26,7 +26,7 @@ const LoginPage = () => {
 
     if (data.status === "success") {
       console.log("Login successful");
-      router.push("/loginsite");
+      router.push("/dashboard");
     }
   };
 

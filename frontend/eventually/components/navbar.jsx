@@ -43,7 +43,7 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav className="flex justify-between items-center px-20 py-5 text-white bg-transparent absolute top-0 left-0 w-full z-50">
+    <nav className="flex justify-between items-center px-20 py-5 text-white bg-transparent fixed top-0 left-0 w-full z-50">
       <div className="flex items-center gap-6">
         {/* Conditionally render the "Eventually" text when user is logged in */}
         {user && (

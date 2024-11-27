@@ -2,7 +2,7 @@ export default function Footer() {
   return (
     <footer className="relative">
       {/* Gradient Divider */}
-      <div className="h-0.5 bg-gradient-to-r from-[#D44757] via-[#484395] to-[#D44757]"></div>
+      <div className="h-0.5 bg-gradient-to-r from-[#484395] to-[#D44757]"></div>
 
       {/* Footer Content */}
       <div className="bg-[#1A192B] text-white py-16">

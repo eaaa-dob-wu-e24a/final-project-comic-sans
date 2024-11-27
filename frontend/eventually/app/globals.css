@@ -5,7 +5,7 @@
 :root {
   /*Light theme colors*/
   --background: #ffffff;
-  --page-background: #FBF9FA;
+  --page-background: #fbf9fa;
   --foreground: #171717;
   /**/
   --primary-pink: #D44757;
@@ -14,15 +14,9 @@
   --gradient-end: hsl(353 62% 55%);
   --secondary: hsl(244 38% 42%);
   --primary: hsl(353 62% 55%);
-  --gradient: linear-gradient(to right, var(--gradient-start), var(--gradient-end))
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #23203B;
-    --page-background: #1A192C;
-    --foreground: #ffffff;
-  }
+  --gradient: linear-gradient(to right,
+      var(--gradient-start),
+      var(--gradient-end));
 }
 
 .curve-gradient {
@@ -31,6 +25,14 @@
   background-image: var(--gradient);
   clip-path: ellipse(110% 100% at 0% 0%);
   z-index: -1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #23203b;
+    --page-background: #1a192c;
+    --foreground: #ffffff;
+  }
 }
 
 body {

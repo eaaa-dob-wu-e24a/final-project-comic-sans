@@ -5,35 +5,36 @@ import { useRouter } from "next/navigation";
 
 export default function AllEventList() {
   const url = process.env.NEXT_PUBLIC_API_URL + "/api/event/events";
+  const urlSingle = process.env.NEXT_PUBLIC_API_URL + "/api/event/";
 
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const router = useRouter();
 
-  // router.push(`/loginsite/event/${eventId}`);
-  const handleEventClick = (eventId) => {
-    fetch(`${url}/${eventId}`, {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data && data.EventDates) {
-          console.log(
-            data.EventDates.length + " dates found for event " + eventId
-          );
-          router.push(`/loginsite/event/${eventId}`, {
-            state: { dates: data.EventDates },
-          });
-        } else {
-          console.log("no dates found for event " + eventId);
-        }
-      })
-      .catch((error) => console.log(error));
+  const handleEventClick = async (eventId) => {
+    try {
+      const response = await fetch(`${urlSingle}/id/${eventId}`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      if (data && data.EventDates) {
+        console.log(
+          data.EventDates.length + " dates found for event " + eventId
+        );
+        router.push(`/loginsite/event/${eventId}`, {
+          state: { dates: data.EventDates },
+        });
+      } else {
+        console.log("no dates found for event " + eventId);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {

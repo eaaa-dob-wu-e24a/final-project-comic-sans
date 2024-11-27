@@ -1,5 +1,4 @@
 "use client";
-import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Button from "../components/button";
 import ProfileAvatar from "../components/profile-avatar";
@@ -8,41 +7,7 @@ import { useContext } from "react";
 
 
 export default function Navbar() {
-  const [loading, setLoading] = useState(true);
-  const { user, setUser } = useContext(AuthContext);
-
-  // Fetch authentication status
-  useEffect(() => {
-    const fetchAuthStatus = async () => {
-      try {
-        const response = await fetch(
-          process.env.NEXT_PUBLIC_API_URL + "/api/user/check_session",
-          {
-            method: "GET",
-            credentials: "include", // Include cookies in the request
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        const data = await response.json();
-
-        if (data.status === "success") {
-          setUser(data.user);
-        } else {
-          setUser(null);
-        }
-      } catch (error) {
-        console.error("Error fetching auth status:", error);
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAuthStatus();
-  }, []);
+  const { user, loading } = useContext(AuthContext);
 
   return (
     <nav className="flex justify-between items-center px-20 py-5 text-white bg-gradient-to-r from-gradientstart to-gradientend fixed top-0 left-0 w-full z-50">

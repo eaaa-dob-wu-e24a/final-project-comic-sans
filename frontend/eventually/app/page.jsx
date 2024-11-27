@@ -24,8 +24,6 @@ export default function Home() {
       </div>
       <GradientCurve></GradientCurve>
 
-      <ComponentTest></ComponentTest>
-
       <section className="text-center mt-12 mx-auto max-w-lg">
         <h2 className="font-bold text-2xl my-4">
           Want to create <span className="text-primary">your own</span> event?

@@ -9,7 +9,7 @@ export default function Checkbox({ id }) {
         id={id}
         className="peer h-8 w-8 hidden"
       />
-      <div className="bg-transparent h-8 w-8 rounded-full border-2 border-slate-500 hover:cursor-pointer peer-checked:border-white peer-checked:border-4 peer-checked:*:opacity-100 flex place-content-center">
+      <div className="bg-transparent h-8 w-8 rounded-full border-2 border-white/75 hover:cursor-pointer peer-checked:border-white peer-checked:border-4 peer-checked:*:opacity-100 flex place-content-center">
         <Image
           width={16}
           height={16}

@@ -24,7 +24,7 @@ export default function Home() {
       </div>
       <GradientCurve></GradientCurve>
 
-      {/* <ComponentTest></ComponentTest> */}
+      <ComponentTest></ComponentTest>
 
       <section className="text-center mt-12 mx-auto max-w-lg">
         <h2 className="font-bold text-2xl my-4">

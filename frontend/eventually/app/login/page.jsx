@@ -7,7 +7,7 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/login";
+  const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/login"; 
 
   //Login function
   const handleSubmit = async (event) => {
@@ -31,9 +31,9 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <main className="relative top-0 min-h-screen pt-36 bg-[url('/background.svg')] bg-top bg-no-repeat flex flex-col items-center justify-start text-white">
+      <h1 className="text-2xl font-bold text-center mb-6">Login</h1>
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded shadow-md">
-        <h1 className="text-2xl font-bold text-center">Login</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">
@@ -43,7 +43,7 @@ const LoginPage = () => {
               type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
+              className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-indigo-200 text-gray-700"
             />
           </div>
           <div>
@@ -54,7 +54,7 @@ const LoginPage = () => {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
+              className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-indigo-200 text-gray-700"
             />
           </div>
           <button
@@ -65,7 +65,7 @@ const LoginPage = () => {
           </button>
         </form>
       </div>
-    </div>
+    </main>
   );
 };
 

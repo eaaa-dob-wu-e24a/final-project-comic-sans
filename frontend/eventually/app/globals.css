@@ -4,21 +4,34 @@
 
 :root {
   --background: #ffffff;
+  --page-background: #FBF9FA;
   --foreground: #171717;
+  --primary-pink: #D44757;
+  --primary-purple: #484395;
   --gradient-start: hsl(244 38% 42%);
   --gradient-end: hsl(353 62% 55%);
+  --secondary: hsl(244 38% 42%);
+  --primary: hsl(353 62% 55%);
   --gradient: linear-gradient(to right, var(--gradient-start), var(--gradient-end))
+}
+
+.curve-gradient {
+    height: 10rem;
+    width: 100vw;
+    background-image: var(--gradient);
+    clip-path: ellipse(110% 100% at 0% 0%);
+    z-index: -1;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #23203B;
+    --page-background: #1A192C;
+    --foreground: #ffffff;
   }
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
 }

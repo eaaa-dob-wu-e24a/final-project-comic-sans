@@ -7,7 +7,33 @@ export default function EventDetail() {
   const { eventId } = useParams();
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loggedInUser, setLoggedInUser] = useState({
+    userId: null,
+    username: "",
+  });
 
+  // Fetch the logged-in user's data
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/user/check_session`,
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
+        const userData = await res.json();
+        setLoggedInUser(userData);
+      } catch (err) {
+        console.error("Failed to fetch user data:", err);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  // Fetch event data
   useEffect(() => {
     const fetchEventData = async () => {
       if (eventId) {
@@ -21,7 +47,6 @@ export default function EventDetail() {
           );
           const data = await res.json();
 
-          // Fetch votes for each event date
           if (data.EventDates && data.EventDates.length > 0) {
             const votesPromises = data.EventDates.map(async (date) => {
               const resVotes = await fetch(
@@ -33,13 +58,11 @@ export default function EventDetail() {
               );
               const votesData = await resVotes.json();
 
-              return { ...date, UserVotes: votesData.UserVotes || [] }; // Merge votes into the date
+              return { ...date, UserVotes: votesData.UserVotes || [] };
             });
 
-            // Wait for all vote data to be fetched
             const eventDatesWithVotes = await Promise.all(votesPromises);
 
-            // Update the event data with the combined event dates and votes
             setEvent((prevEvent) => ({
               ...prevEvent,
               EventDates: eventDatesWithVotes,
@@ -49,7 +72,6 @@ export default function EventDetail() {
           }
 
           setLoading(false);
-          console.log("Event data fetched:", data);
         } catch (err) {
           console.error(err);
         }
@@ -59,14 +81,10 @@ export default function EventDetail() {
     fetchEventData();
   }, [eventId]);
 
-  console.log("Event data:", event);
-
   if (loading) return <p>Loading...</p>;
 
-  // Handle date selection logic
+  // Handle voting for a date
   const handleEventClick = async (index) => {
-    console.log("Event date clicked:", index);
-
     const updatedDates = event.EventDates.map((d, i) =>
       i === index ? { ...d, selected: !d.selected } : d
     );
@@ -80,9 +98,12 @@ export default function EventDetail() {
       const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
           eventId: eventId,
-          dateId: selectedDate.PK_ID, // Use PK_ID for the backend
+          dateId: selectedDate.PK_ID,
+          userId: loggedInUser.userId,
+          username: loggedInUser.username,
         }),
       });
 
@@ -90,7 +111,17 @@ export default function EventDetail() {
         throw new Error("Failed to update vote");
       }
 
-      setEvent({ ...event, EventDates: updatedDates });
+      // Update UI dynamically
+      const updatedUserVotes = selectedDate.selected
+        ? [...selectedDate.UserVotes, { UserName: "You" }]
+        : selectedDate.UserVotes.filter((vote) => vote.UserName !== "You");
+
+      setEvent({
+        ...event,
+        EventDates: updatedDates.map((date, i) =>
+          i === index ? { ...date, UserVotes: updatedUserVotes } : date
+        ),
+      });
     } catch (err) {
       console.error(err);
     }
@@ -104,29 +135,37 @@ export default function EventDetail() {
       <p>Location: {event?.Location || "DummyLocation"}</p>
       <div>
         <h2>Event Dates:</h2>
-        <ul className="flex flex-col items-start w-full">
+        <ul className="flex flex-row flex-wrap w-full gap-4">
           {event?.EventDates?.map((date, index) => (
             <li
               key={index}
-              className={`w-full border p-4 my-2 rounded-lg shadow-md cursor-pointer ${
+              className={`flex flex-col items-center w-64 border p-4 rounded-lg shadow-md cursor-pointer ${
                 date.selected
                   ? "bg-green-500 text-white"
                   : "bg-white text-black"
               }`}
               onClick={() => handleEventClick(index)}
             >
-              <p>Start: {date.DateTimeStart}</p>
-              <p>End: {date.DateTimeEnd}</p>
-              <h3 className="mt-2 text-sm font-bold">Voted Users:</h3>
-              {date.UserVotes.length > 0 ? (
-                <ul className="ml-4 list-disc">
-                  {date.UserVotes.map((vote, i) => (
-                    <li key={i}>{vote.UserName}</li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-gray-500">No votes yet</p>
-              )}
+              <div>
+                <p>Start: {date.DateTimeStart}</p>
+                <p>End: {date.DateTimeEnd}</p>
+              </div>
+              <div className="mt-4 text-sm">
+                <h3 className="font-bold">Voted Users:</h3>
+                {date.UserVotes.length > 0 ? (
+                  <ul className="list-disc ml-4">
+                    {date.UserVotes.map((vote, i) => (
+                      <li key={i}>
+                        {vote.UserName === loggedInUser.username
+                          ? "You"
+                          : vote.UserName}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-gray-500">No votes yet</p>
+                )}
+              </div>
             </li>
           ))}
         </ul>

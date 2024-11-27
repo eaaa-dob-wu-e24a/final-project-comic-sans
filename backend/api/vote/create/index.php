@@ -8,15 +8,7 @@ header('Content-Type: application/json');
 
 require_once __DIR__ . "/../../../database/dbconn.php";
 
-
-echo "Hello from vote create";
-// function showError($msgString)
-// {
-//     $msg = ["status" => "error", "message" => $msgString];
-//     echo json_encode($msg, JSON_PRETTY_PRINT);
-// }
-
-// session_start();
+session_start();
 
 // // Handle preflight OPTIONS request
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -24,33 +16,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-// if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Access user data correctly from session
+    $userId = $_SESSION['user']['id'] ?? null;
+    $username = $_SESSION['user']['name'] ?? null;
 
-//     if (isset($_SESSION['user_id']) && isset($_POST['event_id']) && isset($_POST['status']) && isset($_POST['username'])) {
-//         $userId = $_SESSION['user_id'];
-//         $eventId = $_POST['event_id'];
-//         $status = $_POST['status'];
-//         $username = $_POST['username'];
+    // Decode incoming JSON data
+    $postData = json_decode(file_get_contents('php://input'), true);
 
-//         $stmt = $conn->prepare("INSERT INTO Eventually_User_Voting (FK_User, FK_Event_Dates, Status, UserName) VALUES (?, ?, ?, ?)");
-//         $stmt->bind_param("iiss", $userId, $eventId, $status, $username);
+    // Validate incoming data
+    if (!$userId || !$username || !isset($postData['dateId']) || !isset($postData['eventId'])) {
+        http_response_code(400);
+        echo json_encode(["status" => "error", "message" => "Invalid input."], JSON_PRETTY_PRINT);
+        exit();
+    }
 
-//         if ($stmt->execute()) {
-//             http_response_code(200);
-//             echo json_encode(["status" => "success", "message" => "Vote successfully recorded."], JSON_PRETTY_PRINT);
-//         } else {
-//             http_response_code(500);
-//             showError("Failed to record vote.");
-//         }
+    $dateId = $postData['dateId'];
 
-//         $stmt->close();
-//     } else {
-//         http_response_code(400);
-//         showError("Invalid input.");
-//     }
-// } else {
-//     http_response_code(405);
-//     showError("Invalid request method.");
-// }
+    // Insert vote into the database
+    $stmt = $mysqli->prepare("INSERT INTO Eventually_Event_User_Voting (FK_User, FK_Event_Dates, UserName) VALUES (?, ?, ?)");
+    $stmt->bind_param("iis", $userId, $dateId, $username);
 
-// $conn->close();
+    if ($stmt->execute()) {
+        http_response_code(200);
+        echo json_encode(["status" => "success", "message" => "Vote successfully recorded."], JSON_PRETTY_PRINT);
+    } else {
+        http_response_code(500);
+        echo json_encode(["status" => "error", "message" => "Failed to record vote."], JSON_PRETTY_PRINT);
+    }
+
+    $stmt->close();
+} else {
+    http_response_code(405);
+    echo json_encode(["status" => "error", "message" => "Invalid request method."], JSON_PRETTY_PRINT);
+}

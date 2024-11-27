@@ -4,6 +4,7 @@ import Link from "next/link";
 import Button from "../components/button";
 import ProfileAvatar from "../components/profile-avatar";
 
+
 export default function Navbar() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -58,10 +59,7 @@ export default function Navbar() {
           // Render this if the user is logged in
 
           <>
-            <ProfileAvatar
-              name={user.name}
-              imageUrl={user.profileImageUrl} // Pass user data to ProfileAvatar
-            />
+            <ProfileAvatar user={user} setUser={setUser} />
             <Button label="CREATE EVENT" className="m-10" />
           </>
         ) : (

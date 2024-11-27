@@ -114,7 +114,7 @@ const ProfileAvatar = () => {
             <li>
               <button
                 onClick={handleLogout}
-                className="block w-full text-left px-4 py-2 bg- text-foreground bg-primary hover:bg-gray-100"
+                className="block w-full text-left px-4 py-2 bg- text-secondary font-bold hover:bg-gray-100"
               >
                 Log out
               </button>

@@ -49,7 +49,7 @@ export default function UserEventList({maxEvents}) {
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <ul className="flex flex-row  gap-4">
+        <ul className="flex flex-row flex-wrap gap-4">
           {events.map((event) => (
               <DateCard
                 time={event.FinalDate? event.FinalDate : event.EventDates[0]?.DateTimeStart}

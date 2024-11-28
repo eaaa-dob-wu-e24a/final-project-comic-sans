@@ -1,14 +1,8 @@
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function DateCard({ time, title, id }) {
   // convert time to date class to use methods on it
   const cardTime = new Date(time);
-
-  // on click, go to associated event
-  const router = useRouter();
-  const handleClick = () => {
-    router.push(`/dashboard/event/${id}`);
-  }
 
   //set the day/date/month variables by processing time
   const day = cardTime.toLocaleString("default", {
@@ -44,8 +38,9 @@ export default function DateCard({ time, title, id }) {
     "before:bg-background before:content-[''] before:inset-[1px] before:absolute before:rounded-2xl hover:before:opacity-0"; // remember to set z-index on content, otherwise it goes behind the pseudo-element
 
   if (showDate == true) {
-    return (
-      <li className={`${classes} ${beforeClasses}`} onClick={handleClick}>
+    return (<Link href={`/dashboard/event/${id}`} className={`${classes}`}>
+      <li className={`${classes} ${beforeClasses}`}>
+        
         <div className="flex flex-col absolute top-4 w-full z-10 group-hover:text-white">
           <p className="text-sm font-bold opacity-60">{time ? day : ""}</p>
           <p className="text-gradientend my-[-0.25rem] text-4xl font-bold group-hover:text-white">
@@ -59,11 +54,12 @@ export default function DateCard({ time, title, id }) {
         <p className="mx-auto absolute bottom-4 w-full px-4 font-bold text-lg z-10 group-hover:text-white">
           {newTitle}
         </p>
-      </li>
+      </li></Link>
     );
   } else {
     return (
-      <li className={`${classes} ${beforeClasses}`} onClick={handleClick}>
+      <Link href={`/dashboard/event/${id}`} className={`${classes}`}>
+      <li className={`${classes} ${beforeClasses}`}>
         {/* <div className="flex flex-col place-items-center z-10 group-hover:text-white">
 
           <p className="font-bold  opacity-60 text-lg">No date set</p>
@@ -89,6 +85,7 @@ export default function DateCard({ time, title, id }) {
           </svg>
         </div>
       </li>
+      </Link>
     );
   }
 }

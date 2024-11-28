@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import DateCard from "./event-date-card";
 import Arrow from "./ui/arrow";
+import Loading from "./ui/loading-spinner";
 
 
 export default function AllEventList({maxEvents}) {
@@ -78,7 +79,7 @@ export default function AllEventList({maxEvents}) {
         </Link>
       </div>
       {loading ? (
-        <p>Loading...</p>
+        <Loading></Loading>
       ) : (
         <ul className="flex flex-wrap flex-row gap-4">
           {events.map((event) => (

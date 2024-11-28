@@ -29,7 +29,7 @@
 
 .mask-anim {
   mask-image: linear-gradient(to right, transparent 70%, white 90%, transparent 100%);
-  animation: move-mask 1800ms linear reverse infinite;
+  animation: move-mask 1000ms linear reverse infinite;
   mask-size: 200%;
 }
 

@@ -89,6 +89,7 @@ const LoginSite = () => {
         </div>
       </GradientCurve>
       <section className="max-w-6xl mx-auto">
+        <ComponentTest></ComponentTest>
         <UserEventList></UserEventList>
         <AllEventList></AllEventList>
       </section>

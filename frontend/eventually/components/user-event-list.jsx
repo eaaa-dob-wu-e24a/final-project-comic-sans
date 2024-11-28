@@ -2,9 +2,9 @@ import React from "react";
 import { useState, useEffect } from "react";
 import DateCard from "./event-date-card";
 import Link from "next/link";
-import Image from "next/image";
+import Arrow from "./ui/arrow";
 
-export default function UserEventList(id) {
+export default function UserEventList({maxEvents}) {
   const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/events";
 
   const [events, setEvents] = useState([]);
@@ -21,7 +21,14 @@ export default function UserEventList(id) {
       .then((response) => response.json())
       .then((data) => {
         if (data) {
-          setEvents(data.events);
+          // if a max events variable is passed, only show that amount
+          console.log(data.events.length + " events found.");
+          if (maxEvents && data.events.length > maxEvents) {
+            const limitedEvents = data.events.slice(-maxEvents);
+            setEvents(limitedEvents);
+          } else {
+            setEvents(data.events);
+          }
         } else {
           console.log("no data yet.");
         }
@@ -35,14 +42,8 @@ export default function UserEventList(id) {
       <div className="flex place-content-between align-center flex-row">
         <h2 className="text-xl font-bold">Your Events</h2>
         <Link href="/dashboard/event" className="flex flex-row gap-2 font-bold">
-          All your events
-          <Image
-            alt="arrow"
-            src="arrow.svg"
-            width={16}
-            height={16}
-            className="-rotate-90"
-          ></Image>
+          All
+          <Arrow className="-rotate-90 mt-1"></Arrow>
         </Link>
       </div>
       {loading ? (
@@ -50,13 +51,11 @@ export default function UserEventList(id) {
       ) : (
         <ul className="flex flex-row  gap-4">
           {events.map((event) => (
-            <Link href={`dashboard/event/${event.PK_ID}`} key={event.PK_ID}>
               <DateCard
-                time={event.EventDates[0]?.DateTimeStart}
+                time={event.FinalDate? event.FinalDate : event.EventDates[0]?.DateTimeStart}
                 title={event.Title}
                 key={event.PK_ID}
               />
-            </Link>
           ))}
         </ul>
       )}

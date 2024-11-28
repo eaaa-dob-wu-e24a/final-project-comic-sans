@@ -89,8 +89,8 @@ const LoginSite = () => {
         </div>
       </GradientCurve>
       <section className="max-w-6xl mx-auto">
-        <UserEventList></UserEventList>
-        <AllEventList></AllEventList>
+        <UserEventList maxEvents={6}></UserEventList>
+        <AllEventList maxEvents={6}></AllEventList>
       </section>
     </main>
   );

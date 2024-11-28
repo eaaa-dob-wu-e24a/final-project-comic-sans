@@ -55,6 +55,7 @@ export default function UserEventList({maxEvents}) {
                 time={event.FinalDate? event.FinalDate : event.EventDates[0]?.DateTimeStart}
                 title={event.Title}
                 key={event.PK_ID}
+                id={event.PK_ID}
               />
           ))}
         </ul>

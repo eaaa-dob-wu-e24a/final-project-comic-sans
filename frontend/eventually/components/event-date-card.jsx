@@ -1,10 +1,14 @@
-import Link from "next/link";
-import Image from "next/image";
-import React from "react";
+import { useRouter } from "next/navigation";
 
-export default function DateCard({ time, title }) {
+export default function DateCard({ time, title, id }) {
   // convert time to date class to use methods on it
   const cardTime = new Date(time);
+
+  // on click, go to associated event
+  const router = useRouter();
+  const handleClick = () => {
+    router.push(`/dashboard/event/${id}`);
+  }
 
   //set the day/date/month variables by processing time
   const day = cardTime.toLocaleString("default", {
@@ -41,7 +45,7 @@ export default function DateCard({ time, title }) {
 
   if (showDate == true) {
     return (
-      <li className={`${classes} ${beforeClasses}`}>
+      <li className={`${classes} ${beforeClasses}`} onClick={handleClick}>
         <div className="flex flex-col absolute top-4 w-full z-10 group-hover:text-white">
           <p className="text-sm font-bold opacity-60">{time ? day : ""}</p>
           <p className="text-gradientend my-[-0.25rem] text-4xl font-bold group-hover:text-white">
@@ -59,7 +63,7 @@ export default function DateCard({ time, title }) {
     );
   } else {
     return (
-      <li className={`${classes} ${beforeClasses}`}>
+      <li className={`${classes} ${beforeClasses}`} onClick={handleClick}>
         {/* <div className="flex flex-col place-items-center z-10 group-hover:text-white">
 
           <p className="font-bold  opacity-60 text-lg">No date set</p>

@@ -90,6 +90,7 @@ export default function AllEventList({maxEvents}) {
               }
               title={event.Title}
               key={event.PK_ID}
+              id={event.PK_ID}
             />
           ))}
         </ul>

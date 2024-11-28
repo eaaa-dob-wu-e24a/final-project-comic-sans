@@ -3,11 +3,13 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Button from "../components/button";
 import ProfileAvatar from "../components/profile-avatar";
+import { AuthContext } from "../app/authcontext";
+import { useContext } from "react";
 
 
 export default function Navbar() {
-  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { user, setUser } = useContext(AuthContext);
 
   // Fetch authentication status
   useEffect(() => {
@@ -59,7 +61,7 @@ export default function Navbar() {
           // Render this if the user is logged in
 
           <>
-            <ProfileAvatar user={user} setUser={setUser} />
+            <ProfileAvatar user={user} />
             <Button label="CREATE EVENT" className="m-10" />
           </>
         ) : (

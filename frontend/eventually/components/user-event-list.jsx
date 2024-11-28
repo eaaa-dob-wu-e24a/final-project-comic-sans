@@ -34,10 +34,7 @@ export default function UserEventList(id) {
     <section className="mx-auto flex flex-col gap-4 bg-background p-6 my-12 rounded-2xl">
       <div className="flex place-content-between align-center flex-row">
         <h2 className="text-xl font-bold">Your Events</h2>
-        <Link
-          href="/dashboard/events/"
-          className="flex flex-row gap-2 font-bold"
-        >
+        <Link href="/dashboard/event" className="flex flex-row gap-2 font-bold">
           All your events
           <Image
             alt="arrow"
@@ -53,11 +50,13 @@ export default function UserEventList(id) {
       ) : (
         <ul className="flex flex-row  gap-4">
           {events.map((event) => (
-            <DateCard
-              time={event.EventDates[0]?.DateTimeStart}
-              title={event.Title}
-              key={event.PK_ID}
-            />
+            <Link href={`dashboard/event/${event.PK_ID}`} key={event.PK_ID}>
+              <DateCard
+                time={event.EventDates[0]?.DateTimeStart}
+                title={event.Title}
+                key={event.PK_ID}
+              />
+            </Link>
           ))}
         </ul>
       )}

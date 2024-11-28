@@ -42,7 +42,7 @@ const ProfileAvatar = () => {
     });
 
     setUser(null); // Clear user state
-    router.push("/login"); // Redirect to login page
+    router.push("/"); // Redirect to login page
   };
 
   return (
@@ -59,7 +59,7 @@ const ProfileAvatar = () => {
             className="w-8 h-8 rounded-full object-cover"
           />
         ) : (
-          <div className="w-8 h-8 rounded-full bg-gray-400 text-white flex items-center justify-center text-sm font-bold">
+          <div className="w-8 h-8 rounded-full bg-secondary text-white flex items-center justify-center text-sm font-bold">
             {user.name ? user.name.charAt(0).toUpperCase() : "?"}
           </div>
         )}
@@ -114,7 +114,7 @@ const ProfileAvatar = () => {
             <li>
               <button
                 onClick={handleLogout}
-                className="block w-full text-left px-4 py-2 bg- text-foreground bg-primary hover:bg-gray-100"
+                className="block w-full text-left px-4 py-2 bg- text-secondary font-bold hover:bg-gray-100"
               >
                 Log out
               </button>

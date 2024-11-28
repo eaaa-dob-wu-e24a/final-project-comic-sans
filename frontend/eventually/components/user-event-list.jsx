@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import DateCard from "./event-date-card";
 import Link from "next/link";
 import Arrow from "./ui/arrow";
+import Loading from "./ui/loading-spinner";
 
 export default function UserEventList({maxEvents}) {
   const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/events";
@@ -47,7 +48,7 @@ export default function UserEventList({maxEvents}) {
         </Link>
       </div>
       {loading ? (
-        <p>Loading...</p>
+        <Loading></Loading>
       ) : (
         <ul className="flex flex-row flex-wrap gap-4">
           {events.map((event) => (

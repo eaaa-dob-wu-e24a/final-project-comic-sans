@@ -22,6 +22,10 @@ module.exports = {
       fontFamily: {
         "dancing-script": "var(--font-dancing-script)",
       },
+      dropShadow: {
+        "button-shadow:": "shadow-md",
+        "card-shadow": "shadow-sm"
+      },
     },
   },
   plugins: [],

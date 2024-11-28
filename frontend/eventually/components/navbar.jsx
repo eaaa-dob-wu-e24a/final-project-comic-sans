@@ -20,7 +20,7 @@ export default function Navbar() {
     <nav className="flex justify-between items-center px-20 py-5 text-white bg-gradient-to-r from-gradientstart to-gradientend fixed top-0 left-0 w-full z-50">
       {/* Left Side: Logo */}
       <div className="flex items-center gap-6">
-        <Link href="/" className="flex items-center gap-4">
+        <Link href= {user? "/dashboard" : "/"} className="flex items-center gap-4">
           <Image src="/logo.svg" alt="Eventually" width={40} height={40} />
           {!isHomePage && (
             <h1 className="font-dancing-script text-3xl">Eventually</h1>

@@ -3,11 +3,11 @@ import React from "react";
 export default function DateCard({ time, title }) {
   const cardTime = new Date(time);
 
-  const beforeClasses = "before:bg-background before:content-[''] before:inset-[1px] before:absolute before:rounded-2xl hover:before:opacity-0 hover:before:transition-all before:duration-500 hover:before:duration-500" // remember to set z-index on content, otherwise it goes behind the pseudo-element
+  const beforeClasses = "before:bg-background before:content-[''] before:inset-[1px] before:absolute before:rounded-2xl hover:before:opacity-0" // remember to set z-index on content, otherwise it goes behind the pseudo-element
 
   console.log(time);
   return (
-    <li className={`bg-gradient-to-r from-gradientstart to-gradientend text-foreground rounded-2xl p-4 shadow-lg flex flex-col basis-0 grow shrink-0 place-content-center max-w-48 relative hover:cursor-pointer ${beforeClasses}`}>
+    <li className={`group bg-gradient-to-r from-gradientstart to-gradientend text-foreground rounded-2xl p-4 shadow-lg flex flex-col basis-0 grow shrink-0 place-content-center max-w-48 relative hover:cursor-pointer ${beforeClasses}`}>
       <div className="flex flex-col place-items-center z-10">
         <p className="text-sm font-bold opacity-60">
           {time
@@ -16,7 +16,7 @@ export default function DateCard({ time, title }) {
               })
             : "N/A"}
         </p>
-        <p className="text-gradientend my-[-0.25rem] text-4xl font-bold">
+        <p className="text-gradientend my-[-0.25rem] text-4xl font-bold group-hover:text-white">
           {time
             ? new Date(time).toLocaleString("default", {
                 day: "2-digit",

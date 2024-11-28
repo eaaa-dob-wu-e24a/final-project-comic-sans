@@ -35,7 +35,7 @@ export default function DateCard({ time, title }) {
   }
   // split the classes for the main card so its easier to read
   const classes =
-    "text-center group min-h-44 min-w-32 bg-gradient-to-r from-gradientstart to-gradientend text-foreground rounded-2xl shadow-lg flex flex-col basis-32 grow shrink-0 place-content-center max-w-lg relative hover:cursor-pointer h-full";
+    "text-center group min-h-44 min-w-32 bg-gradient-to-r from-gradientstart to-gradientend text-foreground rounded-2xl shadow-md flex flex-col basis-32 grow shrink-0 place-content-center max-w-lg relative hover:cursor-pointer h-full";
   const beforeClasses =
     "before:bg-background before:content-[''] before:inset-[1px] before:absolute before:rounded-2xl hover:before:opacity-0"; // remember to set z-index on content, otherwise it goes behind the pseudo-element
 

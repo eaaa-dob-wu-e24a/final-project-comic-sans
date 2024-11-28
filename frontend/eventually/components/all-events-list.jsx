@@ -69,7 +69,7 @@ export default function AllEventList({maxEvents}) {
   }, []);
 
   return (
-    <section className="mx-auto flex flex-col gap-4 bg-background p-6 my-12 rounded-2xl">
+    <section className="mx-auto flex flex-col gap-4 bg-background p-6 my-12 rounded-2xl shadow-md">
       <div className="flex place-content-between align-center flex-row">
         <h2 className="text-xl font-bold">Participating Events</h2>
         <Link href="/dashboard/event" className="flex flex-row gap-2 font-bold">

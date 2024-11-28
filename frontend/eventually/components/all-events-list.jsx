@@ -26,7 +26,7 @@ export default function AllEventList() {
         console.log(
           data.EventDates.length + " dates found for event " + eventId
         );
-        router.push(`/loginsite/event/${eventId}`, {
+        router.push(`/dashboard/event/${eventId}`, {
           state: { dates: data.EventDates },
         });
       } else {

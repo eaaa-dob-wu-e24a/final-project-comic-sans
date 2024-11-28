@@ -144,6 +144,7 @@ export default function EventDetail() {
                   ? "bg-green-500 text-white"
                   : "bg-white text-black"
               }`}
+              // sets your vote
               onClick={() => handleEventClick(index)}
             >
               <div>
@@ -151,15 +152,12 @@ export default function EventDetail() {
                 <p>End: {date.DateTimeEnd}</p>
               </div>
               <div className="mt-4 text-sm">
+                {/* Display the users who voted for this date */}
                 <h3 className="font-bold">Voted Users:</h3>
                 {date.UserVotes.length > 0 ? (
                   <ul className="list-disc ml-4">
                     {date.UserVotes.map((vote, i) => (
-                      <li key={i}>
-                        {vote.UserName === loggedInUser.username
-                          ? "You"
-                          : vote.UserName}
-                      </li>
+                      <li key={i}>{vote.UserName}</li>
                     ))}
                   </ul>
                 ) : (

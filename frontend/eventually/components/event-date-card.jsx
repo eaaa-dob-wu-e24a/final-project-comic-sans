@@ -8,7 +8,7 @@ export default function DateCard({ time, title }) {
   console.log(time);
   return (
     <li className={`group bg-gradient-to-r from-gradientstart to-gradientend text-foreground rounded-2xl p-4 shadow-lg flex flex-col basis-0 grow shrink-0 place-content-center max-w-48 relative hover:cursor-pointer ${beforeClasses}`}>
-      <div className="flex flex-col place-items-center z-10">
+      <div className="flex flex-col place-items-center z-10 group-hover:text-white">
         <p className="text-sm font-bold opacity-60">
           {time
             ? new Date(time).toLocaleString("default", {

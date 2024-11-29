@@ -47,7 +47,6 @@ export default function EventUpdateForm({ id }) {
         name="newtitle"
         type="text"
         placeholder="Enter a new title..."
-        required
       />
 
       <label htmlFor="newdesc">Description</label>
@@ -56,7 +55,6 @@ export default function EventUpdateForm({ id }) {
         name="newdesc"
         type="text"
         placeholder="Update your description..."
-        required
       />
 
       <label htmlFor="newloc">Location</label>
@@ -65,7 +63,6 @@ export default function EventUpdateForm({ id }) {
         name="newloc"
         type="text"
         placeholder="Enter a new location..."
-        required
       />
 
       <button

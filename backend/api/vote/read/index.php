@@ -8,6 +8,9 @@ header('Content-Type: application/json');
 
 require_once __DIR__ . "/../../../database/dbconn.php";
 
+session_start();
+$userId = $_SESSION['user']['id'] ?? null;
+
 function showError($msgString)
 {
     $msg = ["Error" => $msgString];
@@ -37,7 +40,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $date = $dateResult->fetch_assoc();
 
             // Fetch the associated votes for the date
-            $voteQuery = "SELECT * FROM Eventually_Event_User_Voting WHERE FK_Event_Dates = $id";
+            $voteQuery = "SELECT * FROM Eventually_Event_User_Voting WHERE FK_Event_Dates = '$id';";
+            //AND FK_User != '$userId';
+
+
             $voteResult = $mysqli->query($voteQuery);
 
             // Add all fetched votes to a new array

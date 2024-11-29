@@ -3,25 +3,25 @@
 @tailwind utilities;
 
 :root {
+  /*Light theme colors*/
   --background: #ffffff;
   --page-background: #fbf9fa;
   --foreground: #171717;
+  /**/
   --primary-pink: #D44757;
   --primary-purple: #484395;
   --gradient-start: hsl(244 38% 42%);
   --gradient-end: hsl(353 62% 55%);
   --secondary: hsl(244 38% 42%);
   --primary: hsl(353 62% 55%);
-  --gradient: linear-gradient(
-    to right,
-    var(--gradient-start),
-    var(--gradient-end)
-  );
+  --gradient: linear-gradient(to right,
+      var(--gradient-start),
+      var(--gradient-end));
 }
 
 .curve-gradient {
   height: 10rem;
-  width: 100%;
+  width: 100vw;
   background-image: var(--gradient);
   clip-path: ellipse(110% 100% at 0% 0%);
   z-index: -1;

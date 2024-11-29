@@ -27,6 +27,20 @@
   z-index: -1;
 }
 
+.mask-anim {
+  mask-image: linear-gradient(to right, transparent 70%, white 90%, transparent 100%);
+  animation: move-mask 1000ms linear reverse infinite;
+  mask-size: 200%;
+}
+
+@keyframes move-mask {
+  0% {
+  mask-position: 0%;
+}
+  100% {
+    mask-position: 200%;  }
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #23203b;

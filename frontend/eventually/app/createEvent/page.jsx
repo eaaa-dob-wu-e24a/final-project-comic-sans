@@ -67,9 +67,9 @@ const CreateEvent = () => {
     };
 
     return (
-        <div className="flex flex-col px-4 pt-16 pb-8 bg-gradient-to-r from-gradientstart to-gradientend pb-0">
+        <div className="flex flex-col px-4 pt-24 pb-8">
 
-            <section className="space-y-4 p-12 rounded-xl drop-shadow mx-auto flex flex-col text-black place-content-center bg-pagebackground">
+            <section className="max-w-6xl w-full space-y-4 p-12 rounded-xl drop-shadow mx-auto flex flex-col text-black place-content-center bg-background">
                 <h1 className="font-extrabold text-2xl mb-4">Create Event</h1>
                 <form onSubmit={handleSubmit}>
                     <div>

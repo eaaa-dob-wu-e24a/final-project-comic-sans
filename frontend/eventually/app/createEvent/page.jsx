@@ -34,6 +34,7 @@ const CreateEvent = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(eventData),
+                credentials: "include", // Send cookies with the request if needed for session-based auth
             });
 
             const data = await response.json();
@@ -67,7 +68,7 @@ const CreateEvent = () => {
     };
 
     return (
-        <div className="flex flex-col px-4 pt-24 pb-8">
+        <main className="flex flex-col px-4 pt-24 pb-8 my-12">
 
             <section className="max-w-6xl w-full space-y-4 p-12 rounded-xl drop-shadow mx-auto flex flex-col text-black place-content-center bg-background">
                 <h1 className="font-extrabold text-2xl mb-4">Create Event</h1>
@@ -197,7 +198,7 @@ const CreateEvent = () => {
 
             </section>
 
-        </div>
+        </main>
     );
 };
 

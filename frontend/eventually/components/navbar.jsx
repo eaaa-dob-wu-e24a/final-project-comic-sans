@@ -35,28 +35,31 @@ export default function Navbar() {
           // Render this if the user is logged in
           <>
             <ProfileAvatar />
-            <Button label="CREATE EVENT" className="m-10" />
+            <Link href="/createEvent">
+              <Button label="CREATE EVENT" className="m-10" />
+            </Link>
           </>
         ) : (
           // Render this for home, login, and signup pages
           <>
             <Link
               href="/login"
-              className={`flex items-center w-20 whitespace-nowrap ${
-                isLoginPage ? "font-bold" : ""
-              }`}
+              className={`flex items-center w-20 whitespace-nowrap ${isLoginPage ? "font-bold" : ""
+                }`}
             >
               LOGIN
             </Link>
             <Link
               href="/signup"
-              className={`flex items-center w-20 whitespace-nowrap ${
-                isSignupPage ? "font-bold" : ""
-              }`}
+              className={`flex items-center w-20 whitespace-nowrap ${isSignupPage ? "font-bold" : ""
+                }`}
             >
               SIGN UP
             </Link>
-            <Button label="CREATE EVENT" />
+
+            <Link href="/createEvent">
+              <Button label="CREATE EVENT" className="m-10" />
+            </Link>
           </>
         )}
       </div>

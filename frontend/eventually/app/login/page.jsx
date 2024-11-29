@@ -4,6 +4,9 @@ import React, { useState, useContext } from "react";
 import { useRouter } from "next/navigation";
 import { AuthContext } from "../authcontext";
 import GradientCurve from "../../components/gradientcurve";
+import FormLabel from "../../components/ui/formlabel";
+import Input from "../../components/ui/input";
+import Button from "../../components/ui/button";
 
 const LoginPage = () => {
   const { setUser } = useContext(AuthContext);
@@ -46,84 +49,48 @@ const LoginPage = () => {
     <>
       <div className="bg-gradient-to-r from-gradientstart to-gradientend pb-0">
         <section className="mx-auto flex flex-col justify-center items-center pt-32">
-          <section className="relative z-10 w-full max-w-md p-8 space-y-6 bg-white rounded shadow-md">
-            <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">
-              Login
+          <section className="relative z-10 w-full max-w-md p-8 space-y-4">
+            <h1 className="text-2xl font-bold text-center mb-6 text-white">
+              LOGIN
             </h1>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-1">
               <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Email:
-                </label>
-                <input
+                <FormLabel htmlFor="email">Email:</FormLabel>
+                <Input
                   type="text"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-indigo-200 text-gray-700"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Password:
-                </label>
-                <input
+                <FormLabel htmlFor="password">Password:</FormLabel>
+                <Input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-indigo-200 text-gray-700"
                 />
+                <p className=" py-1 text-xs text-right underline">Forgot password?</p>
               </div>
-              <button
-                type="submit"
-                className="w-full px-4 py-2 font-bold text-white bg-indigo-600 rounded hover:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-200"
-              >
-                Login
-              </button>
+              <div className="flex flex-col items-center mt-4 space-y-2 pt-6">
+                <Button
+                  className="bg-secondary hover:bg-secondary-hover transition-all duration-200"
+                  type="submit"
+                >
+                  Log in
+                </Button>
+                <p className="text-center">
+                  Don't have an account?{" "}
+                  <a href="/signup" className="font-bold hover:underline">
+                    Sign up
+                  </a>
+                </p>
+              </div>
             </form>
           </section>
         </section>
       </div>
       <GradientCurve />
     </>
-
-    // <main className="relative min-h-screen flex flex-col items-center justify-center">
-    //   {/* Content Section */}
-    //   <section className="relative z-10 w-full max-w-md p-8 space-y-6 bg-white rounded shadow-md">
-    //     <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">
-    //       Login
-    //     </h1>
-    //     <form onSubmit={handleSubmit} className="space-y-4">
-    //       <div>
-    //         <label className="block text-sm font-medium text-gray-700">
-    //           Email:
-    //         </label>
-    //         <input
-    //           type="text"
-    //           value={email}
-    //           onChange={(e) => setEmail(e.target.value)}
-    //           className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-indigo-200 text-gray-700"
-    //         />
-    //       </div>
-    //       <div>
-    //         <label className="block text-sm font-medium text-gray-700">
-    //           Password:
-    //         </label>
-    //         <input
-    //           type="password"
-    //           value={password}
-    //           onChange={(e) => setPassword(e.target.value)}
-    //           className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-indigo-200 text-gray-700"
-    //         />
-    //       </div>
-    //       <button
-    //         type="submit"
-    //         className="w-full px-4 py-2 font-bold text-white bg-indigo-600 rounded hover:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-200"
-    //       >
-    //         Login
-    //       </button>
-    //     </form>
-    //   </section>
-    // </main>
   );
 };
 

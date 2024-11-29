@@ -29,7 +29,6 @@ else if ($_SERVER['REQUEST_METHOD'] !== 'PATCH') {
     http_response_code(405);
     showError("Invalid request method.");
     exit;
-
 } else {
     // get the request body
     $request = file_get_contents('php://input');
@@ -37,7 +36,7 @@ else if ($_SERVER['REQUEST_METHOD'] !== 'PATCH') {
     $eventID = $input['ID'];
 
     // get the event info
-    $sql = "SELECT * FROM Eventually_Event WHERE PK_ID = $eventID";
+    $sql = "SELECT * FROM Eventually_Event WHERE PK_ID = $eventID;";
     $result = $mysqli->query($sql);
     $event = $result->fetch_assoc();
 

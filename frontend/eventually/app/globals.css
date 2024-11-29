@@ -3,10 +3,12 @@
 @tailwind utilities;
 
 :root {
+  /*Light theme colors*/
   --background: #ffffff;
   --page-background: #fbf9fa;
   --foreground: #171717;
-  --primary-pink: #D44757;
+  /**/
+  --primary-pink: #d44757;
   --primary-purple: #484395;
   --gradient-start: hsl(244 38% 42%);
   --gradient-end: hsl(353 62% 55%);
@@ -21,10 +23,30 @@
 
 .curve-gradient {
   height: 10rem;
-  width: 100%;
+  width: 100vw;
   background-image: var(--gradient);
   clip-path: ellipse(110% 100% at 0% 0%);
   z-index: -1;
+}
+
+.mask-anim {
+  mask-image: linear-gradient(
+    to right,
+    transparent 70%,
+    white 90%,
+    transparent 100%
+  );
+  animation: move-mask 1000ms linear reverse infinite;
+  mask-size: 200%;
+}
+
+@keyframes move-mask {
+  0% {
+    mask-position: 0%;
+  }
+  100% {
+    mask-position: 200%;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -38,4 +60,8 @@
 body {
   color: var(--foreground);
   background: var(--background);
+}
+
+main {
+  padding-top: 5rem;
 }

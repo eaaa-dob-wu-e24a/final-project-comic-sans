@@ -1,15 +1,16 @@
 "use client";
 import React, { useState } from "react";
 
-export default function EventUpdateForm() {
+export default function EventUpdateForm({ id }) {
   const [data, setData] = useState(null); // State to store response data or errors
+  const eventID = id;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const url = process.env.NEXT_PUBLIC_API_URL + "/api/event/update/";
     const formValues = {
-      ID: document.getElementById("eventid").value, //change this to be fetched automatically on event page
+      ID: eventID,
       Title: document.getElementById("newtitle").value,
       Description: document.getElementById("newdesc").value,
       Location: document.getElementById("newloc").value,
@@ -40,16 +41,12 @@ export default function EventUpdateForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col mx-auto max-w-96">
-      <label htmlFor="eventid">Event ID to update (placeholder)</label>
-      <input id="eventid" name="eventid" type="number" required />
-
       <label htmlFor="newtitle">Title</label>
       <input
         id="newtitle"
         name="newtitle"
         type="text"
         placeholder="Enter a new title..."
-        required
       />
 
       <label htmlFor="newdesc">Description</label>
@@ -58,7 +55,6 @@ export default function EventUpdateForm() {
         name="newdesc"
         type="text"
         placeholder="Update your description..."
-        required
       />
 
       <label htmlFor="newloc">Location</label>
@@ -67,7 +63,6 @@ export default function EventUpdateForm() {
         name="newloc"
         type="text"
         placeholder="Enter a new location..."
-        required
       />
 
       <button

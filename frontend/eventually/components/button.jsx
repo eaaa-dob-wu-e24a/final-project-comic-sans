@@ -3,11 +3,8 @@ import React from "react";
 
 export default function Button({label}) {
     return (
-        <button
-            type="submit"
-            className="w-full rounded-full px-4 py-2 font-bold text-white bg-secondary focus:outline-none focus:ring focus:ring-indigo-200"
-        >
-            {label}
-        </button>
-    )
+      <button className="w-full rounded-full px-3 text-sm py-3 font-bold text-white bg-secondary hover:bg-secondary-hover transition-all duration-200">
+        {label}
+      </button>
+    );
 }

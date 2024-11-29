@@ -14,7 +14,13 @@ module.exports = {
         gradientstart: "var(--gradient-start)",
         gradientend: "var(--gradient-end)",
         primary: "var(--primary)",
-        secondary: "var(--secondary)"
+        secondary: {
+          DEFAULT: "var(--secondary)", // Base secondary color
+          hover: "rgba(72, 67, 149, 0.75)", // Hover color with opacity
+        },
+      },
+      fontFamily: {
+        "dancing-script": "var(--font-dancing-script)",
       },
     },
   },

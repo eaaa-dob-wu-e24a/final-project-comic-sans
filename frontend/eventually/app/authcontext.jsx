@@ -1,13 +1,11 @@
 "use client";
-
 import React, { createContext, useState, useEffect } from "react";
 
-// Create the AuthContext
 export const AuthContext = createContext();
 
-// Create the AuthProvider component
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null); // User state
+  const [loading, setLoading] = useState(true); // Loading state
 
   // Function to fetch the authentication status
   const fetchAuthStatus = async () => {
@@ -33,16 +31,17 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       console.error("Error fetching auth status:", error);
       setUser(null);
+    } finally {
+      setLoading(false); // Set loading to false after fetch completes
     }
   };
 
-  // Fetch auth status when the component mounts
   useEffect(() => {
     fetchAuthStatus();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, setUser, fetchAuthStatus }}>
+    <AuthContext.Provider value={{ user, setUser, loading }}>
       {children}
     </AuthContext.Provider>
   );

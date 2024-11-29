@@ -100,7 +100,7 @@ const Register = () => {
               </div>
               <div className="flex flex-col items-center mt-4 space-y-2 pt-6">
                 <Button
-                  className="bg-secondary hover:bg-secondary-hover transition-all duration-200"
+                  variant="secondary"
                   type="submit"
                 >
                   Sign up

@@ -38,7 +38,7 @@ export default function Navbar() {
           // Render this if the user is logged in
           <>
             <ProfileAvatar />
-            <Button className="bg-secondary hover:bg-secondary-hover transition-all duration-200">
+            <Button variant="secondary">
               Create event
             </Button>{" "}
           </>

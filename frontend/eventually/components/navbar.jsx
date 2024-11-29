@@ -39,7 +39,7 @@ export default function Navbar() {
           <>
             <ProfileAvatar />
             <Link href="/createEvent">
-              <Button variant="secondary" label="CREATE EVENT" className="m-10" />
+              <Button variant="secondary" label="CREATE EVENT">Create event</Button>
             </Link>
           </>
         ) : (
@@ -61,7 +61,7 @@ export default function Navbar() {
             </Link>
 
             <Link href="/createEvent">
-              <Button label="CREATE EVENT" className="m-10 bg-secondary hover:bg-secondary-hover transition-all duration-200">
+              <Button label="CREATE EVENT" className="bg-secondary hover:bg-secondary-hover transition-all duration-200">Create Event
               </Button>
             </Link>
 

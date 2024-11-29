@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import Button from "../components/button";
+import Button from "../components/ui/button";
 import ProfileAvatar from "../components/profile-avatar";
 import { AuthContext } from "../app/authcontext";
 import { useContext } from "react";
@@ -20,7 +20,10 @@ export default function Navbar() {
     <nav className="flex justify-between items-center px-20 py-5 text-white bg-gradient-to-r from-gradientstart to-gradientend fixed top-0 left-0 w-full z-50">
       {/* Left Side: Logo */}
       <div className="flex items-center gap-6">
-        <Link href="/" className="flex items-center gap-4">
+        <Link
+          href={user ? "/dashboard" : "/"}
+          className="flex items-center gap-4"
+        >
           <Image src="/logo.svg" alt="Eventually" width={40} height={40} />
           {!isHomePage && (
             <h1 className="font-dancing-script text-3xl">Eventually</h1>
@@ -36,7 +39,7 @@ export default function Navbar() {
           <>
             <ProfileAvatar />
             <Link href="/createEvent">
-              <Button label="CREATE EVENT" className="m-10" />
+              <Button variant="secondary" label="CREATE EVENT" className="m-10" />
             </Link>
           </>
         ) : (
@@ -58,8 +61,10 @@ export default function Navbar() {
             </Link>
 
             <Link href="/createEvent">
-              <Button label="CREATE EVENT" className="m-10" />
+              <Button label="CREATE EVENT" className="m-10 bg-secondary hover:bg-secondary-hover transition-all duration-200">
+              </Button>
             </Link>
+
           </>
         )}
       </div>

@@ -2,8 +2,13 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import DateCard from "./event-date-card";
+import Arrow from "./ui/arrow";
+import Loading from "./ui/loading-spinner";
 
-export default function AllEventList() {
+
+export default function AllEventList({maxEvents}) {
   const url = process.env.NEXT_PUBLIC_API_URL + "/api/event/events";
   const urlSingle = process.env.NEXT_PUBLIC_API_URL + "/api/event/";
 
@@ -48,9 +53,14 @@ export default function AllEventList() {
       .then((response) => response.json())
       .then((data) => {
         if (data) {
+          // if a max events variable is passed, only show that amount
           console.log(data.events.length + " events found.");
-
-          setEvents(data.events);
+          if (maxEvents && data.events.length > maxEvents) {
+            const limitedEvents = data.events.slice(-maxEvents);
+            setEvents(limitedEvents);
+          } else {
+            setEvents(data.events);
+          }
         } else {
           console.log("no data yet.");
         }
@@ -60,23 +70,29 @@ export default function AllEventList() {
   }, []);
 
   return (
-    <section className="mx-auto flex flex-col">
-      <div>
-        <h2 className="font-bold">Other Events</h2>
+    <section className="mx-auto flex flex-col gap-4 bg-background p-6 my-12 rounded-2xl shadow-md">
+      <div className="flex place-content-between align-center flex-row">
+        <h2 className="text-xl font-bold">Participating Events</h2>
+        <Link href="/dashboard/event" className="flex flex-row gap-2 font-bold">
+          All
+          <Arrow className="-rotate-90 mt-1"></Arrow>
+        </Link>
       </div>
       {loading ? (
-        <p>Loading...</p>
+        <Loading></Loading>
       ) : (
-        <ul className="flex flex-row gap-2">
+        <ul className="flex flex-wrap flex-row gap-4">
           {events.map((event) => (
-            <li
-              className="bg-lightblue rounded-2xl text-black p-4 shadow-md flex basis-0 grow shrink-0 place-content-center cursor-pointer"
+            <DateCard
+              time={
+                event.FinalDate
+                  ? event.FinalDate
+                  : event.EventDates[0]?.DateTimeStart
+              }
+              title={event.Title}
               key={event.PK_ID}
-              onClick={() => handleEventClick(event.PK_ID)}
-            >
-              <p>{event.Title}</p>
-              <p>{event.FinalDate}</p>
-            </li>
+              id={event.PK_ID}
+            />
           ))}
         </ul>
       )}

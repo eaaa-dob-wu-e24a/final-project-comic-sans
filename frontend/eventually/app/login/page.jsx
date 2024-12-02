@@ -2,7 +2,7 @@
 
 import React, { useState, useContext } from "react";
 import { useRouter } from "next/navigation";
-import { AuthContext } from "../authcontext";
+import { AuthContext } from "../../contexts/authcontext";
 import GradientCurve from "../../components/gradientcurve";
 import FormLabel from "../../components/ui/formlabel";
 import Input from "../../components/ui/input";
@@ -101,7 +101,7 @@ const LoginPage = () => {
       <GradientCurve />
 
       {/* Dynamic Section Below the Gradient Curve */}
-      <section className="flex-grow bg-page-background"/>
+      <section className="flex-grow bg-page-background" />
     </div>
   );
 };

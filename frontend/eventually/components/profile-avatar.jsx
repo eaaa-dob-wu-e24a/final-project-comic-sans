@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { useRouter } from "next/navigation";
-import { AuthContext } from "../app/authcontext";
-import { useContext } from "react";
+import { AuthContext } from "../contexts/authcontext";
 
 const ProfileAvatar = () => {
   const { user, setUser } = useContext(AuthContext);
+  console.log("User object:", user);
+
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
   const router = useRouter();
@@ -97,7 +98,7 @@ const ProfileAvatar = () => {
             </li>
             <li>
               <a
-                href="/account-settings"
+                href="/profile"
                 className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
               >
                 Account Settings

@@ -46,9 +46,10 @@ const LoginPage = () => {
   };
 
   return (
-    <>
-      <div className="bg-gradient-to-r from-gradientstart to-gradientend pb-0">
-        <section className="mx-auto flex flex-col justify-center items-center pt-32">
+    <div className="flex flex-col min-h-screen">
+      {/* Gradient Background with Login Form */}
+      <div className="bg-gradient-to-r from-gradientstart to-gradientend flex-shrink-0">
+        <section className="mx-auto flex flex-col justify-center items-center pt-32 pb-16">
           <section className="relative z-10 w-full max-w-md p-8 space-y-4 text-white">
             <h1 className="text-2xl font-bold text-center mb-6 text-white">
               LOGIN
@@ -73,7 +74,7 @@ const LoginPage = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
-                <p className=" py-1 text-xs text-right underline">
+                <p className="py-1 text-xs text-right hover:underline">
                   Forgot password?
                 </p>
               </div>
@@ -95,8 +96,13 @@ const LoginPage = () => {
           </section>
         </section>
       </div>
+
+      {/* Gradient Curve */}
       <GradientCurve />
-    </>
+
+      {/* Dynamic Section Below the Gradient Curve */}
+      <section className="flex-grow bg-page-background"/>
+    </div>
   );
 };
 

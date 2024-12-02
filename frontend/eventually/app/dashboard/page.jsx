@@ -2,6 +2,9 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import UserEventList from "@/components/user-event-list";
+import Button from "@/components/ui/button";
+import GradientCurve from "@/components/gradientcurve";
+import AllEventList from "@/components/all-events-list";
 
 const LoginSite = () => {
   const router = useRouter();
@@ -76,20 +79,20 @@ const LoginSite = () => {
   }
 
   return (
-    <main>
-    <div className="flex justify-between items-center p-5 bg-gray-100 rounded-lg shadow-md">
-      <h1 className="m-0 text-2xl text-gray-800">
-        Hello, {user.name} your email is {user.email}
-      </h1>
-      <button
-        className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700 transition-colors"
-        onClick={handleLogout}
-      >
-        Logout
-      </button>
-    </div>
-      <UserEventList></UserEventList>
-      </main>
+    <main className="pt-20">
+      <section className="bg-gradient-to-r from-gradientstart to-gradientend"></section>
+      <GradientCurve className={"max-h-24"}>
+        <div className="max-w-6xl mx-auto flex">
+          <h1 className="font-bold text-2xl mx-auto max-w-6xl pb-12 text-white">
+            Hello, {user.name}
+          </h1>
+        </div>
+      </GradientCurve>
+      <section className="max-w-6xl mx-auto">
+        <UserEventList maxEvents={6}></UserEventList>
+        <AllEventList maxEvents={6}></AllEventList>
+      </section>
+    </main>
   );
 };
 

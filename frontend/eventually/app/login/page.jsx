@@ -55,7 +55,9 @@ const LoginPage = () => {
             </h1>
             <form onSubmit={handleSubmit} className="space-y-1">
               <div>
-                <FormLabel htmlFor="email">Email:</FormLabel>
+                <FormLabel className="text-white" htmlFor="email">
+                  Email:
+                </FormLabel>
                 <Input
                   type="text"
                   value={email}
@@ -63,7 +65,9 @@ const LoginPage = () => {
                 />
               </div>
               <div>
-                <FormLabel htmlFor="password">Password:</FormLabel>
+                <FormLabel className="text-white" htmlFor="password">
+                  Password:
+                </FormLabel>
                 <Input
                   type="password"
                   value={password}

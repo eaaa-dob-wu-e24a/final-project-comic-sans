@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { AuthContext } from "../contexts/authcontext";
 
-export default function ProfileAvatar({ className, variant = "small" }) {
+export default function ProfileAvatar({ className = "", variant = "small" }) {
   const { user } = useContext(AuthContext);
   const baseStyles =
     "rounded-full bg-secondary text-white flex items-center justify-center font-bold";
@@ -10,13 +10,15 @@ export default function ProfileAvatar({ className, variant = "small" }) {
     large: "w-32 h-32 text-3xl",
   };
 
+  const imageClass = `${variants[variant]} rounded-full object-cover ${className}`;
+
   return (
     <div>
       {user.imagePath ? (
         <img
-          src={user.imagePath}
+          src={process.env.NEXT_PUBLIC_API_URL + user.imagePath}
           alt={user.name}
-          className="w-8 h-8 rounded-full object-cover"
+          className={imageClass}
         />
       ) : (
         <div className={`${baseStyles} ${variants[variant]} ${className}`}>

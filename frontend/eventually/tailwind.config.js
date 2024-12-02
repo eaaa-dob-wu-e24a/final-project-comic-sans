@@ -4,6 +4,7 @@ module.exports = {
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./globals.css",
   ],
   theme: {
     extend: {
@@ -13,7 +14,10 @@ module.exports = {
         foreground: "var(--foreground)",
         gradientstart: "var(--gradient-start)",
         gradientend: "var(--gradient-end)",
-        primary: "var(--primary)",
+        primary: {
+          DEFAULT: "var(--primary)", // Base primary color
+          hover: "rgba(211, 69, 86, 0.75)", // Hover color with opacity
+        },
         secondary: {
           DEFAULT: "var(--secondary)", // Base secondary color
           hover: "rgba(72, 67, 149, 0.75)", // Hover color with opacity
@@ -24,8 +28,9 @@ module.exports = {
         "dancing-script": "var(--font-dancing-script)",
       },
       boxShadow: {
-        "buttonshadow": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)", //correspondig to shadow-md
-        "cardshadow": "0 1px 2px 0 rgba(0, 0, 0, 0.05)", //correspondig to shadow-sm
+        buttonshadow:
+          "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)", //correspondig to shadow-md
+        cardshadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)", //correspondig to shadow-sm
       },
     },
   },

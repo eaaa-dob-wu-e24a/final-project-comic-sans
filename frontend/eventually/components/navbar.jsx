@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import Button from "../components/ui/button";
-import ProfileAvatar from "../components/profile-avatar";
+import ProfileAvatar from "./profile-dropdown";
 import { AuthContext } from "../contexts/authcontext";
 import { useContext } from "react";
 import Image from "next/image";

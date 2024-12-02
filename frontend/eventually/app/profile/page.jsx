@@ -34,8 +34,49 @@ export default function Profile() {
     return <div>Loading...</div>;
   }
 
+  // Upload profile photo
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      console.log("Selected file:", file); // Debug statement
+
+      uploadProfilePhoto(file);
+    }
+  };
+
+  // Send the profile photo file to the backend
+  const uploadProfilePhoto = async (file) => {
+    const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/upload-photo";
+    const formData = new FormData();
+    formData.append("profilePhoto", file);
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        credentials: "include", // Include cookies for session handling
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Profile photo updated successfully!");
+        // Update the user context with the new imagePath
+        if (setUser) {
+          setUser({ ...user, imagePath: data.imagePath });
+        }
+      } else {
+        alert(`Error: ${data.Error || "Failed to upload profile photo."}`);
+      }
+    } catch (error) {
+      console.error("Error uploading profile photo:", error);
+      alert("An error occurred while uploading the profile photo.");
+    }
+  };
+
+  // Change user name and/or email
   const handleSaveDetails = async () => {
-    const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/update";
+    const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/update-details";
     try {
       const response = await fetch(url, {
         method: "PATCH",
@@ -70,10 +111,12 @@ export default function Profile() {
     }
   };
 
+  // Cancel editing
   const handleCancel = () => {
     setIsEditing(false);
   };
 
+  // Change password
   const handleSavePassword = async () => {
     // Validate input
     if (!currentPassword || !newPassword || !confirmPassword) {
@@ -120,6 +163,7 @@ export default function Profile() {
     }
   };
 
+  // Cancel password change
   const handleCancelPasswordChange = () => {
     setIsEditingPassword(false);
     setCurrentPassword("");
@@ -127,11 +171,13 @@ export default function Profile() {
     setConfirmPassword("");
   };
 
+  // Toggle dark theme
   const handleThemeToggle = () => {
     setIsDarkTheme(!isDarkTheme);
     document.documentElement.classList.toggle("dark");
   };
 
+  // Delete account
   const handleDeleteAccount = () => {
     if (
       confirm(
@@ -161,10 +207,17 @@ export default function Profile() {
               <div className="relative">
                 <ProfileAvatar variant="large" />
                 <label
+                  htmlFor="profilePhotoInput"
                   className="absolute bottom-2 right-2 bg-white w-8 h-8 rounded-full flex items-center justify-center cursor-pointer"
                   title="Change Profile Photo"
                 >
-                  <input type="file" className="hidden" />
+                  <input
+                    type="file"
+                    id="profilePhotoInput"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
                   <Image
                     src="/camera.svg"
                     alt="Camera"
@@ -246,18 +299,6 @@ export default function Profile() {
             <div className="flex items-center mb-4">
               <div className="relative">
                 <ProfileAvatar variant="large" />
-                <label
-                  className="absolute bottom-2 right-2 bg-white w-8 h-8 rounded-full flex items-center justify-center cursor-pointer"
-                  title="Change Profile Photo"
-                >
-                  <input type="file" className="hidden" />
-                  <Image
-                    src="/camera.svg"
-                    alt="Camera"
-                    width={20}
-                    height={20}
-                  />
-                </label>
               </div>
               <div className="ml-6">
                 <p className="text-lg font-medium">{user.name}</p>

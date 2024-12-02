@@ -40,11 +40,6 @@ export default function EventPage() {
     fetchUserData();
   }, []);
 
-  // Helper function to check if the logged-in user voted for a date
-  const userHasVoted = (userVotes, userId) => {
-    return userVotes.some((vote) => vote.FK_User == userId);
-  };
-
   //fetch event data
   useEffect(() => {
     const fetchEventData = async () => {
@@ -59,10 +54,11 @@ export default function EventPage() {
           );
           const data = await res.json();
 
-          // Check if the logged-in user voted for each date
+          // Recalculate selected state
           const eventDatesWithVotes = data.EventDates.map((date) => {
             const userVoted = date.UserVotes.some(
-              (vote) => vote.FK_User == loggedInUser.userId
+              (vote) =>
+                parseInt(vote.FK_User, 10) === parseInt(loggedInUser.userId, 10)
             );
             return { ...date, selected: userVoted };
           });
@@ -79,16 +75,14 @@ export default function EventPage() {
 
   // Define handleEventClick
   const handleEventClick = async (index) => {
-    const updatedDates = event.EventDates.map((d, i) =>
-      i === index ? { ...d, selected: !d.selected } : d
-    );
-
-    const selectedDate = updatedDates[index];
-    const url = selectedDate.selected
-      ? `${process.env.NEXT_PUBLIC_API_URL}/api/vote/create`
-      : `${process.env.NEXT_PUBLIC_API_URL}/api/vote/delete`;
+    const selectedDate = event.EventDates[index];
+    const isCurrentlySelected = selectedDate.selected;
 
     try {
+      const url = isCurrentlySelected
+        ? `${process.env.NEXT_PUBLIC_API_URL}/api/vote/delete`
+        : `${process.env.NEXT_PUBLIC_API_URL}/api/vote/create`;
+
       const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -97,7 +91,6 @@ export default function EventPage() {
           eventId,
           dateId: selectedDate.PK_ID,
           userId: loggedInUser.userId,
-          username: loggedInUser.username,
         }),
       });
 
@@ -105,21 +98,28 @@ export default function EventPage() {
         throw new Error("Failed to update vote");
       }
 
-      const updatedUserVotes = selectedDate.selected
-        ? [
+      // Update the UserVotes array and selected state
+      const updatedUserVotes = isCurrentlySelected
+        ? selectedDate.UserVotes.filter(
+            (vote) =>
+              parseInt(vote.FK_User, 10) !== parseInt(loggedInUser.userId, 10)
+          )
+        : [
             ...selectedDate.UserVotes,
-            { UserName: "You", FK_User: loggedInUser.userId },
-          ]
-        : selectedDate.UserVotes.filter(
-            (vote) => vote.FK_User !== loggedInUser.userId
-          );
+            { UserName: loggedInUser.username, FK_User: loggedInUser.userId },
+          ];
 
-      setEvent({
-        ...event,
-        EventDates: updatedDates.map((date, i) =>
-          i === index ? { ...date, UserVotes: updatedUserVotes } : date
-        ),
-      });
+      const updatedDates = event.EventDates.map((date, i) =>
+        i == index
+          ? {
+              ...date,
+              UserVotes: updatedUserVotes,
+              selected: !isCurrentlySelected,
+            }
+          : date
+      );
+
+      setEvent({ ...event, EventDates: updatedDates });
     } catch (err) {
       console.error(err);
     }

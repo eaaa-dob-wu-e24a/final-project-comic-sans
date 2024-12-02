@@ -7,20 +7,15 @@ export default function EventDateDetailCard({
 }) {
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    const day = new Intl.DateTimeFormat("en-GB", { day: "2-digit" }).format(
-      date
-    );
-    const month = new Intl.DateTimeFormat("en-GB", { month: "long" }).format(
-      date
-    );
-    const year = new Intl.DateTimeFormat("en-GB", { year: "numeric" }).format(
-      date
-    );
-    const time = new Intl.DateTimeFormat("en-GB", {
-      hour: "2-digit",
-      minute: "2-digit",
-    }).format(date);
-    return { day, month, year, time };
+    return {
+      day: new Intl.DateTimeFormat("en-GB", { day: "2-digit" }).format(date),
+      month: new Intl.DateTimeFormat("en-GB", { month: "long" }).format(date),
+      year: new Intl.DateTimeFormat("en-GB", { year: "numeric" }).format(date),
+      time: new Intl.DateTimeFormat("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit",
+      }).format(date),
+    };
   };
 
   return (
@@ -38,7 +33,7 @@ export default function EventDateDetailCard({
           return (
             <div key={index} className="w-64">
               <li
-                className={`flex flex-col items-center h-48  w-64 border p-4 rounded-lg cursor-pointer ${
+                className={`flex flex-col items-center h-48 w-64 border p-4 rounded-lg cursor-pointer ${
                   date.selected ? selectedClasses : unselectedClasses
                 }`}
                 onClick={() => onDateClick(index)}
@@ -59,7 +54,7 @@ export default function EventDateDetailCard({
                     {startDate.month}
                   </p>
                   <p
-                    className={`font-bold ${
+                    className={`font-bold mb-3 ${
                       date.selected ? "text-white" : "text-gray-600"
                     }`}
                   >
@@ -70,7 +65,8 @@ export default function EventDateDetailCard({
                   >
                     {startDate.time} - {endDate.time}
                   </p>
-                  <Checkbox />
+                  {/* Pass checked and onChange props to the Checkbox */}
+                  <Checkbox id={`checkbox-${index}`} checked={date.selected} />
                 </div>
               </li>
               <div className="mt-4 text-sm">
@@ -78,11 +74,7 @@ export default function EventDateDetailCard({
                 {date.UserVotes.length > 0 ? (
                   <ul className="list-disc ml-4">
                     {date.UserVotes.map((vote, i) => (
-                      <li key={i}>
-                        {loggedInUser?.userId === vote.FK_User
-                          ? "You"
-                          : vote.UserName}
-                      </li>
+                      <li key={i}>{vote.UserName}</li>
                     ))}
                   </ul>
                 ) : (

@@ -57,7 +57,8 @@ const Register = () => {
   };
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
+
       <div className="bg-gradient-to-r from-gradientstart to-gradientend pb-0">
         <section className="mx-auto flex flex-col justify-center items-center pt-32">
           <section className="relative z-10 w-full max-w-md p-8 space-y-4 text-white">
@@ -120,7 +121,9 @@ const Register = () => {
         </section>
       </div>
       <GradientCurve />
-    </>
+            {/* Dynamic Section Below the Gradient Curve */}
+      <section className="flex-grow bg-page-background"/>
+    </div>
   );
 };
 

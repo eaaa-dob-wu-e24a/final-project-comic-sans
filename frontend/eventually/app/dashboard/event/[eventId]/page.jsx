@@ -45,7 +45,7 @@ export default function EventPage() {
     return userVotes.some((vote) => vote.FK_User == userId);
   };
 
-  // Fetch event data
+  //fetch event data
   useEffect(() => {
     const fetchEventData = async () => {
       if (eventId && loggedInUser.userId !== null) {
@@ -59,47 +59,15 @@ export default function EventPage() {
           );
           const data = await res.json();
 
-          if (data.EventDates && data.EventDates.length > 0) {
-            const votesPromises = data.EventDates.map(async (date) => {
-              const resVotes = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/vote/read/${date.PK_ID}`,
-                {
-                  method: "GET",
-                  headers: { "Content-Type": "application/json" },
-                  credentials: "include", // Include credentials for session
-                }
-              );
-              const votesData = await resVotes.json();
+          // Check if the logged-in user voted for each date
+          const eventDatesWithVotes = data.EventDates.map((date) => {
+            const userVoted = date.UserVotes.some(
+              (vote) => vote.FK_User == loggedInUser.userId
+            );
+            return { ...date, selected: userVoted };
+          });
 
-              // Check if the logged-in user has voted for this date
-              const userVoted = userHasVoted(
-                votesData.UserVotes || [],
-                loggedInUser.userId
-              );
-
-              // Filter out the logged-in user's vote for display
-              const filteredVotes = (votesData.UserVotes || []).filter(
-                (vote) => vote.FK_User !== loggedInUser.userId
-              );
-
-              return {
-                ...date,
-                UserVotes: filteredVotes, // Exclude logged-in user's vote from display
-                selected: userVoted, // Mark tile as selected if the user voted
-              };
-            });
-
-            const eventDatesWithVotes = await Promise.all(votesPromises);
-
-            setEvent((prevEvent) => ({
-              ...prevEvent,
-              ...data,
-              EventDates: eventDatesWithVotes,
-            }));
-          } else {
-            setEvent(data);
-          }
-
+          setEvent({ ...data, EventDates: eventDatesWithVotes });
           setLoading(false);
         } catch (err) {
           console.error(err);

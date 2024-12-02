@@ -18,6 +18,7 @@ module.exports = {
           DEFAULT: "var(--secondary)", // Base secondary color
           hover: "rgba(72, 67, 149, 0.75)", // Hover color with opacity
         },
+        dark: "var(--dark)",
       },
       fontFamily: {
         "dancing-script": "var(--font-dancing-script)",

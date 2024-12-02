@@ -7,13 +7,11 @@
   --background: #ffffff;
   --page-background: #fbf9fa;
   --foreground: #171717;
-  /**/
-  --primary-pink: #d44757;
-  --primary-purple: #484395;
   --gradient-start: hsl(244 38% 42%);
   --gradient-end: hsl(353 62% 55%);
   --secondary: hsl(244 38% 42%);
   --primary: hsl(353 62% 55%);
+  --dark: #171717;
   --gradient: linear-gradient(
     to right,
     var(--gradient-start),

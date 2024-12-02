@@ -3,6 +3,7 @@ import "./globals.css";
 import Navbar from "../components/navbar";
 import Footer from "../components/footer";
 import { AuthProvider } from "./authcontext";
+import { NotifProvider } from "@/components/ui/notif";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -39,7 +40,9 @@ export default function RootLayout({ children }) {
       >
         <AuthProvider>
           <Navbar />
+          <NotifProvider>
           {children}
+          </NotifProvider>
           <Footer />
         </AuthProvider>
       </body>

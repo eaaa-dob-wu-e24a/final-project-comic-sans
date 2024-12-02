@@ -6,7 +6,7 @@ export default function Button({
   variant = "primary",
 }) {
   const baseStyles =
-    "text-white text-m font-bold py-2 px-8 uppercase rounded-full shadow-md hover:cursor-pointer";
+    "text-white text-m font-bold py-2 px-8 uppercase rounded-full shadow-buttonshadow hover:cursor-pointer";
   const variants = {
     primary: "bg-primary hover:bg-primary-hover",
     secondary: "bg-secondary hover:bg-secondary-hover transition-all duration-200r"

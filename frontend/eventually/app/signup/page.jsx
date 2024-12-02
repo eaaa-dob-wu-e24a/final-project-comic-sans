@@ -60,7 +60,7 @@ const Register = () => {
     <>
       <div className="bg-gradient-to-r from-gradientstart to-gradientend pb-0">
         <section className="mx-auto flex flex-col justify-center items-center pt-32">
-          <section className="relative z-10 w-full max-w-md p-8 space-y-4">
+          <section className="relative z-10 w-full max-w-md p-8 space-y-4 text-white">
             <h2 className="text-2xl font-bold text-center text-white">
               SIGN UP
             </h2>

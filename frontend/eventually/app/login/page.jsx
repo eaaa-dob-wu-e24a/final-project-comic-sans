@@ -49,7 +49,7 @@ const LoginPage = () => {
     <>
       <div className="bg-gradient-to-r from-gradientstart to-gradientend pb-0">
         <section className="mx-auto flex flex-col justify-center items-center pt-32">
-          <section className="relative z-10 w-full max-w-md p-8 space-y-4">
+          <section className="relative z-10 w-full max-w-md p-8 space-y-4 text-white">
             <h1 className="text-2xl font-bold text-center mb-6 text-white">
               LOGIN
             </h1>
@@ -69,7 +69,9 @@ const LoginPage = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
-                <p className=" py-1 text-xs text-right underline">Forgot password?</p>
+                <p className=" py-1 text-xs text-right underline">
+                  Forgot password?
+                </p>
               </div>
               <div className="flex flex-col items-center mt-4 space-y-2 pt-6">
                 <Button

@@ -2,8 +2,10 @@
 
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import EventDetail from "@/components/event-detail";
+import EventDateDetailCard from "@/components/event-date-detail-card";
 
-export default function EventDetail() {
+export default function EventPage() {
   const { eventId } = useParams();
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -107,9 +109,7 @@ export default function EventDetail() {
     fetchEventData();
   }, [eventId, loggedInUser.userId]);
 
-  if (loading) return <p>Loading...</p>;
-
-  // Handle voting for a date
+  // Define handleEventClick
   const handleEventClick = async (index) => {
     const updatedDates = event.EventDates.map((d, i) =>
       i === index ? { ...d, selected: !d.selected } : d
@@ -124,9 +124,9 @@ export default function EventDetail() {
       const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include", // Include credentials to maintain session
+        credentials: "include",
         body: JSON.stringify({
-          eventId: eventId,
+          eventId,
           dateId: selectedDate.PK_ID,
           userId: loggedInUser.userId,
           username: loggedInUser.username,
@@ -137,7 +137,6 @@ export default function EventDetail() {
         throw new Error("Failed to update vote");
       }
 
-      // Update UI dynamically
       const updatedUserVotes = selectedDate.selected
         ? [
             ...selectedDate.UserVotes,
@@ -158,50 +157,18 @@ export default function EventDetail() {
     }
   };
 
+  if (loading) return <p>Loading...</p>;
+
   return (
-    <main className="pt-20">
-      <section className="max-w-6xl mx-auto my-8">
-        <h1>Title: {event?.Title}</h1>
-        <p>Description: {event?.Description}</p>
-        <p>User Name: {event?.UserName || "DummyUser"}</p>
-        <p>Location: {event?.Location || "DummyLocation"}</p>
+    <main>
+      <section className="max-w-6xl mx-auto flex flex-col gap-4 bg-background p-6 my-12 rounded-2xl shadow-md">
+        <EventDetail event={event} />
         <div>
-          <h2>Event Dates:</h2>
-          <ul className="flex flex-row flex-wrap w-full gap-4">
-            {event?.EventDates?.map((date, index) => (
-              <li
-                key={index}
-                className={`flex flex-col items-center w-64 border p-4 rounded-lg shadow-md cursor-pointer ${
-                  date.selected
-                    ? "bg-green-500 text-white"
-                    : "bg-white text-black"
-                }`}
-                onClick={() => handleEventClick(index)}
-              >
-                <div>
-                  <p>Start: {date.DateTimeStart}</p>
-                  <p>End: {date.DateTimeEnd}</p>
-                </div>
-                <div className="mt-4 text-sm">
-                  {/* Display the users who voted for this date */}
-                  <h3 className="font-bold">Voted Users:</h3>
-                  {date.UserVotes.length > 0 ? (
-                    <ul className="list-disc ml-4">
-                      {date.UserVotes.map((vote, i) => (
-                        <li key={i}>
-                          {loggedInUser.userId == vote.FK_User
-                            ? "You"
-                            : vote.UserName}
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-gray-500">No votes yet</p>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ul>
+          <EventDateDetailCard
+            eventDates={event.EventDates}
+            onDateClick={handleEventClick}
+            loggedInUser={loggedInUser}
+          />
         </div>
       </section>
     </main>

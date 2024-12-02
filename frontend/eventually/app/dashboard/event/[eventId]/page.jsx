@@ -20,11 +20,16 @@ export default function EventDetail() {
           `${process.env.NEXT_PUBLIC_API_URL}/api/user/check_session`,
           {
             method: "GET",
-            credentials: "include",
+            credentials: "include", // Include credentials to maintain session
           }
         );
         const userData = await res.json();
-        setLoggedInUser(userData);
+
+        // Map the response to match the loggedInUser state structure
+        setLoggedInUser({
+          userId: userData.user.id, // Map 'id' to 'userId'
+          username: userData.user.name, // Map 'name' to 'username'
+        });
       } catch (err) {
         console.error("Failed to fetch user data:", err);
       }
@@ -33,10 +38,15 @@ export default function EventDetail() {
     fetchUserData();
   }, []);
 
+  // Helper function to check if the logged-in user voted for a date
+  const userHasVoted = (userVotes, userId) => {
+    return userVotes.some((vote) => vote.FK_User == userId);
+  };
+
   // Fetch event data
   useEffect(() => {
     const fetchEventData = async () => {
-      if (eventId) {
+      if (eventId && loggedInUser.userId !== null) {
         try {
           const res = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/api/event/id/${eventId}`,
@@ -54,17 +64,34 @@ export default function EventDetail() {
                 {
                   method: "GET",
                   headers: { "Content-Type": "application/json" },
+                  credentials: "include", // Include credentials for session
                 }
               );
               const votesData = await resVotes.json();
 
-              return { ...date, UserVotes: votesData.UserVotes || [] };
+              // Check if the logged-in user has voted for this date
+              const userVoted = userHasVoted(
+                votesData.UserVotes || [],
+                loggedInUser.userId
+              );
+
+              // Filter out the logged-in user's vote for display
+              const filteredVotes = (votesData.UserVotes || []).filter(
+                (vote) => vote.FK_User !== loggedInUser.userId
+              );
+
+              return {
+                ...date,
+                UserVotes: filteredVotes, // Exclude logged-in user's vote from display
+                selected: userVoted, // Mark tile as selected if the user voted
+              };
             });
 
             const eventDatesWithVotes = await Promise.all(votesPromises);
 
             setEvent((prevEvent) => ({
               ...prevEvent,
+              ...data,
               EventDates: eventDatesWithVotes,
             }));
           } else {
@@ -77,9 +104,8 @@ export default function EventDetail() {
         }
       }
     };
-
     fetchEventData();
-  }, [eventId]);
+  }, [eventId, loggedInUser.userId]);
 
   if (loading) return <p>Loading...</p>;
 
@@ -98,7 +124,7 @@ export default function EventDetail() {
       const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        credentials: "include", // Include credentials to maintain session
         body: JSON.stringify({
           eventId: eventId,
           dateId: selectedDate.PK_ID,
@@ -113,8 +139,13 @@ export default function EventDetail() {
 
       // Update UI dynamically
       const updatedUserVotes = selectedDate.selected
-        ? [...selectedDate.UserVotes, { UserName: "You" }]
-        : selectedDate.UserVotes.filter((vote) => vote.UserName !== "You");
+        ? [
+            ...selectedDate.UserVotes,
+            { UserName: "You", FK_User: loggedInUser.userId },
+          ]
+        : selectedDate.UserVotes.filter(
+            (vote) => vote.FK_User !== loggedInUser.userId
+          );
 
       setEvent({
         ...event,
@@ -128,46 +159,51 @@ export default function EventDetail() {
   };
 
   return (
-    <section>
-      <h1>Title: {event?.Title}</h1>
-      <p>Description: {event?.Description}</p>
-      <p>User Name: {event?.UserName || "DummyUser"}</p>
-      <p>Location: {event?.Location || "DummyLocation"}</p>
-      <div>
-        <h2>Event Dates:</h2>
-        <ul className="flex flex-row flex-wrap w-full gap-4">
-          {event?.EventDates?.map((date, index) => (
-            <li
-              key={index}
-              className={`flex flex-col items-center w-64 border p-4 rounded-lg shadow-md cursor-pointer ${
-                date.selected
-                  ? "bg-green-500 text-white"
-                  : "bg-white text-black"
-              }`}
-              // sets your vote
-              onClick={() => handleEventClick(index)}
-            >
-              <div>
-                <p>Start: {date.DateTimeStart}</p>
-                <p>End: {date.DateTimeEnd}</p>
-              </div>
-              <div className="mt-4 text-sm">
-                {/* Display the users who voted for this date */}
-                <h3 className="font-bold">Voted Users:</h3>
-                {date.UserVotes.length > 0 ? (
-                  <ul className="list-disc ml-4">
-                    {date.UserVotes.map((vote, i) => (
-                      <li key={i}>{vote.UserName}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-gray-500">No votes yet</p>
-                )}
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
+    <main className="pt-20">
+      <section className="max-w-6xl mx-auto my-8">
+        <h1>Title: {event?.Title}</h1>
+        <p>Description: {event?.Description}</p>
+        <p>User Name: {event?.UserName || "DummyUser"}</p>
+        <p>Location: {event?.Location || "DummyLocation"}</p>
+        <div>
+          <h2>Event Dates:</h2>
+          <ul className="flex flex-row flex-wrap w-full gap-4">
+            {event?.EventDates?.map((date, index) => (
+              <li
+                key={index}
+                className={`flex flex-col items-center w-64 border p-4 rounded-lg shadow-md cursor-pointer ${
+                  date.selected
+                    ? "bg-green-500 text-white"
+                    : "bg-white text-black"
+                }`}
+                onClick={() => handleEventClick(index)}
+              >
+                <div>
+                  <p>Start: {date.DateTimeStart}</p>
+                  <p>End: {date.DateTimeEnd}</p>
+                </div>
+                <div className="mt-4 text-sm">
+                  {/* Display the users who voted for this date */}
+                  <h3 className="font-bold">Voted Users:</h3>
+                  {date.UserVotes.length > 0 ? (
+                    <ul className="list-disc ml-4">
+                      {date.UserVotes.map((vote, i) => (
+                        <li key={i}>
+                          {loggedInUser.userId == vote.FK_User
+                            ? "You"
+                            : vote.UserName}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-gray-500">No votes yet</p>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    </main>
   );
 }

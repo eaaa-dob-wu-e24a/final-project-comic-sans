@@ -1,22 +1,136 @@
 "use client";
 
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../../contexts/authcontext";
 import GradientCurve from "../../components/gradientcurve";
 import Button from "../../components/ui/button";
+import Image from "next/image";
+import ProfileAvatar from "../../components/profile-avatar";
+import Input from "../../components/ui/input";
+import FormLabel from "../../components/ui/formlabel";
 
 export default function Profile() {
-  const { user, loading } = useContext(AuthContext);
-  console.log("User object:", user);
+  const { user, setUser, loading } = useContext(AuthContext);
+  const [isEditing, setIsEditing] = useState(false); // State to toggle edit mode
+  const [isEditingPassword, setIsEditingPassword] = useState(false);
+  const [name, setName] = useState(user?.name || "");
+  const [email, setEmail] = useState(user?.email || "");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-  const [email, setEmail] = useState("siiri@gmail.com");
   const [isDarkTheme, setIsDarkTheme] = useState(false);
   const [notifications, setNotifications] = useState(true);
   const [timeZone, setTimeZone] = useState("Central Time - US & Canada");
 
-    if (loading) {
-      return <div>Loading...</div>;
+  useEffect(() => {
+    if (user) {
+      setName(user.name || "");
+      setEmail(user.email || "");
     }
+  }, [user]);
+
+  if (loading || !user) {
+    return <div>Loading...</div>;
+  }
+
+  const handleSaveDetails = async () => {
+    const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/update";
+    try {
+      const response = await fetch(url, {
+        method: "PATCH",
+        credentials: "include", // Include cookies for session handling
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Name: name,
+          Email: email,
+          // Include ImagePath if it's being updated
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Details saved successfully!");
+        setIsEditing(false);
+
+        // Update the user context
+        if (setUser) {
+          setUser({ ...user, name: name, email: email });
+        }
+      } else {
+        // Handle errors returned from the server
+        alert(`Error: ${data.Error || "Failed to update details."}`);
+      }
+    } catch (error) {
+      console.error("Error updating user details:", error);
+      alert("An error occurred while updating details.");
+    }
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+  };
+
+  const handleSavePassword = async () => {
+    // Validate input
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      alert("Please fill in all the fields.");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      alert("New passwords do not match.");
+      return;
+    }
+
+    // Send data to the backend
+    const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/update";
+    try {
+      const response = await fetch(url, {
+        method: "PATCH",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          currentPassword: currentPassword,
+          newPassword: newPassword,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Password changed successfully!");
+        setIsEditingPassword(false);
+        // Clear the input fields
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+      } else {
+        // Handle errors returned from the server
+        alert(`Error: ${data.Error || "Failed to change password."}`);
+      }
+    } catch (error) {
+      console.error("Error changing password:", error);
+      alert("An error occurred while changing password.");
+    }
+  };
+
+  const handleCancelPasswordChange = () => {
+    setIsEditingPassword(false);
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+  };
+
+  const handleThemeToggle = () => {
+    setIsDarkTheme(!isDarkTheme);
+    document.documentElement.classList.toggle("dark");
+  };
 
   const handleDeleteAccount = () => {
     if (
@@ -26,11 +140,6 @@ export default function Profile() {
     ) {
       alert("Account deleted successfully.");
     }
-  };
-
-  const handleThemeToggle = () => {
-    setIsDarkTheme(!isDarkTheme);
-    document.documentElement.classList.toggle("dark");
   };
 
   return (
@@ -44,33 +153,133 @@ export default function Profile() {
         </div>
       </GradientCurve>
       <section className="mx-auto flex flex-grow flex-col gap-4 p-6 w-6xl">
-        <div className="bg-background shadow-md rounded-lg p-6 mb-6 mx-auto w-4/5 ">
-          <h2 className="text-xl font-bold mb-4">Profile details</h2>
-          <div className="flex items-center mb-4">
-            {/* Profile photo */}
-            <div className="relative w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center text-xl font-bold text-white mr-4">
-              S
-              <label
-                className="absolute bottom-0 right-0 bg-secondary text-white w-6 h-6 rounded-full flex items-center justify-center cursor-pointer"
-                title="Change Profile Photo"
+        {isEditing ? (
+          // Edit Profile
+          <div className="bg-background shadow-md rounded-lg p-6 mb-6 mx-auto w-4/5">
+            <h2 className="text-xl font-bold mb-4">Edit details</h2>
+            <div className="flex items-center mb-6">
+              <div className="relative">
+                <ProfileAvatar variant="large" />
+                <label
+                  className="absolute bottom-2 right-2 bg-white w-8 h-8 rounded-full flex items-center justify-center cursor-pointer"
+                  title="Change Profile Photo"
+                >
+                  <input type="file" className="hidden" />
+                  <Image
+                    src="/camera.svg"
+                    alt="Camera"
+                    width={20}
+                    height={20}
+                  />
+                </label>
+              </div>
+              <div className="ml-6 w-1/2">
+                <FormLabel>Name</FormLabel>
+                <Input
+                  type="text"
+                  placeholder={user.name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+                <FormLabel>Email</FormLabel>
+                <Input
+                  type="email"
+                  placeholder={user.email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="flex justify-end space-x-4">
+              <Button variant="secondaryoutline" onClick={handleCancel}>
+                Cancel
+              </Button>
+              <Button variant="secondary" onClick={handleSaveDetails}>
+                Save
+              </Button>
+            </div>
+          </div>
+        ) : isEditingPassword ? (
+          // Change Password Section
+          <div className="bg-background shadow-md rounded-lg p-6 mb-6 mx-auto w-4/5">
+            <h2 className="text-xl font-bold mb-4">Change Password</h2>
+            <div className="mb-6">
+              <FormLabel>Current Password</FormLabel>
+              <Input
+                type="password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+              />
+            </div>
+            <div className="flex mb-6">
+              <div className="w-1/2 pr-2">
+                <FormLabel>New Password</FormLabel>
+                <Input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                />
+              </div>
+              <div className="w-1/2 pl-2">
+                <FormLabel>Confirm New Password</FormLabel>
+                <Input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="flex justify-end space-x-4">
+              <Button
+                variant="secondaryoutline"
+                onClick={handleCancelPasswordChange}
               >
-                <input type="file" className="hidden" />
-                <span className="text-sm">📷</span>
-              </label>
-            </div>
-            <div>
-              <p className="text-lg font-medium">{user.name}</p>
-              <p className="text-sm text-gray-500">{user.email}</p>
+                Cancel
+              </Button>
+              <Button variant="secondary" onClick={handleSavePassword}>
+                Save
+              </Button>
             </div>
           </div>
-          <div className="flex space-x-4">
-            <Button variant="secondary">Edit Details</Button>
-            <Button variant="secondaryoutline">Change Password</Button>
+        ) : (
+          // Profile Details
+          <div className="bg-background shadow-md rounded-lg p-6 mb-6 mx-auto w-4/5">
+            <h2 className="text-xl font-bold mb-4">Profile details</h2>
+            <div className="flex items-center mb-4">
+              <div className="relative">
+                <ProfileAvatar variant="large" />
+                <label
+                  className="absolute bottom-2 right-2 bg-white w-8 h-8 rounded-full flex items-center justify-center cursor-pointer"
+                  title="Change Profile Photo"
+                >
+                  <input type="file" className="hidden" />
+                  <Image
+                    src="/camera.svg"
+                    alt="Camera"
+                    width={20}
+                    height={20}
+                  />
+                </label>
+              </div>
+              <div className="ml-6">
+                <p className="text-lg font-medium">{user.name}</p>
+                <p className="text-sm text-gray-500">{user.email}</p>
+              </div>
+            </div>
+            <div className="flex justify-end space-x-4">
+              <Button variant="primary" onClick={() => setIsEditing(true)}>
+                Edit Details
+              </Button>
+              <Button
+                variant="primaryoutline"
+                onClick={() => setIsEditingPassword(true)}
+              >
+                Change Password
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* App Settings */}
-        <div className="bg-background shadow-md rounded-lg p-6 mb-6 mx-auto w-4/5 ">
+        <div className="bg-background shadow-md rounded-lg p-6 mb-6 mx-auto w-4/5">
           <h2 className="text-xl font-bold mb-4">App settings</h2>
           <div className="mb-4 flex items-center justify-between">
             <span className="text-sm font-medium">Notifications</span>

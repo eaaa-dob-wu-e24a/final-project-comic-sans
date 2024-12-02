@@ -66,7 +66,9 @@ const Register = () => {
             </h2>
             <form onSubmit={handleSubmit} className="space-y-1">
               <div>
-                <FormLabel htmlFor="username">Name:</FormLabel>
+                <FormLabel className="text-white" htmlFor="username">
+                  Name:
+                </FormLabel>
                 <Input
                   type="text"
                   id="username"
@@ -77,7 +79,9 @@ const Register = () => {
                 />
               </div>
               <div>
-                <FormLabel htmlFor="email">Email:</FormLabel>
+                <FormLabel className="text-white" htmlFor="email">
+                  Email:
+                </FormLabel>
                 <Input
                   type="email"
                   id="email"
@@ -88,7 +92,9 @@ const Register = () => {
                 />
               </div>
               <div>
-                <FormLabel htmlFor="password">Password:</FormLabel>
+                <FormLabel className="text-white" htmlFor="password">
+                  Password:
+                </FormLabel>
                 <Input
                   type="password"
                   id="password"
@@ -99,10 +105,7 @@ const Register = () => {
                 />
               </div>
               <div className="flex flex-col items-center mt-4 space-y-2 pt-6">
-                <Button
-                  variant="secondary"
-                  type="submit"
-                >
+                <Button variant="secondary" type="submit">
                   Sign up
                 </Button>
                 <p className="text-center">

@@ -1,4 +1,5 @@
 import Checkbox from "./ui/checkbox";
+import EventAvatar from "./event-detail-avatar";
 
 export default function EventDateDetailCard({
   eventDates,
@@ -33,7 +34,7 @@ export default function EventDateDetailCard({
           const endDate = formatDate(date.DateTimeEnd);
 
           return (
-            <div key={index} className="w-64">
+            <div key={index} className="w-64 mb-4">
               <li
                 className={`flex flex-col items-center h-48 w-64 border p-4 rounded-lg cursor-pointer ${
                   date.selected ? selectedClasses : unselectedClasses
@@ -73,13 +74,24 @@ export default function EventDateDetailCard({
               </li>
               <div className="mt-4 ml-2 text-sm relative group">
                 <h3>Currently {date.UserVotes.length} participants... </h3>
+
                 <div className="absolute left-0 mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg p-2 hidden group-hover:block">
-                  <ul>
+                  <ul className="space-y-2">
                     {date.UserVotes.map((vote, i) => (
-                      <li key={i}>
-                        {vote.FK_User == loggedInUser.userId
-                          ? vote.UserName + " (you)"
-                          : vote.UserName}
+                      <li key={i} className="flex items-center">
+                        <EventAvatar
+                          className="w-8 h-8"
+                          variant="small"
+                          user={{
+                            name: vote.UserName,
+                            imagePath: vote.UserImagePath,
+                          }}
+                        />
+                        <span className="ml-2 truncate text-sm">
+                          {vote.FK_User == loggedInUser.userId
+                            ? vote.UserName + " (you)"
+                            : vote.UserName}
+                        </span>
                       </li>
                     ))}
                   </ul>

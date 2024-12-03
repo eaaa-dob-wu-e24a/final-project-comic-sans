@@ -3,9 +3,11 @@ import Checkbox from "./ui/checkbox";
 export default function EventDateDetailCard({
   eventDates,
   onDateClick,
-  loggedInUser,
+  loggedInUser, //userID and username
 }) {
   const formatDate = (dateString) => {
+    console.log(eventDates);
+
     const date = new Date(dateString);
     return {
       day: new Intl.DateTimeFormat("en-GB", { day: "2-digit" }).format(date),
@@ -69,17 +71,19 @@ export default function EventDateDetailCard({
                   <Checkbox id={`checkbox-${index}`} checked={date.selected} />
                 </div>
               </li>
-              <div className="mt-4 text-sm">
-                <h3 className="font-bold">Votes:</h3>
-                {date.UserVotes.length > 0 ? (
-                  <ul className="list-disc ml-4">
+              <div className="mt-4 ml-2 text-sm relative group">
+                <h3>Currently {date.UserVotes.length} participants... </h3>
+                <div className="absolute left-0 mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg p-2 hidden group-hover:block">
+                  <ul>
                     {date.UserVotes.map((vote, i) => (
-                      <li key={i}>{vote.UserName}</li>
+                      <li key={i}>
+                        {vote.FK_User == loggedInUser.userId
+                          ? vote.UserName + " (you)"
+                          : vote.UserName}
+                      </li>
                     ))}
                   </ul>
-                ) : (
-                  <p className="text-gray-500">No votes yet</p>
-                )}
+                </div>
               </div>
             </div>
           );

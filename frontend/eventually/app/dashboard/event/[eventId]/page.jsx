@@ -2,8 +2,10 @@
 
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import EventDetail from "@/components/event-detail";
+import EventDateDetailCard from "@/components/event-date-detail-card";
 
-export default function EventDetail() {
+export default function EventPage() {
   const { eventId } = useParams();
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -38,12 +40,7 @@ export default function EventDetail() {
     fetchUserData();
   }, []);
 
-  // Helper function to check if the logged-in user voted for a date
-  const userHasVoted = (userVotes, userId) => {
-    return userVotes.some((vote) => vote.FK_User == userId);
-  };
-
-  // Fetch event data
+  //fetch event data
   useEffect(() => {
     const fetchEventData = async () => {
       if (eventId && loggedInUser.userId !== null) {
@@ -57,47 +54,16 @@ export default function EventDetail() {
           );
           const data = await res.json();
 
-          if (data.EventDates && data.EventDates.length > 0) {
-            const votesPromises = data.EventDates.map(async (date) => {
-              const resVotes = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/vote/read/${date.PK_ID}`,
-                {
-                  method: "GET",
-                  headers: { "Content-Type": "application/json" },
-                  credentials: "include", // Include credentials for session
-                }
-              );
-              const votesData = await resVotes.json();
+          // Recalculate selected state
+          const eventDatesWithVotes = data.EventDates.map((date) => {
+            const userVoted = date.UserVotes.some(
+              (vote) =>
+                parseInt(vote.FK_User, 10) === parseInt(loggedInUser.userId, 10)
+            );
+            return { ...date, selected: userVoted };
+          });
 
-              // Check if the logged-in user has voted for this date
-              const userVoted = userHasVoted(
-                votesData.UserVotes || [],
-                loggedInUser.userId
-              );
-
-              // Filter out the logged-in user's vote for display
-              const filteredVotes = (votesData.UserVotes || []).filter(
-                (vote) => vote.FK_User !== loggedInUser.userId
-              );
-
-              return {
-                ...date,
-                UserVotes: filteredVotes, // Exclude logged-in user's vote from display
-                selected: userVoted, // Mark tile as selected if the user voted
-              };
-            });
-
-            const eventDatesWithVotes = await Promise.all(votesPromises);
-
-            setEvent((prevEvent) => ({
-              ...prevEvent,
-              ...data,
-              EventDates: eventDatesWithVotes,
-            }));
-          } else {
-            setEvent(data);
-          }
-
+          setEvent({ ...data, EventDates: eventDatesWithVotes });
           setLoading(false);
         } catch (err) {
           console.error(err);
@@ -107,29 +73,24 @@ export default function EventDetail() {
     fetchEventData();
   }, [eventId, loggedInUser.userId]);
 
-  if (loading) return <p>Loading...</p>;
-
-  // Handle voting for a date
+  // Define handleEventClick
   const handleEventClick = async (index) => {
-    const updatedDates = event.EventDates.map((d, i) =>
-      i === index ? { ...d, selected: !d.selected } : d
-    );
-
-    const selectedDate = updatedDates[index];
-    const url = selectedDate.selected
-      ? `${process.env.NEXT_PUBLIC_API_URL}/api/vote/create`
-      : `${process.env.NEXT_PUBLIC_API_URL}/api/vote/delete`;
+    const selectedDate = event.EventDates[index];
+    const isCurrentlySelected = selectedDate.selected;
 
     try {
+      const url = isCurrentlySelected
+        ? `${process.env.NEXT_PUBLIC_API_URL}/api/vote/delete`
+        : `${process.env.NEXT_PUBLIC_API_URL}/api/vote/create`;
+
       const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include", // Include credentials to maintain session
+        credentials: "include",
         body: JSON.stringify({
-          eventId: eventId,
+          eventId,
           dateId: selectedDate.PK_ID,
           userId: loggedInUser.userId,
-          username: loggedInUser.username,
         }),
       });
 
@@ -137,71 +98,45 @@ export default function EventDetail() {
         throw new Error("Failed to update vote");
       }
 
-      // Update UI dynamically
-      const updatedUserVotes = selectedDate.selected
-        ? [
+      // Update the UserVotes array and selected state
+      const updatedUserVotes = isCurrentlySelected
+        ? selectedDate.UserVotes.filter(
+            (vote) =>
+              parseInt(vote.FK_User, 10) !== parseInt(loggedInUser.userId, 10)
+          )
+        : [
             ...selectedDate.UserVotes,
-            { UserName: "You", FK_User: loggedInUser.userId },
-          ]
-        : selectedDate.UserVotes.filter(
-            (vote) => vote.FK_User !== loggedInUser.userId
-          );
+            { UserName: loggedInUser.username, FK_User: loggedInUser.userId },
+          ];
 
-      setEvent({
-        ...event,
-        EventDates: updatedDates.map((date, i) =>
-          i === index ? { ...date, UserVotes: updatedUserVotes } : date
-        ),
-      });
+      const updatedDates = event.EventDates.map((date, i) =>
+        i == index
+          ? {
+              ...date,
+              UserVotes: updatedUserVotes,
+              selected: !isCurrentlySelected,
+            }
+          : date
+      );
+
+      setEvent({ ...event, EventDates: updatedDates });
     } catch (err) {
       console.error(err);
     }
   };
 
+  if (loading) return <p>Loading...</p>;
+
   return (
-    <main className="pt-20">
-      <section className="max-w-6xl mx-auto my-8">
-        <h1>Title: {event?.Title}</h1>
-        <p>Description: {event?.Description}</p>
-        <p>User Name: {event?.UserName || "DummyUser"}</p>
-        <p>Location: {event?.Location || "DummyLocation"}</p>
+    <main>
+      <section className="max-w-6xl mx-auto flex flex-col gap-4 bg-background p-6 my-12 rounded-2xl shadow-md">
+        <EventDetail event={event} />
         <div>
-          <h2>Event Dates:</h2>
-          <ul className="flex flex-row flex-wrap w-full gap-4">
-            {event?.EventDates?.map((date, index) => (
-              <li
-                key={index}
-                className={`flex flex-col items-center w-64 border p-4 rounded-lg shadow-md cursor-pointer ${
-                  date.selected
-                    ? "bg-green-500 text-white"
-                    : "bg-white text-black"
-                }`}
-                onClick={() => handleEventClick(index)}
-              >
-                <div>
-                  <p>Start: {date.DateTimeStart}</p>
-                  <p>End: {date.DateTimeEnd}</p>
-                </div>
-                <div className="mt-4 text-sm">
-                  {/* Display the users who voted for this date */}
-                  <h3 className="font-bold">Voted Users:</h3>
-                  {date.UserVotes.length > 0 ? (
-                    <ul className="list-disc ml-4">
-                      {date.UserVotes.map((vote, i) => (
-                        <li key={i}>
-                          {loggedInUser.userId == vote.FK_User
-                            ? "You"
-                            : vote.UserName}
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-gray-500">No votes yet</p>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ul>
+          <EventDateDetailCard
+            eventDates={event.EventDates}
+            onDateClick={handleEventClick}
+            loggedInUser={loggedInUser}
+          />
         </div>
       </section>
     </main>

@@ -3,6 +3,7 @@ import Button from "@/components/ui/button";
 import JoinForm from "@/components/ui/joinform";
 import GradientCurve from "@/components/gradientcurve";
 import ComponentTest from "@/components/component-test";
+import NotifTester from "@/components/notif-tester";
 
 export default function Home() {
   return (
@@ -36,6 +37,7 @@ export default function Home() {
           <Button label="CREATE" className="mb-12">CREATE</Button>
         </Link>
       </section>
+      <NotifTester></NotifTester>
     </>
   );
 }

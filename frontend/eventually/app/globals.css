@@ -28,12 +28,10 @@
 }
 
 .mask-anim {
-  mask-image: linear-gradient(
-    to right,
-    transparent 70%,
-    white 90%,
-    transparent 100%
-  );
+  mask-image: linear-gradient(to right,
+      transparent 70%,
+      white 90%,
+      transparent 100%);
   animation: move-mask 1000ms linear reverse infinite;
   mask-size: 200%;
 }
@@ -42,9 +40,18 @@
   0% {
     mask-position: 0%;
   }
+
   100% {
     mask-position: 200%;
   }
+}
+
+.curve-gradient {
+  height: 10rem;
+  width: 100vw;
+  background-image: var(--gradient);
+  clip-path: ellipse(110% 100% at 0% 0%);
+  z-index: -1;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -62,6 +69,7 @@ body {
 
 main {
   padding-top: 5rem;
+
 }
 
 .notification {
@@ -81,4 +89,5 @@ main {
   100% {
     transform: translateX(0);
   }
+
 }

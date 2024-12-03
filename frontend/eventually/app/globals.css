@@ -65,3 +65,22 @@ body {
 main {
   padding-top: 5rem;
 }
+
+.notification {
+  animation-name: slide-in;
+  animation-duration: 500ms;
+}
+
+@keyframes slide-in {
+  0% {
+    transform: translateX(100vw);
+  }
+
+  80% {
+    transform: translateX(-2rem);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}

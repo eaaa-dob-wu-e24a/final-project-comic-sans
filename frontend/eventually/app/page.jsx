@@ -3,6 +3,7 @@ import Button from "@/components/ui/button";
 import JoinForm from "@/components/ui/joinform";
 import GradientCurve from "@/components/gradientcurve";
 import ComponentTest from "@/components/component-test";
+import NotifTester from "@/components/notif-tester";
 
 export default function Home() {
   return (
@@ -28,12 +29,15 @@ export default function Home() {
         <h2 className="font-bold text-2xl my-4">
           Want to create <span className="text-primary">your own</span> event?
         </h2>
-        <p className="text-md mb-12">
+        <p className="text-md mb-8">
           Schedule an event with your friends, family, co-workers, or anyone
           else. For free.
         </p>
-        <Button>Create</Button>
+        <Link href="/createEvent">
+          <Button label="CREATE" className="mb-12">CREATE</Button>
+        </Link>
       </section>
+      <NotifTester></NotifTester>
     </>
   );
 }

@@ -1,8 +1,8 @@
 "use client";
 import Link from "next/link";
 import Button from "../components/ui/button";
-import ProfileAvatar from "../components/profile-avatar";
-import { AuthContext } from "../app/authcontext";
+import ProfileAvatar from "./profile-dropdown";
+import { AuthContext } from "../contexts/authcontext";
 import { useContext } from "react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -20,10 +20,7 @@ export default function Navbar() {
     <nav className="flex justify-between items-center px-20 py-5 text-white bg-gradient-to-r from-gradientstart to-gradientend fixed top-0 left-0 w-full z-50">
       {/* Left Side: Logo */}
       <div className="flex items-center gap-6">
-        <Link
-          href={user ? "/dashboard" : "/"}
-          className="flex items-center gap-4"
-        >
+        <Link href={"/"} className="flex items-center gap-4">
           <Image src="/logo.svg" alt="Eventually" width={40} height={40} />
           {!isHomePage && (
             <h1 className="font-dancing-script text-3xl">Eventually</h1>
@@ -38,32 +35,33 @@ export default function Navbar() {
           // Render this if the user is logged in
           <>
             <ProfileAvatar />
-            <Button variant="secondary">
-              Create event
-            </Button>{" "}
+            <Link href="/createEvent">
+              <Button variant="secondary">Create event</Button>
+            </Link>
           </>
         ) : (
           // Render this for home, login, and signup pages
           <>
             <Link
               href="/login"
-              className={`flex items-center w-20 whitespace-nowrap ${
-                isLoginPage ? "font-bold" : ""
-              }`}
+              className={`flex items-center w-20 whitespace-nowrap ${isLoginPage ? "font-bold" : ""
+                }`}
             >
               LOGIN
             </Link>
             <Link
               href="/signup"
-              className={`flex items-center w-20 whitespace-nowrap ${
-                isSignupPage ? "font-bold" : ""
-              }`}
+              className={`flex items-center w-20 whitespace-nowrap ${isSignupPage ? "font-bold" : ""
+                }`}
             >
               SIGN UP
             </Link>
-            <Button className="bg-secondary hover:bg-secondary-hover transition-all duration-200">
-              Create event
-            </Button>
+
+            <Link href="/createEvent">
+              <Button label="CREATE EVENT" className="bg-secondary hover:bg-secondary-hover transition-all duration-200">Create Event
+              </Button>
+            </Link>
+
           </>
         )}
       </div>

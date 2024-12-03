@@ -2,7 +2,7 @@
 
 import React, { useState, useContext } from "react";
 import { useRouter } from "next/navigation";
-import { AuthContext } from "../authcontext";
+import { AuthContext } from "../../contexts/authcontext";
 import GradientCurve from "../../components/gradientcurve";
 import FormLabel from "../../components/ui/formlabel";
 import Input from "../../components/ui/input";
@@ -46,16 +46,19 @@ const LoginPage = () => {
   };
 
   return (
-    <>
-      <div className="bg-gradient-to-r from-gradientstart to-gradientend pb-0">
-        <section className="mx-auto flex flex-col justify-center items-center pt-32">
-          <section className="relative z-10 w-full max-w-md p-8 space-y-4">
+    <div className="flex flex-col min-h-screen">
+      {/* Gradient Background with Login Form */}
+      <div className="bg-gradient-to-r from-gradientstart to-gradientend flex-shrink-0">
+        <section className="mx-auto flex flex-col justify-center items-center pt-32 pb-16">
+          <section className="relative z-10 w-full max-w-md p-8 space-y-4 text-white">
             <h1 className="text-2xl font-bold text-center mb-6 text-white">
               LOGIN
             </h1>
             <form onSubmit={handleSubmit} className="space-y-1">
               <div>
-                <FormLabel htmlFor="email">Email:</FormLabel>
+                <FormLabel className="text-white" htmlFor="email">
+                  Email:
+                </FormLabel>
                 <Input
                   type="text"
                   value={email}
@@ -63,13 +66,17 @@ const LoginPage = () => {
                 />
               </div>
               <div>
-                <FormLabel htmlFor="password">Password:</FormLabel>
+                <FormLabel className="text-white" htmlFor="password">
+                  Password:
+                </FormLabel>
                 <Input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
-                <p className=" py-1 text-xs text-right underline">Forgot password?</p>
+                <p className="py-1 text-xs text-right hover:underline">
+                  Forgot password?
+                </p>
               </div>
               <div className="flex flex-col items-center mt-4 space-y-2 pt-6">
                 <Button
@@ -89,8 +96,13 @@ const LoginPage = () => {
           </section>
         </section>
       </div>
+
+      {/* Gradient Curve */}
       <GradientCurve />
-    </>
+
+      {/* Dynamic Section Below the Gradient Curve */}
+      <section className="flex-grow bg-page-background" />
+    </div>
   );
 };
 

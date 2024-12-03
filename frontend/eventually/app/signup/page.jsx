@@ -57,16 +57,19 @@ const Register = () => {
   };
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
+
       <div className="bg-gradient-to-r from-gradientstart to-gradientend pb-0">
         <section className="mx-auto flex flex-col justify-center items-center pt-32">
-          <section className="relative z-10 w-full max-w-md p-8 space-y-4">
+          <section className="relative z-10 w-full max-w-md p-8 space-y-4 text-white">
             <h2 className="text-2xl font-bold text-center text-white">
               SIGN UP
             </h2>
             <form onSubmit={handleSubmit} className="space-y-1">
               <div>
-                <FormLabel htmlFor="username">Name:</FormLabel>
+                <FormLabel className="text-white" htmlFor="username">
+                  Name:
+                </FormLabel>
                 <Input
                   type="text"
                   id="username"
@@ -77,7 +80,9 @@ const Register = () => {
                 />
               </div>
               <div>
-                <FormLabel htmlFor="email">Email:</FormLabel>
+                <FormLabel className="text-white" htmlFor="email">
+                  Email:
+                </FormLabel>
                 <Input
                   type="email"
                   id="email"
@@ -88,7 +93,9 @@ const Register = () => {
                 />
               </div>
               <div>
-                <FormLabel htmlFor="password">Password:</FormLabel>
+                <FormLabel className="text-white" htmlFor="password">
+                  Password:
+                </FormLabel>
                 <Input
                   type="password"
                   id="password"
@@ -99,10 +106,7 @@ const Register = () => {
                 />
               </div>
               <div className="flex flex-col items-center mt-4 space-y-2 pt-6">
-                <Button
-                  variant="secondary"
-                  type="submit"
-                >
+                <Button variant="secondary" type="submit">
                   Sign up
                 </Button>
                 <p className="text-center">
@@ -117,7 +121,9 @@ const Register = () => {
         </section>
       </div>
       <GradientCurve />
-    </>
+            {/* Dynamic Section Below the Gradient Curve */}
+      <section className="flex-grow bg-page-background"/>
+    </div>
   );
 };
 

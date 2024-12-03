@@ -38,32 +38,33 @@ export default function Navbar() {
           // Render this if the user is logged in
           <>
             <ProfileAvatar />
-            <Button variant="secondary">
-              Create event
-            </Button>{" "}
+            <Link href="/createEvent">
+              <Button variant="secondary" label="CREATE EVENT">Create event</Button>
+            </Link>
           </>
         ) : (
           // Render this for home, login, and signup pages
           <>
             <Link
               href="/login"
-              className={`flex items-center w-20 whitespace-nowrap ${
-                isLoginPage ? "font-bold" : ""
-              }`}
+              className={`flex items-center w-20 whitespace-nowrap ${isLoginPage ? "font-bold" : ""
+                }`}
             >
               LOGIN
             </Link>
             <Link
               href="/signup"
-              className={`flex items-center w-20 whitespace-nowrap ${
-                isSignupPage ? "font-bold" : ""
-              }`}
+              className={`flex items-center w-20 whitespace-nowrap ${isSignupPage ? "font-bold" : ""
+                }`}
             >
               SIGN UP
             </Link>
-            <Button className="bg-secondary hover:bg-secondary-hover transition-all duration-200">
-              Create event
-            </Button>
+
+            <Link href="/createEvent">
+              <Button label="CREATE EVENT" className="bg-secondary hover:bg-secondary-hover transition-all duration-200">Create Event
+              </Button>
+            </Link>
+
           </>
         )}
       </div>

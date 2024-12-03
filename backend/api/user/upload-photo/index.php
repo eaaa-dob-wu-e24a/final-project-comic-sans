@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . "/../../../database/dbconn.php";
+
 header("Access-Control-Allow-Origin: http://localhost:3000");
 header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
@@ -17,9 +18,6 @@ function showError($msgString)
 
 // Handle preflight request
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    header("Access-Control-Allow-Origin: http://localhost:3000");
-    header("Access-Control-Allow-Methods: POST, OPTIONS");
-    header("Access-Control-Allow-Headers: Content-Type, Authorization");
     http_response_code(200);
     exit;
 }
@@ -47,7 +45,11 @@ if (!isset($_FILES['profilePhoto'])) {
 
 $targetDir = __DIR__ . '/../../../uploads/';
 if (!file_exists($targetDir)) {
-    mkdir($targetDir, 0755, true);
+    if (!mkdir($targetDir, 0755, true)) {
+        http_response_code(500);
+        showError("Failed to create target directory.");
+        exit;
+    }
 }
 
 $file = $_FILES['profilePhoto'];
@@ -57,17 +59,40 @@ $fileSize = $file['size'];
 $fileType = $file['type'];
 $fileError = $file['error'];
 
-// Generate a unique file name to prevent overwriting
-$extension = pathinfo($fileName, PATHINFO_EXTENSION);
-$newFileName = uniqid('profile_', true) . '.' . $extension;
-$targetFilePath = $targetDir . $newFileName;
+// Check for upload errors
+if ($fileError !== UPLOAD_ERR_OK) {
+    http_response_code(400);
+    showError("File upload error code: $fileError");
+    exit;
+}
 
 // Validate file type (e.g., allow only images)
+$extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 $allowedTypes = ['jpg', 'jpeg', 'png', 'gif'];
-if (!in_array(strtolower($extension), $allowedTypes)) {
+if (!in_array($extension, $allowedTypes)) {
     http_response_code(400);
     showError("Invalid file type. Only JPG, JPEG, PNG, and GIF are allowed.");
     exit;
+}
+
+// Generate a unique file name based on user ID and current timestamp
+$newFileName = 'profile_' . $user['id'] . '_' . time() . '.' . $extension;
+$targetFilePath = $targetDir . $newFileName;
+
+// Delete the old profile photo if it exists
+$sql = "SELECT ImagePath FROM Eventually_User WHERE PK_ID = ?";
+$stmt = $mysqli->prepare($sql);
+$stmt->bind_param("i", $user['id']);
+$stmt->execute();
+$stmt->bind_result($oldImagePath);
+$stmt->fetch();
+$stmt->close();
+
+if (!empty($oldImagePath)) {
+    $oldImageFullPath = __DIR__ . '/../../..' . $oldImagePath;
+    if (file_exists($oldImageFullPath)) {
+        unlink($oldImageFullPath);
+    }
 }
 
 // Move the file to the target directory

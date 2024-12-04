@@ -7,7 +7,7 @@ import NotifTester from "@/components/notif-tester";
 
 export default function Home() {
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <div className="bg-gradient-to-r from-gradientstart to-gradientend pb-0">
         <section className="max-w-lg mx-auto flex flex-col text-white place-content-center text-center  ">
           <h1 className="font-[family-name:var(--font-dancing-script)] text-8xl mt-28">
@@ -34,10 +34,13 @@ export default function Home() {
           else. For free.
         </p>
         <Link href="/createEvent">
-          <Button label="CREATE" className="mb-12">CREATE</Button>
+          <Button label="CREATE" className="mb-12">
+            CREATE
+          </Button>
         </Link>
       </section>
-      <NotifTester></NotifTester>
-    </>
+      {/* Dynamic Section Below the Gradient Curve */}
+      <section className="flex-grow bg-page-background" />
+    </div>
   );
 }

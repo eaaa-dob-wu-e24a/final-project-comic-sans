@@ -48,7 +48,7 @@ export default function UserEventList({maxEvents}) {
         </Link>
       </div>
       {loading ? (
-        <Loading></Loading>
+        <Loading/>
       ) : (
         <ul className="flex flex-row flex-wrap gap-4">
           {events.map((event) => (

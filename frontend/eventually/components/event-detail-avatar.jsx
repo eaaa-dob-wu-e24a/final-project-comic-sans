@@ -1,8 +1,8 @@
-import { useContext } from "react";
-import { AuthContext } from "../contexts/authcontext";
-
-export default function ProfileAvatar({ className = "", variant = "small" }) {
-  const { user } = useContext(AuthContext);
+export default function EventAvatar({
+  user,
+  className = "",
+  variant = "small",
+}) {
   const baseStyles =
     "rounded-full bg-secondary text-white flex items-center justify-center font-bold";
   const variants = {

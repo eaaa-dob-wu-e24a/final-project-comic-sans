@@ -20,6 +20,7 @@ package-lock.json
 
 # production
 /build
+/backend/uploads
 
 # misc
 .DS_Store

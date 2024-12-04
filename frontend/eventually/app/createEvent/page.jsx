@@ -128,39 +128,39 @@ const CreateEvent = () => {
                 </div>
             </GradientCurve>
 
-            <section className="max-w-6xl w-full p-12 rounded-xl drop-shadow mx-auto flex flex-col color: var(--foreground) place-content-center bg-background my-12">
+            <section className="max-w-6xl w-full p-8 lg:p-12 rounded-xl drop-shadow mx-auto flex flex-col color: var(--foreground) place-content-center bg-background my-12">
                 <form onSubmit={handleSubmit}>
-                    <div className='flex justify-between mb-8'>
+                    <div className='flex justify-between mb-8 flex-col lg:flex-row lg:gap-0 gap-4'>
                         <input
                             type="text"
                             id="title"
                             name="title"
-                            className="flex-grow max-w-lg mt-1 bg-page-foreground hover:border-b-4 hover:border-transparent hover:border-b-gray-300 focus:outline-none font-bold text-2xl"
+                            className="flex-grow max-w-lg mt-1 text-black px-4 min-h-12 rounded-full bg-page-foreground hover:border-b-4 hover:border-transparent hover:border-b-gray-300 focus:outline-none font-bold text-2xl"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             placeholder='Event Name'
-                            maxlength="30"
+                            maxLength="30"
                         />
-                        <div className='flex'>
+                        <div className='flex flex-col lg:flex-row w-fit mx-auto text-center'>
                             <div id="joinCode" className="hover:border-transparent focus:outline-none mt-1 text-2xl  font-bold px-4 py-2  rounded-full">
                                 {joinCode || 'Fetching...'}
                             </div>
-                            <button type="submit" className="text-white text-m font-bold py-2 px-16 uppercase rounded-full shadow-md hover:cursor-pointer bg-secondary hover:bg-secondary-hover transition-all duration-200r undefined">
+                            <button type="submit" className="text-white max-w-fit text-m font-bold py-2 px-16 uppercase rounded-full shadow-md hover:cursor-pointer bg-secondary hover:bg-secondary-hover transition-all duration-200r undefined">
                                 Create Event
                             </button>
                         </div>
                     </div>
 
 
-                    <div className='flex gap-16'>
-                        <div className='w-2/5 space-y-4'>
+                    <div className='flex gap-16 flex-col flex-shrink lg:flex-row '>
+                        <div className='lg:w-2/5 space-y-4 '>
                             <div>
                                 <label htmlFor="userName" className="block text-lg font-medium">User Name:</label>
                                 <input
                                     type="text"
                                     id="userName"
                                     name="userName"
-                                    className="max-w-lg w-full rounded-full mt-1 px-4 py-2 border-2 border-grey-300"
+                                    className="max-w-lg text-black w-full rounded-full mt-1 px-4 py-2 border-2 border-grey-300"
                                     value={userName}
                                     onChange={(e) => setUserName(e.target.value)}
                                     placeholder='User Name'
@@ -172,7 +172,7 @@ const CreateEvent = () => {
                                     type="text"
                                     id="location"
                                     name="location"
-                                    className="max-w-lg w-full rounded-full mt-1 px-4 py-2  border-2 border-grey-300"
+                                    className="max-w-lg w-full text-black rounded-full mt-1 px-4 py-2  border-2 border-grey-300"
                                     value={location}
                                     onChange={(e) => setLocation(e.target.value)}
                                     placeholder='Location'
@@ -184,7 +184,7 @@ const CreateEvent = () => {
                                     type="text"
                                     id="description"
                                     name="description"
-                                    className="leading-6 rounded-xl w-full mt-1 px-4 py-2 rounded border-2 border-grey-300"
+                                    className="leading-6 rounded-xl max-w-lg w-full mt-1 px-4 py-2 text-black border-2 border-grey-300"
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
                                     placeholder='Description'
@@ -196,9 +196,9 @@ const CreateEvent = () => {
                             {/* Proposed Dates Section */}
 
                             <label className="text-lg font-medium mr-4 color: var(--foreground)">Proposed Dates:</label>
-                            <div className='w-3/5 space-y-4'>
+                            <div className='lg:w-3/5 space-y-4'>
                                 {proposedDates.map((date, index) => (
-                                    <div key={index} className="flex space-x-2">
+                                    <div key={index} className="flex lg:space-x-2 flex-col lg:flex-row gap-4 lg:gap-0">
                                         <input
                                             type="datetime-local"
                                             value={date.start}
@@ -216,7 +216,7 @@ const CreateEvent = () => {
                                         <button
                                             type="button"
                                             onClick={() => removeProposedDate(index)}
-                                            className="rounded-full  px-2 py-1 bg-red-500 text-background rounded"
+                                            className="rounded-full  px-2 py-1 bg-red-500 text-foregorund font-bold max-w-fit"
                                         >
                                             Remove
                                         </button>

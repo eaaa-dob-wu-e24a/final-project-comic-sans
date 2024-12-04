@@ -21,33 +21,69 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    //Fetches the URL of the current page
+    // Fetches the URL of the current page
     $url = $_SERVER['REQUEST_URI'];
-    //Splits the URL into an array of components
+    // Splits the URL into an array of components
     $urlComponents = explode('/', $url);
-    //Gets the last component of the URL array e.g., /user/id/1 => 1
+    // Gets the last component of the URL array e.g., /user/id/1 => 1
     $id = end($urlComponents);
 
     if ($id) {
         $eventQuery = "SELECT * FROM Eventually_Event WHERE PK_ID = $id";
         $eventResult = $mysqli->query($eventQuery);
 
-        //make sure there is a response with data, otherwise show error
+        // Make sure there is a response with data, otherwise show error
         if ($eventResult && $eventResult->num_rows > 0) {
             $event = $eventResult->fetch_assoc();
 
-            // fetch the associated dates for the event
-            $dateQuery = "SELECT * FROM Eventually_Event_Dates WHERE FK_Event = $id";
-            $dateResult = $mysqli->query($dateQuery);
+            // Fetch the associated dates and votes for the event
+            $dateVotesQuery = "
+                SELECT 
+                    d.PK_ID AS DateID,
+                    d.DateTimeStart,
+                    d.DateTimeEnd,
+                    v.PK_ID AS VoteID,
+                    v.FK_User,
+                    v.Status,
+                    v.UserName
+                FROM 
+                    Eventually_Event_Dates d
+                LEFT JOIN 
+                    Eventually_Event_User_Voting v
+                ON 
+                    d.PK_ID = v.FK_Event_Dates
+                WHERE 
+                    d.FK_Event = $id
+            ";
 
-            //add all fetched dates to a new array
-            $datesArray = array();
-            while ($row = $dateResult->fetch_assoc()) {
-                array_push($datesArray, $row);
+            $dateVotesResult = $mysqli->query($dateVotesQuery);
+
+            $datesArray = [];
+            while ($row = $dateVotesResult->fetch_assoc()) {
+                $dateID = $row['DateID'];
+
+                // Group votes under their corresponding date
+                if (!isset($datesArray[$dateID])) {
+                    $datesArray[$dateID] = [
+                        "PK_ID" => $row['DateID'],
+                        "DateTimeStart" => $row['DateTimeStart'],
+                        "DateTimeEnd" => $row['DateTimeEnd'],
+                        "UserVotes" => []
+                    ];
+                }
+
+                if ($row['VoteID']) {
+                    $datesArray[$dateID]["UserVotes"][] = [
+                        "VoteID" => $row['VoteID'],
+                        "FK_User" => $row['FK_User'],
+                        "Status" => $row['Status'],
+                        "UserName" => $row['UserName']
+                    ];
+                }
             }
 
-            //assign the dates to a new key in the event array
-            $event['EventDates'] = $datesArray;
+            // Re-index the dates array
+            $event['EventDates'] = array_values($datesArray);
 
             header('Content-Type: application/json');
             echo json_encode($event, JSON_PRETTY_PRINT);

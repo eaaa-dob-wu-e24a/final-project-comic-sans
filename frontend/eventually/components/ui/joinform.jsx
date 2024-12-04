@@ -1,6 +1,7 @@
 "use client";  // This directive is necessary for the client-side rendering.
 
 import { useState } from "react";
+import { useRouter } from "next/navigation"; // Import useRouter
 import Button from "./button";
 
 export default function JoinForm() {
@@ -9,6 +10,7 @@ export default function JoinForm() {
   const [eventData, setEventData] = useState(null); // State for event data
 
   const joinEvent = process.env.NEXT_PUBLIC_API_URL + '/api/event/code?joincode=' + joinCode.toUpperCase();
+  const router = useRouter(); // Initialize useRouter
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent form from reloading the page
@@ -33,6 +35,10 @@ export default function JoinForm() {
       // Parse the event data
       const data = await response.json();
       setEventData(data); // Save the event data in state
+
+      // After successful event fetch, redirect to the event page
+      router.push(`/join/${joinCode.toUpperCase()}`); // Redirect to the event's page
+
     } catch (err) {
       setError("Something went wrong. Please try again later.");
     }
@@ -60,7 +66,7 @@ export default function JoinForm() {
       {/* Display Error */}
       {error && <div className="text-red-500 mt-4 text-center">{error}</div>}
 
-      {/* Display Event Data */}
+      {/* Display Event Data (Optional) */}
       {eventData && (
         <div className="mt-6 p-4 border rounded-lg shadow-lg">
           <h2 className="text-xl font-bold">{eventData.Name}</h2>
@@ -85,4 +91,3 @@ export default function JoinForm() {
     </div>
   );
 }
-

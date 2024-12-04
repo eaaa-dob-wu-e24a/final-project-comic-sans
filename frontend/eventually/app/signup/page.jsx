@@ -12,6 +12,7 @@ const Register = () => {
     email: "",
     password: "",
   });
+  const [errorMessage, setErrorMessage] = useState(""); // State variable for error message
 
   const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/signup";
   const router = useRouter();
@@ -26,47 +27,56 @@ const Register = () => {
       ...formData,
       [name]: value,
     });
+    setErrorMessage(""); // Clear error message on input change
   };
 
   // creates a user and redirects to login page
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
-    if (response.ok) {
-      const result = await response.json();
-      console.log(result);
 
-      if (result.status === "success") {
-        router.push("/login");
-      } else {
-        setError(result.message);
-      }
-    } else {
-      const errorText = await response.text();
-      console.error("Error:", errorText);
-      setError("An error occurred. Please try again.");
+    // Client-side validation
+    if (!formData.username || !formData.email || !formData.password) {
+      setErrorMessage("Please fill in all fields.");
+      return;
     }
 
-    console.log("Form submitted:", formData);
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (result.status === "success") {
+        console.log("Registration successful:", result);
+        router.push("/login");
+      } else {
+        console.log("Registration failed:", result.message);
+        setErrorMessage(result.message); // Display the error message from backend
+      }
+    } catch (error) {
+      console.log("Error:", error);
+      setErrorMessage("An unexpected error occurred. Please try again.");
+    }
   };
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <div className="bg-gradient-to-r from-gradientstart to-gradientend pb-0">
         <section className="mx-auto flex flex-col justify-center items-center pt-32">
-          <section className="relative z-10 w-full max-w-md p-8 space-y-4">
+          <section className="relative z-10 w-full max-w-md p-8 space-y-4 text-white">
             <h2 className="text-2xl font-bold text-center text-white">
               SIGN UP
             </h2>
             <form onSubmit={handleSubmit} className="space-y-1">
               <div>
-                <FormLabel htmlFor="username">Name:</FormLabel>
+                <FormLabel className="text-white" htmlFor="username">
+                  Name:
+                </FormLabel>
                 <Input
                   type="text"
                   id="username"
@@ -77,7 +87,9 @@ const Register = () => {
                 />
               </div>
               <div>
-                <FormLabel htmlFor="email">Email:</FormLabel>
+                <FormLabel className="text-white" htmlFor="email">
+                  Email:
+                </FormLabel>
                 <Input
                   type="email"
                   id="email"
@@ -88,7 +100,9 @@ const Register = () => {
                 />
               </div>
               <div>
-                <FormLabel htmlFor="password">Password:</FormLabel>
+                <FormLabel className="text-white" htmlFor="password">
+                  Password:
+                </FormLabel>
                 <Input
                   type="password"
                   id="password"
@@ -98,11 +112,20 @@ const Register = () => {
                   required
                 />
               </div>
-              <div className="flex flex-col items-center mt-4 space-y-2 pt-6">
-                <Button
-                  variant="secondary"
-                  type="submit"
+
+              {/* Display error message here */}
+              {errorMessage && (
+                <div
+                  className="text-white text-sm mt-2"
+                  role="alert"
+                  aria-live="assertive"
                 >
+                  {errorMessage}
+                </div>
+              )}
+
+              <div className="flex flex-col items-center mt-4 space-y-2 pt-6">
+                <Button variant="secondary" type="submit">
                   Sign up
                 </Button>
                 <p className="text-center">
@@ -117,7 +140,9 @@ const Register = () => {
         </section>
       </div>
       <GradientCurve />
-    </>
+      {/* Dynamic Section Below the Gradient Curve */}
+      <section className="flex-grow bg-page-background"/>
+    </div>
   );
 };
 

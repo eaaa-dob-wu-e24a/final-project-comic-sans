@@ -2,6 +2,7 @@
 header("Access-Control-Allow-Origin: http://localhost:3000");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
+
 require_once __DIR__ . "/../../../database/dbconn.php";
 
 // Check connection
@@ -21,6 +22,22 @@ if (empty($name) || empty($email) || empty($password)) {
     exit();
 }
 
+// Check if email already exists
+$sql = "SELECT Email FROM Eventually_User WHERE Email = ?";
+$stmt = $mysqli->prepare($sql);
+$stmt->bind_param("s", $email);
+$stmt->execute();
+$stmt->store_result();
+
+if ($stmt->num_rows > 0) {
+    echo json_encode(["status" => "error", "message" => "Email already registered."]);
+    $stmt->close();
+    $mysqli->close();
+    exit();
+}
+
+$stmt->close();
+
 // Hash the password
 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
@@ -32,7 +49,7 @@ $stmt->bind_param("sss", $name, $email, $hashed_password);
 if ($stmt->execute()) {
     echo json_encode(["status" => "success", "message" => "User registered successfully."]);
 } else {
-    echo json_encode(["status" => "error", "message" => "Error: " . $stmt->error]);
+    echo json_encode(["status" => "error", "message" => "Registration failed. Please try again."]);
 }
 
 // Close connection

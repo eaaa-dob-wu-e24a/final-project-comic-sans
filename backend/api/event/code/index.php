@@ -15,8 +15,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 // Extract joincode from the URL path
-$url = $_SERVER['REQUEST_URI']; // Full URL, e.g., /api/event/code/TGWQ3145
-$urlComponents = explode('/', $url); // Split into parts
+$url = $_SERVER['REQUEST_URI']; 
+$urlComponents = explode('/', $url); 
 $joinCode = end($urlComponents); // Get the last part (the joincode)
 
 // Validate joincode

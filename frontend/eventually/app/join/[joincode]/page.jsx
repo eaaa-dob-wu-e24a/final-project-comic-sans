@@ -46,7 +46,7 @@ export default function JoinEventPage() {
     // Fetch event data based on joincode
     useEffect(() => {
         const fetchEventData = async () => {
-            if (joincode && loggedInUser.userId !== null) {
+            if (joincode) {
                 try {
                     console.log(
                         "Fetching event data from:",

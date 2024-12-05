@@ -1,77 +1,90 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import EventDetail from "@/components/event-detail";
 import EventDateDetailCard from "@/components/event-date-detail-card";
 
-export default function EventPage() {
-    const { joincode } = useParams(); // Get joincode from URL
-    const router = useRouter(); // For handling redirection
+export default function JoinEventPage() {
+    const { joincode } = useParams(); // Extract joincode from the URL
+    console.log("Join code from URL:", joincode); // Debug joincode value
+
     const [event, setEvent] = useState(null);
+    const [eventId, setEventId] = useState(null); // Store eventId separately
     const [loading, setLoading] = useState(true);
     const [loggedInUser, setLoggedInUser] = useState({
         userId: null,
         username: "",
     });
-    const [error, setError] = useState(null); // For handling errors (invalid session, event not found)
 
     // Fetch the logged-in user's data
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/check_session`, {
-                    method: "GET",
-                    credentials: "include", // Include credentials for session
-                });
-
-                if (!res.ok) {
-                    // Handle error if user is not authenticated
-                    setError("Please log in to join an event.");
-                    return;
-                }
-
+                const res = await fetch(
+                    `${process.env.NEXT_PUBLIC_API_URL}/api/user/check_session`,
+                    {
+                        method: "GET",
+                        credentials: "include", // Ensure cookies are sent
+                    }
+                );
                 const userData = await res.json();
+
                 setLoggedInUser({
                     userId: userData.user.id,
                     username: userData.user.name,
                 });
+                console.log("Logged-in user:", userData);
             } catch (err) {
                 console.error("Failed to fetch user data:", err);
-                setError("An error occurred. Please try again later.");
             }
         };
 
         fetchUserData();
     }, []);
 
-    // Fetch event data based on the joincode
+    // Fetch event data based on joincode
     useEffect(() => {
-        if (!joincode) {
-            setError("Event not found.");
-            return;
-        }
-
         const fetchEventData = async () => {
             if (joincode && loggedInUser.userId !== null) {
                 try {
-                    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/event/code?joincode=${joincode}`, {
-                        method: "GET",
-                        headers: { "Content-Type": "application/json" },
-                    });
+                    console.log(
+                        "Fetching event data from:",
+                        `${process.env.NEXT_PUBLIC_API_URL}/api/event/code/${joincode}`
+                    );
+
+                    const res = await fetch(
+                        `${process.env.NEXT_PUBLIC_API_URL}/api/event/code/${joincode}`, // Path-based URL
+                        {
+                            method: "GET",
+                            headers: { "Content-Type": "application/json" },
+                            credentials: "include",
+                        }
+                    );
 
                     if (!res.ok) {
-                        // Handle the case where the event is not found
-                        setError("No event found with the provided join code.");
-                        return;
+                        const error = await res.json();
+                        console.error("Error from backend:", error);
+                        throw new Error(error.Error || "Failed to fetch event data.");
                     }
 
                     const data = await res.json();
+                    console.log("Event data fetched:", data);
 
-                    // Update event data with selected state for dates
+                    if (!data || !data.EventDates) {
+                        console.error("Invalid event data received:", data);
+                        throw new Error("Event data is invalid.");
+                    }
+
+                    // Store eventId from response
+                    setEventId(data.PK_ID);
+
+                    // Recalculate selected state
                     const eventDatesWithVotes = data.EventDates.map((date) => {
                         const userVoted = date.UserVotes.some(
-                            (vote) => parseInt(vote.FK_User, 10) === parseInt(loggedInUser.userId, 10)
+                            (vote) =>
+                                parseInt(vote.FK_User, 10) ===
+                                parseInt(loggedInUser.userId, 10)
                         );
                         return { ...date, selected: userVoted };
                     });
@@ -79,8 +92,7 @@ export default function EventPage() {
                     setEvent({ ...data, EventDates: eventDatesWithVotes });
                     setLoading(false);
                 } catch (err) {
-                    console.error("Failed to fetch event data:", err);
-                    setError("Failed to load event details.");
+                    console.error("Error fetching event data:", err);
                 }
             }
         };
@@ -88,7 +100,7 @@ export default function EventPage() {
         fetchEventData();
     }, [joincode, loggedInUser.userId]);
 
-    // Handle voting on event dates
+    // Handle date click logic
     const handleEventClick = async (index) => {
         const selectedDate = event.EventDates[index];
         const isCurrentlySelected = selectedDate.selected;
@@ -98,12 +110,14 @@ export default function EventPage() {
                 ? `${process.env.NEXT_PUBLIC_API_URL}/api/vote/delete`
                 : `${process.env.NEXT_PUBLIC_API_URL}/api/vote/create`;
 
+            console.log("Submitting vote with eventId:", eventId);
+
             const res = await fetch(url, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                credentials: "include",
+                credentials: "include", // Send credentials to server
                 body: JSON.stringify({
-                    eventId: event.PK_ID, // Use event's PK_ID for voting
+                    eventId, // Use eventId retrieved from join endpoint
                     dateId: selectedDate.PK_ID,
                     userId: loggedInUser.userId,
                 }),
@@ -113,11 +127,12 @@ export default function EventPage() {
                 throw new Error("Failed to update vote");
             }
 
-            // Update the event dates with the new vote state
+            // Update the UserVotes array and selected state
             const updatedUserVotes = isCurrentlySelected
                 ? selectedDate.UserVotes.filter(
                     (vote) =>
-                        parseInt(vote.FK_User, 10) !== parseInt(loggedInUser.userId, 10)
+                        parseInt(vote.FK_User, 10) !==
+                        parseInt(loggedInUser.userId, 10)
                 )
                 : [
                     ...selectedDate.UserVotes,
@@ -136,13 +151,11 @@ export default function EventPage() {
 
             setEvent({ ...event, EventDates: updatedDates });
         } catch (err) {
-            console.error(err);
-            setError("Failed to vote on the date.");
+            console.error("Error updating vote:", err);
         }
     };
 
     if (loading) return <p>Loading...</p>;
-    if (error) return <p className="text-red-500">{error}</p>; // Show error if there's any issue
 
     return (
         <main>

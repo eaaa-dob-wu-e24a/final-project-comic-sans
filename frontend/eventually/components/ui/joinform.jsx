@@ -1,4 +1,4 @@
-"use client";  // This directive is necessary for the client-side rendering.
+"use client"; // This directive is necessary for the client-side rendering.
 
 import { useState } from "react";
 import { useRouter } from "next/navigation"; // Import useRouter
@@ -7,19 +7,22 @@ import Button from "./button";
 export default function JoinForm() {
   const [joinCode, setJoinCode] = useState(""); // State for join code
   const [error, setError] = useState(null); // State for error messages
-  const [eventData, setEventData] = useState(null); // State for event data
+  const [loading, setLoading] = useState(false); // State for loading indicator
 
-  const joinEvent = process.env.NEXT_PUBLIC_API_URL + '/api/event/code?joincode=' + joinCode.toUpperCase();
   const router = useRouter(); // Initialize useRouter
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent form from reloading the page
 
-    setError(null); // Reset any previous errors
-    setEventData(null); // Clear previous event data
+    // Reset state
+    setError(null);
+    setLoading(true);
 
     try {
-      // Fetch the event data from the backend
+      // Construct the API endpoint
+      const joinEvent = `${process.env.NEXT_PUBLIC_API_URL}/api/event/code/${joinCode.toUpperCase()}`;
+
+      // Fetch the event data
       const response = await fetch(joinEvent, {
         method: "GET",
         credentials: "include", // Include cookies for authentication if needed
@@ -29,18 +32,22 @@ export default function JoinForm() {
         // Handle errors from the backend
         const errorData = await response.json();
         setError(errorData.Error || "Failed to fetch the event.");
+        setLoading(false);
         return;
       }
 
       // Parse the event data
       const data = await response.json();
-      setEventData(data); // Save the event data in state
+      console.log("Event data fetched:", data); // Debug fetched data
 
-      // After successful event fetch, redirect to the event page
-      router.push(`/join/${joinCode.toUpperCase()}`); // Redirect to the event's page
+      // Redirect to the event's page after successful fetch
+      router.push(`/join/${joinCode.toUpperCase()}`);
 
     } catch (err) {
+      console.error("Error during join process:", err);
       setError("Something went wrong. Please try again later.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -56,38 +63,19 @@ export default function JoinForm() {
           name="joincode"
           id="joincode"
           value={joinCode}
-          onChange={(e) => setJoinCode(e.target.value)} // Update state with input value
+          onChange={(e) => setJoinCode(e.target.value.toUpperCase())} // Automatically convert input to uppercase
         />
-        <Button className="mt-[-3.125rem] h-11 mb-6 mr-2 place-self-end relative" type="submit">
-          Join
+        <Button
+          className="mt-[-3.125rem] h-11 mb-6 mr-2 place-self-end relative"
+          type="submit"
+          disabled={loading || joinCode.length !== 8} // Disable button when loading or joinCode is invalid
+        >
+          {loading ? "Loading..." : "Join"}
         </Button>
       </form>
 
       {/* Display Error */}
       {error && <div className="text-red-500 mt-4 text-center">{error}</div>}
-
-      {/* Display Event Data (Optional) */}
-      {eventData && (
-        <div className="mt-6 p-4 border rounded-lg shadow-lg">
-          <h2 className="text-xl font-bold">{eventData.Name}</h2>
-          <p className="text-gray-700 mt-2">{eventData.Description}</p>
-          <ul className="mt-4">
-            {eventData.EventDates.map((date) => (
-              <li key={date.PK_ID} className="mt-2">
-                <strong>Date:</strong> {new Date(date.DateTimeStart).toLocaleString()} -{" "}
-                {new Date(date.DateTimeEnd).toLocaleString()}
-                <ul className="ml-4 mt-1">
-                  {date.UserVotes.map((vote) => (
-                    <li key={vote.VoteID}>
-                      {vote.UserName}: {vote.Status}
-                    </li>
-                  ))}
-                </ul>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
     </div>
   );
 }

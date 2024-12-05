@@ -101,21 +101,21 @@ export default function EventPage() {
       // Update the UserVotes array and selected state
       const updatedUserVotes = isCurrentlySelected
         ? selectedDate.UserVotes.filter(
-            (vote) =>
-              parseInt(vote.FK_User, 10) !== parseInt(loggedInUser.userId, 10)
-          )
+          (vote) =>
+            parseInt(vote.FK_User, 10) !== parseInt(loggedInUser.userId, 10)
+        )
         : [
-            ...selectedDate.UserVotes,
-            { UserName: loggedInUser.username, FK_User: loggedInUser.userId },
-          ];
+          ...selectedDate.UserVotes,
+          { UserName: loggedInUser.username, FK_User: loggedInUser.userId },
+        ];
 
       const updatedDates = event.EventDates.map((date, i) =>
         i == index
           ? {
-              ...date,
-              UserVotes: updatedUserVotes,
-              selected: !isCurrentlySelected,
-            }
+            ...date,
+            UserVotes: updatedUserVotes,
+            selected: !isCurrentlySelected,
+          }
           : date
       );
 

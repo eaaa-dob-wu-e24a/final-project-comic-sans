@@ -24,10 +24,10 @@ const qrCode = new QRCodeStyling({
   width: 280,
   height: 280,
   type: "svg",
-  data: "http://localhost:3000/join/",
+  data: "http://localhost:3000/join/" + code,
   dotsOptions: {
     color: "hsl(244 38% 30%)",
-    type: "dots",
+    type: "square",
   },
   backgroundOptions: {
     color: "transparent",
@@ -40,18 +40,35 @@ const qrCode = new QRCodeStyling({
 
 qrCode.append(document.getElementById("canvas"));
 
-async function getEventInfo(id) {
+async function getEventInfo(joincode) {
   try {
-    const response = await fetch(apiURL + "/event/id/" + id);
+    const response = await fetch(apiURL + "/event/code/" + joincode);
     const data = await response.json();
     codeElement.innerText = data["JoinCode"];
     title.innerText = data["Title"];
     loc.innerText = data["Location"];
-    time.innerText = data["FinalDate"];
+
+    if (data['FinalDate'] && data['FinalDate'].length > 1) {
+      time.innerText = data["FinalDate"];
+    } else {
+      time.innerText = "Awaiting votes for final date..."
+    }
+
     console.log(data);
   } catch (error) {
     console.error(error);
   }
 }
 
-getEventInfo(55);
+getEventInfo(code);
+
+async function copyText() {
+  try {
+    await navigator.clipboard.writeText(code);
+    const icon = document.getElementById("copyicon")
+    icon.src = 'assets/check.svg'
+    console.log('copied "' + code + '" to clipboard')
+  } catch (error) {
+    console.error('failed to copy text: ' + error)
+  }
+}

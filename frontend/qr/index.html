@@ -12,15 +12,35 @@
   </head>
   <body>
     <div>
-      <h1 id="title">Event Title</h1>
-      <p id="time">Event date</p>
-      <p id="location">Location</p>
-      <p id="joincode">event Code</p>
-    </div>
-    <div id="canvas"></div>
+      <h1 id="title">Loading event info...</h1>
 
-    <div>
-      <button id="toevent">To event ▶</button>
+
+
+
+      <div class="code-container margin-container">
+        <img class="icon" src="assets/pin.svg" alt="" />
+        <p id="location"></p>
+      </div>
+
+      <div class="code-container margin-container">
+        <img class="icon" src="assets/clock.svg" alt="" />
+        <p id="time">Awaiting final date...</p>
+      </div>
+
+      <div class="margin-container">
+        <p class="faded">Event Code</p>
+        <div class="code-container">
+          <p id="joincode">loading...</p>
+          <button class="copybutton faded" onclick="copyText()">
+            <img src="assets/copy.svg" id="copyicon" alt="" />
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="margin-container">
+      <div id="canvas"></div>
+      <button class="button" id="toevent">To event ▶</button>
     </div>
     <footer>
       <p class="faded">powered by</p>

@@ -1,6 +1,19 @@
 import Button from "./ui/button";
 
 export default function EventDetail({ event }) {
+  const handleShare = () => {
+    const link = `http://localhost:3000/join/${event?.JoinCode}`;
+    navigator.clipboard
+      .writeText(link)
+      .then(() => {
+        alert("Link copied to clipboard!");
+      })
+      .catch((err) => {
+        console.error("Failed to copy the link: ", err);
+        alert("Failed to copy the link. Please try again.");
+      });
+  };
+
   return (
     <div>
       <div className="flex place-content-between">
@@ -9,7 +22,9 @@ export default function EventDetail({ event }) {
           <p className="place-self-center text-2xl font-bold">
             Join code: {event?.JoinCode}{" "}
           </p>
-          <Button>Share</Button>
+          <Button onClick={handleShare}>
+            Share
+          </Button>
         </div>
       </div>
 
@@ -22,7 +37,7 @@ export default function EventDetail({ event }) {
       <h2 className="text-primary font-bold">Description </h2>
 
       <div className="shadow-md p-4 rounded-xl">
-        <p> {event?.Description}</p>
+        <p>{event?.Description}</p>
       </div>
     </div>
   );

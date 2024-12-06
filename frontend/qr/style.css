@@ -1,0 +1,133 @@
+:root {
+  /*Light theme colors*/
+  --background: #ffffff;
+  --page-background: #fbf9fa;
+  --foreground: #171717;
+  --gradient-start: hsl(244 38% 42%);
+  --gradient-end: hsl(353 62% 55%);
+  --secondary: hsl(244 38% 42%);
+  --primary: hsl(353 62% 55%);
+  --dark: #171717;
+  --gradient: linear-gradient(
+    to right,
+    var(--gradient-start),
+    var(--gradient-end)
+  );
+}
+
+* {
+  margin: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #23203b;
+    --page-background: #1a192c;
+    --foreground: #ffffff;
+  }
+}
+
+@font-face {
+  font-family: "montserrat";
+  src: url("assets/Montserrat-VariableFont_wght.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "dancingscript";
+  src: url("assets/DancingScript-VariableFont_wght.ttf") format("truetype");
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  text-align: center;
+  font-family: "montserrat";
+  background-image: var(--gradient);
+  display: flex;
+  flex-direction: column;
+  place-content: space-around;
+  min-height: 100svh;
+}
+
+#canvas {
+  background-color: rgba(255, 255, 255, 0.505);
+  margin-inline: auto;
+  width: fit-content;
+  min-width: 280px;
+
+  height: fit-content;
+  min-height: 280px;
+  padding: 1rem;
+  border-radius: 1rem;
+  box-shadow: 0rem 0.5rem 0.5rem rgba(0, 0, 0, 0.25);
+}
+
+.logo-container {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+
+  max-width: fit-content;
+  margin-inline: auto;
+
+  font-family: "dancingscript";
+  font-size: 2.5rem;
+}
+
+.logo {
+  height: 3rem;
+}
+
+a {
+  text-decoration: none;
+  color: white;
+}
+
+.button {
+  text-transform: uppercase;
+  cursor: pointer;
+  font-weight: bold;
+  border: none;
+  border-radius: 2rem;
+  font-size: 1.5rem;
+  padding: 1rem 2rem;
+  color: white;
+  background-color: var(--secondary);
+  box-shadow: 0rem 0.25rem 0.25rem rgba(0, 0, 0, 0.25);
+  margin-top: 2rem;
+}
+
+.faded {
+  color: white;
+  opacity: 0.75;
+}
+
+.copybutton {
+  background: none;
+  cursor: pointer;
+  border: none;
+}
+
+.copybutton img {
+  height: 2rem;
+}
+
+#joincode {
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.code-container {
+  display: flex;
+  flex-direction: row;
+  place-content: center;
+  gap: 0.5rem;
+}
+
+.margin-container {
+  margin-block: 1rem;
+}
+
+.icon {
+  height: 1.5rem;
+}

@@ -12,6 +12,7 @@ export default function EventPage() {
   const [loggedInUser, setLoggedInUser] = useState({
     userId: null,
     username: "",
+    imagePath: "", // Added imagePath to store the user's avatar path
   });
 
   // Fetch the logged-in user's data
@@ -27,10 +28,10 @@ export default function EventPage() {
         );
         const userData = await res.json();
 
-        // Map the response to match the loggedInUser state structure
         setLoggedInUser({
-          userId: userData.user.id, // Map 'id' to 'userId'
-          username: userData.user.name, // Map 'name' to 'username'
+          userId: userData.user.id,
+          username: userData.user.name,
+          imagePath: userData.user.imagePath, // Ensure avatar is captured
         });
       } catch (err) {
         console.error("Failed to fetch user data:", err);
@@ -40,7 +41,7 @@ export default function EventPage() {
     fetchUserData();
   }, []);
 
-  //fetch event data
+  // Fetch event data
   useEffect(() => {
     const fetchEventData = async () => {
       if (eventId && loggedInUser.userId !== null) {
@@ -73,7 +74,7 @@ export default function EventPage() {
     fetchEventData();
   }, [eventId, loggedInUser.userId]);
 
-  // Define handleEventClick
+  // Handle event date selection
   const handleEventClick = async (index) => {
     const selectedDate = event.EventDates[index];
     const isCurrentlySelected = selectedDate.selected;
@@ -101,21 +102,25 @@ export default function EventPage() {
       // Update the UserVotes array and selected state
       const updatedUserVotes = isCurrentlySelected
         ? selectedDate.UserVotes.filter(
-            (vote) =>
-              parseInt(vote.FK_User, 10) !== parseInt(loggedInUser.userId, 10)
-          )
+          (vote) =>
+            parseInt(vote.FK_User, 10) !== parseInt(loggedInUser.userId, 10)
+        )
         : [
             ...selectedDate.UserVotes,
-            { UserName: loggedInUser.username, FK_User: loggedInUser.userId },
+            {
+              UserName: loggedInUser.username,
+              FK_User: loggedInUser.userId,
+              UserImagePath: loggedInUser.imagePath,
+            },
           ];
 
       const updatedDates = event.EventDates.map((date, i) =>
-        i == index
+        i === index
           ? {
-              ...date,
-              UserVotes: updatedUserVotes,
-              selected: !isCurrentlySelected,
-            }
+            ...date,
+            UserVotes: updatedUserVotes,
+            selected: !isCurrentlySelected,
+          }
           : date
       );
 

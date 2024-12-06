@@ -1,6 +1,6 @@
 <?php
 // Include necessary headers for CORS
-header("Access-Control-Allow-Origin: http://localhost:3000");
+header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
@@ -15,8 +15,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 // Extract joincode from the URL path
-$url = $_SERVER['REQUEST_URI']; 
-$urlComponents = explode('/', $url); 
+$url = $_SERVER['REQUEST_URI']; // Full URL, e.g., /api/event/code/TGWQ3145
+$urlComponents = explode('/', $url); // Split into parts
 $joinCode = end($urlComponents); // Get the last part (the joincode)
 
 // Validate joincode

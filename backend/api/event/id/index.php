@@ -1,6 +1,6 @@
 <?php
 // Include necessary headers for CORS
-header("Access-Control-Allow-Origin: http://localhost:3000");
+header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Credentials: true"); // Allow credentials
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
@@ -45,13 +45,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                     v.PK_ID AS VoteID,
                     v.FK_User,
                     v.Status,
-                    v.UserName
+                    v.UserName,
+                    u.ImagePath AS UserImagePath
                 FROM 
                     Eventually_Event_Dates d
                 LEFT JOIN 
                     Eventually_Event_User_Voting v
                 ON 
                     d.PK_ID = v.FK_Event_Dates
+                LEFT JOIN 
+                    Eventually_User u
+                ON 
+                    v.FK_User = u.PK_ID
                 WHERE 
                     d.FK_Event = $id
             ";
@@ -77,7 +82,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                         "VoteID" => $row['VoteID'],
                         "FK_User" => $row['FK_User'],
                         "Status" => $row['Status'],
-                        "UserName" => $row['UserName']
+                        "UserName" => $row['UserName'],
+                        "UserImagePath" => $row['UserImagePath']
                     ];
                 }
             }

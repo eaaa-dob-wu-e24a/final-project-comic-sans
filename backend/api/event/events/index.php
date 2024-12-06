@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $user_id = intval($_SESSION['user']['id']);
 
     // Prepare the SQL query to fetch events not owned by the user
-    $stmt = $mysqli->prepare("SELECT * FROM Eventually_Event WHERE FK_Owner_UserID != ?");
+    $stmt = $mysqli->prepare("SELECT * FROM Eventually_Event WHERE FK_Owner_UserID != ? OR FK_Owner_UserID IS NULL");
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
     $eventsResult = $stmt->get_result();
@@ -47,6 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         while ($event = $eventsResult->fetch_assoc()) {
             // Fetch associated dates for each event
             $event_id = $event['PK_ID'];
+            //? is the placeholder for the event_id
             $dateStmt = $mysqli->prepare("SELECT * FROM Eventually_Event_Dates WHERE FK_Event = ?");
             $dateStmt->bind_param("i", $event_id);
             $dateStmt->execute();

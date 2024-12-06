@@ -7,8 +7,7 @@ import DateCard from "./event-date-card";
 import Arrow from "./ui/arrow";
 import Loading from "./ui/loading-spinner";
 
-
-export default function AllEventList({maxEvents}) {
+export default function AllEventList({ maxEvents }) {
   const url = process.env.NEXT_PUBLIC_API_URL + "/api/event/events";
   const urlSingle = process.env.NEXT_PUBLIC_API_URL + "/api/event/";
 
@@ -73,10 +72,17 @@ export default function AllEventList({maxEvents}) {
     <section className="mx-auto flex flex-col gap-4 bg-background p-6 my-12 rounded-2xl shadow-md">
       <div className="flex place-content-between align-center flex-row">
         <h2 className="text-xl font-bold">Participating Events</h2>
-        <Link href="/dashboard/event" className="flex flex-row gap-2 font-bold">
-          All
-          <Arrow className="-rotate-90 mt-1"></Arrow>
-        </Link>
+        {maxEvents && maxEvents > 0 ? (
+          <Link
+            href="/dashboard/event/participating"
+            className="flex flex-row gap-2 font-bold"
+          >
+            All
+            <Arrow className="-rotate-90 mt-1"></Arrow>
+          </Link>
+        ) : (
+          <div></div>
+        )}
       </div>
       {loading ? (
         <Loading></Loading>

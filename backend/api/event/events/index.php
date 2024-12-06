@@ -47,6 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         while ($event = $eventsResult->fetch_assoc()) {
             // Fetch associated dates for each event
             $event_id = $event['PK_ID'];
+            //? is the placeholder for the event_id
             $dateStmt = $mysqli->prepare("SELECT * FROM Eventually_Event_Dates WHERE FK_Event = ?");
             $dateStmt->bind_param("i", $event_id);
             $dateStmt->execute();

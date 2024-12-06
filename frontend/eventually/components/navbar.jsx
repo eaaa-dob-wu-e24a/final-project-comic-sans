@@ -44,24 +44,29 @@ export default function Navbar() {
           <>
             <Link
               href="/login"
-              className={`flex items-center w-20 whitespace-nowrap ${isLoginPage ? "font-bold" : ""
-                }`}
+              className={`flex items-center w-20 whitespace-nowrap ${
+                isLoginPage ? "font-bold" : ""
+              }`}
             >
               LOGIN
             </Link>
             <Link
               href="/signup"
-              className={`flex items-center w-20 whitespace-nowrap ${isSignupPage ? "font-bold" : ""
-                }`}
+              className={`flex items-center w-20 whitespace-nowrap ${
+                isSignupPage ? "font-bold" : ""
+              }`}
             >
               SIGN UP
             </Link>
 
             <Link href="/createEvent">
-              <Button label="CREATE EVENT" className="bg-secondary hover:bg-secondary-hover transition-all duration-200">Create Event
+              <Button
+                label="CREATE EVENT"
+                className="bg-secondary hover:bg-secondary-hover transition-all duration-200"
+              >
+                Create Event
               </Button>
             </Link>
-
           </>
         )}
       </div>

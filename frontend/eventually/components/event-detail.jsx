@@ -2,7 +2,7 @@ import Button from "./ui/button";
 
 export default function EventDetail({ event }) {
   const handleShare = () => {
-    const link = `http://localhost:3000/join/${event?.JoinCode}`;
+    const link = `http://final-project-comic-sans-fork.vercel.app/join/${event?.JoinCode}`;
     navigator.clipboard
       .writeText(link)
       .then(() => {
@@ -22,9 +22,7 @@ export default function EventDetail({ event }) {
           <p className="place-self-center text-2xl font-bold">
             Join code: {event?.JoinCode}{" "}
           </p>
-          <Button onClick={handleShare}>
-            Share
-          </Button>
+          <Button onClick={handleShare}>Share</Button>
         </div>
       </div>
 

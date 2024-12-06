@@ -68,7 +68,7 @@ export default function EventDateDetailCard({
                   >
                     {startDate.time} - {endDate.time}
                   </p>
-                  {/* Pass checked and onChange props to the Checkbox */}
+                  {/* Checkbox is disabled in ui-component to avoid double creation*/}
                   <Checkbox id={`checkbox-${index}`} checked={date.selected} />
                 </div>
               </li>

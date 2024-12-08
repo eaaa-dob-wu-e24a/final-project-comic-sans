@@ -253,6 +253,13 @@ const CreateEvent = () => {
     setSelectedDates(updatedDates);
   };
 
+  const getDisabledTimes = (dateIndex) => {
+    const allTimes = selectedDates[dateIndex]?.timeSlots.map(
+      (slot) => slot.startTime
+    );
+    return allTimes || [];
+  };
+
   return (
     <main className="flex flex-col min-h-screen bg-sitebackground">
       {/* Header with GradientCurve */}
@@ -375,7 +382,7 @@ const CreateEvent = () => {
                 )}
               </div>
 
-              <div className="w-full lg:w-full space-y-2.5 overflow-y-auto max-h-96 my-1 mx-1">
+              <div className="flex flex-col h-full w-full space-y-2.5 overflow-y-auto max-h-96 my-1 mx-1">
                 {selectedDates.map((item, dateIndex) => (
                   <SelectedDate
                     key={dateIndex}
@@ -385,6 +392,7 @@ const CreateEvent = () => {
                     addTimeSlot={addTimeSlot}
                     removeTimeSlot={removeTimeSlot}
                     handleTimeSlotChange={handleTimeSlotChange}
+                    getDisabledTimes={() => getDisabledTimes(dateIndex)}
                   />
                 ))}
               </div>

@@ -66,7 +66,124 @@ const CreateEvent = () => {
     fetchUserSession(); // Attempt to fetch user data
     fetchJoinCode(); // Fetch join code
   }, []);
+  
+const isToday = (date) => {
+  const today = new Date();
+  return date.toDateString() === today.toDateString();
+};
 
+// Calculate the next available time slot
+const getNextAvailableTime = () => {
+  const now = new Date();
+  const nextMinutes = Math.ceil(now.getMinutes() / 15) * 15; // Round up to the nearest 15 minutes
+  if (nextMinutes === 60) {
+    now.setHours(now.getHours() + 1, 0, 0, 0);
+  } else {
+    now.setMinutes(nextMinutes, 0, 0);
+  }
+  const hour = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+  return `${hour}:${minutes}`;
+};
+
+
+const handleDateSelect = (date) => {
+  // Check if the date is already in selectedDates
+  const exists = selectedDates.some(
+    (item) => item.date.getTime() === date.getTime()
+  );
+
+  let updatedDates;
+  if (exists) {
+    // If the date is already selected, remove it
+    updatedDates = selectedDates.filter(
+      (item) => item.date.getTime() !== date.getTime()
+    );
+  } else {
+    // Add new date with an initial time slot
+    const defaultStartTime = isToday(date) ? getNextAvailableTime() : "12:00"; // Next slot for today, 12:00 otherwise
+    updatedDates = [
+      ...selectedDates,
+      {
+        date: date,
+        timeSlots: [{ startTime: defaultStartTime, duration: 1 }], // Initial time slot
+      },
+    ];
+  }
+
+  // Sort the dates in ascending order
+  updatedDates.sort((a, b) => a.date - b.date);
+
+  setSelectedDates(updatedDates);
+};
+
+const addTimeSlot = (dateIndex) => {
+  const updatedDates = selectedDates.map((dateItem, idx) => {
+    if (idx === dateIndex) {
+      const defaultStartTime = isToday(dateItem.date)
+        ? getNextAvailableTime()
+        : "12:00"; // Next slot for today, 12:00 otherwise
+
+      return {
+        ...dateItem,
+        timeSlots: [
+          ...dateItem.timeSlots,
+          { startTime: defaultStartTime, duration: 1 }, // Set default startTime
+        ],
+      };
+    }
+    return dateItem;
+  });
+
+  setSelectedDates(updatedDates);
+};
+
+
+  const removeTimeSlot = (dateIndex, timeIndex) => {
+    const updatedDates = selectedDates.map((dateItem, idx) => {
+      if (idx === dateIndex) {
+        // Remove the specific time slot
+        const updatedTimeSlots = dateItem.timeSlots.filter(
+          (_, tIdx) => tIdx !== timeIndex
+        );
+
+        // Return updated date item or filter out if no time slots remain
+        return updatedTimeSlots.length > 0
+          ? { ...dateItem, timeSlots: updatedTimeSlots }
+          : null; // Mark for removal
+      }
+      return dateItem;
+    });
+
+    // Filter out dates with no time slots left
+    setSelectedDates(updatedDates.filter(Boolean));
+  };
+
+  // Handle changes in a specific time slot
+  const handleTimeSlotChange = (dateIndex, timeIndex, field, value) => {
+    const updatedDates = selectedDates.map((dateItem, idx) => {
+      if (idx === dateIndex) {
+        const updatedTimeSlots = dateItem.timeSlots.map((timeItem, tIdx) => {
+          if (tIdx === timeIndex) {
+            return { ...timeItem, [field]: value };
+          }
+          return timeItem;
+        });
+        return { ...dateItem, timeSlots: updatedTimeSlots };
+      }
+      return dateItem;
+    });
+    setSelectedDates(updatedDates);
+  };
+
+  const getDisabledTimes = (dateIndex) => {
+    const allTimes = selectedDates[dateIndex]?.timeSlots.map(
+      (slot) => slot.startTime
+    );
+    return allTimes || [];
+  };
+
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -167,97 +284,6 @@ const CreateEvent = () => {
       });
       console.error("Network error:", error);
     }
-  };
-
-  // Handle date selection from the calendar
-  const handleDateSelect = (date) => {
-    // Check if the date is already in selectedDates
-    const exists = selectedDates.some(
-      (item) => item.date.getTime() === date.getTime()
-    );
-
-    let updatedDates;
-    if (exists) {
-      // If the date is already selected, remove it
-      updatedDates = selectedDates.filter(
-        (item) => item.date.getTime() !== date.getTime()
-      );
-    } else {
-      // Add new date with an initial time slot
-      updatedDates = [
-        ...selectedDates,
-        {
-          date: date,
-          timeSlots: [{ startTime: "12:00", duration: 1 }], // Initial time slot
-        },
-      ];
-    }
-
-    // Sort the dates in ascending order
-    updatedDates.sort((a, b) => a.date - b.date);
-
-    setSelectedDates(updatedDates);
-  };
-
-  // Add a new time slot to a specific date
-  const addTimeSlot = (dateIndex) => {
-    const updatedDates = selectedDates.map((dateItem, idx) => {
-      if (idx === dateIndex) {
-        return {
-          ...dateItem,
-          timeSlots: [
-            ...dateItem.timeSlots,
-            { startTime: "12:00", duration: 1 }, // Default values
-          ],
-        };
-      }
-      return dateItem;
-    });
-    setSelectedDates(updatedDates);
-  };
-
-  const removeTimeSlot = (dateIndex, timeIndex) => {
-    const updatedDates = selectedDates.map((dateItem, idx) => {
-      if (idx === dateIndex) {
-        // Remove the specific time slot
-        const updatedTimeSlots = dateItem.timeSlots.filter(
-          (_, tIdx) => tIdx !== timeIndex
-        );
-
-        // Return updated date item or filter out if no time slots remain
-        return updatedTimeSlots.length > 0
-          ? { ...dateItem, timeSlots: updatedTimeSlots }
-          : null; // Mark for removal
-      }
-      return dateItem;
-    });
-
-    // Filter out dates with no time slots left
-    setSelectedDates(updatedDates.filter(Boolean));
-  };
-
-  // Handle changes in a specific time slot
-  const handleTimeSlotChange = (dateIndex, timeIndex, field, value) => {
-    const updatedDates = selectedDates.map((dateItem, idx) => {
-      if (idx === dateIndex) {
-        const updatedTimeSlots = dateItem.timeSlots.map((timeItem, tIdx) => {
-          if (tIdx === timeIndex) {
-            return { ...timeItem, [field]: value };
-          }
-          return timeItem;
-        });
-        return { ...dateItem, timeSlots: updatedTimeSlots };
-      }
-      return dateItem;
-    });
-    setSelectedDates(updatedDates);
-  };
-
-  const getDisabledTimes = (dateIndex) => {
-    const allTimes = selectedDates[dateIndex]?.timeSlots.map(
-      (slot) => slot.startTime
-    );
-    return allTimes || [];
   };
 
   return (

@@ -107,9 +107,9 @@ if (isset($input['currentPassword']) && isset($input['newPassword'])) {
 }
 
 // Prepare the update query with placeholders
-$updateSql = "UPDATE Eventually_User SET Name = ?, Email = ?, Password = ? WHERE PK_ID = ?";
+$updateSql = "UPDATE Eventually_User SET Name = ?, Email = ?, Password = ?, imagePath = ? WHERE PK_ID = ?";
 $updateStmt = $mysqli->prepare($updateSql);
-$updateStmt->bind_param("sssi", $newName, $newEmail, $hashedPassword, $userID);
+$updateStmt->bind_param("ssssi", $newName, $newEmail, $imagePath, $hashedPassword, $userID);
 
 // Execute the update statement
 if ($updateStmt->execute()) {
@@ -127,6 +127,7 @@ if ($updateStmt->execute()) {
             'id' => $updatedUser['PK_ID'],
             'name' => $updatedUser['Name'],
             'email' => $updatedUser['Email'],
+            'imagePath' => $currentUser['ImagePath']
             // Removed password and imagePath
         ];
 

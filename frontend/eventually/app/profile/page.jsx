@@ -130,7 +130,7 @@ export default function Profile() {
     }
 
     // Send data to the backend
-    const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/update";
+    const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/update-details";
     try {
       const response = await fetch(url, {
         method: "PATCH",

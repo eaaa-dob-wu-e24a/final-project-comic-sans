@@ -29,6 +29,15 @@ export default function SelectedDate({
     return times;
   };
 
+  const isPastTime = (time) => {
+    const [hour, minute] = time.split(":").map(Number);
+    const now = new Date();
+    const selectedDate = new Date(date); // `date` is passed as a prop
+    selectedDate.setHours(hour, minute, 0, 0);
+
+    return selectedDate < now;
+  };
+
   const allTimes = generateTimeOptions();
 
   const handleTimeClick = (time, timeIndex) => {
@@ -101,9 +110,11 @@ export default function SelectedDate({
                   {allTimes.map((time) => (
                     <li
                       key={time}
-                      onClick={() => handleTimeClick(time, timeIndex)}
+                      onClick={() =>
+                        !isPastTime(time) && handleTimeClick(time, timeIndex)
+                      }
                       className={`px-4 py-2 text-sm cursor-pointer ${
-                        disabledTimes.includes(time)
+                        disabledTimes.includes(time) || isPastTime(time)
                           ? "text-gray-400 cursor-not-allowed"
                           : "hover:bg-primary hover:text-white"
                       }`}

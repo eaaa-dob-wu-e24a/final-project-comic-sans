@@ -16,32 +16,9 @@ export default function SelectedDate({
 
   const disabledTimes = getDisabledTimes();
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleOutsideClick = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setDropdownOpen(null); // Close the dropdown
-      }
-    };
-
-    document.addEventListener("mousedown", handleOutsideClick);
-    return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
-    };
-  }, []);
-
-  // Generate time options starting from 12:00 in 15-minute intervals
   const generateTimeOptions = () => {
     const times = [];
     for (let hour = 12; hour < 24; hour++) {
-      for (let minute = 0; minute < 60; minute += 15) {
-        const time = `${String(hour).padStart(2, "0")}:${String(
-          minute
-        ).padStart(2, "0")}`;
-        times.push(time);
-      }
-    }
-    for (let hour = 0; hour < 12; hour++) {
       for (let minute = 0; minute < 60; minute += 15) {
         const time = `${String(hour).padStart(2, "0")}:${String(
           minute
@@ -58,6 +35,20 @@ export default function SelectedDate({
     handleTimeSlotChange(dateIndex, timeIndex, "startTime", time);
     setDropdownOpen(null); // Close the dropdown after selection
   };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
 
   return (
     <div className="flex flex-col overflow-visible py-2 px-4 rounded-lg shadow-sm bg-secondary-100 border border-secondary-10">
@@ -103,7 +94,9 @@ export default function SelectedDate({
               {dropdownOpen === timeIndex && (
                 <ul
                   ref={dropdownRef}
-                  className="absolute z-10 mt-3 max-h-40 w-28 overflow-y-auto border rounded-lg bg-white shadow-lg"
+                  className={`absolute z-10 ${
+                    timeIndex === 0 ? "mt-3.5" : "mt-3.75"
+                  } max-h-32 w-28 overflow-y-scroll border rounded-lg bg-white shadow-lg`}
                 >
                   {allTimes.map((time) => (
                     <li
@@ -133,7 +126,7 @@ export default function SelectedDate({
               )}
               <select
                 id={`duration-${dateIndex}-${timeIndex}`}
-                className="block w-24 rounded-full border px-2 py-1 text-sm text-dark leading-5 focus:outline-none focus:ring focus:border-primary"
+                className="block w-24 rounded-full border px-2 py-1 text-sm text-dark leading-5 focus:outline-none focus:none focus:border-primary "
                 value={timeSlot.duration}
                 onChange={(e) => {
                   const numericValue = parseInt(e.target.value, 10);

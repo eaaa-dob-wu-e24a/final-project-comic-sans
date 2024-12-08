@@ -1,14 +1,17 @@
 "use client"; // Ensure this is the very first line
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import GradientCurve from "@/components/gradientcurve";
 import Calendar from "@/components/calendar";
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
 import FormLabel from "@/components/ui/formlabel";
 import SelectedDate from "@/components/selected-date";
+import { AuthContext } from "@/contexts/authcontext";
 
 const CreateEvent = () => {
+  const { user } = useContext(AuthContext);
+
   // State variables
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -22,25 +25,13 @@ const CreateEvent = () => {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL + "/api/event/create";
   const joinCodeEndpoint =
     process.env.NEXT_PUBLIC_API_URL + "/api/code/generate";
-  const userSessionEndpoint =
-    process.env.NEXT_PUBLIC_API_URL + "/api/user/check_session";
 
-  const fetchUserSession = async () => {
-    try {
-      const response = await fetch(userSessionEndpoint, {
-        method: "GET",
-        credentials: "include",
-      });
-      const data = await response.json();
-
-      if (data.status === "success" && data.user) {
-        setUserName(data.user.name); // Set the username if user is logged in
-      }
-    } catch (error) {
-      console.error("Error fetching user session:", error);
-      // Leave userName as an empty string if fetching fails
+  useEffect(() => {
+    if (user) {
+      setUserName(user.name); // Set the username from AuthContext
     }
-  };
+    fetchJoinCode(); // Fetch join code
+  }, [user]);
 
   const fetchJoinCode = async () => {
     try {
@@ -61,83 +52,75 @@ const CreateEvent = () => {
     }
   };
 
-  // Fetch user session and join code on component mount
-  useEffect(() => {
-    fetchUserSession(); // Attempt to fetch user data
-    fetchJoinCode(); // Fetch join code
-  }, []);
-  
-const isToday = (date) => {
-  const today = new Date();
-  return date.toDateString() === today.toDateString();
-};
+  const isToday = (date) => {
+    const today = new Date();
+    return date.toDateString() === today.toDateString();
+  };
 
-// Calculate the next available time slot
-const getNextAvailableTime = () => {
-  const now = new Date();
-  const nextMinutes = Math.ceil(now.getMinutes() / 15) * 15; // Round up to the nearest 15 minutes
-  if (nextMinutes === 60) {
-    now.setHours(now.getHours() + 1, 0, 0, 0);
-  } else {
-    now.setMinutes(nextMinutes, 0, 0);
-  }
-  const hour = String(now.getHours()).padStart(2, "0");
-  const minutes = String(now.getMinutes()).padStart(2, "0");
-  return `${hour}:${minutes}`;
-};
-
-
-const handleDateSelect = (date) => {
-  // Check if the date is already in selectedDates
-  const exists = selectedDates.some(
-    (item) => item.date.getTime() === date.getTime()
-  );
-
-  let updatedDates;
-  if (exists) {
-    // If the date is already selected, remove it
-    updatedDates = selectedDates.filter(
-      (item) => item.date.getTime() !== date.getTime()
-    );
-  } else {
-    // Add new date with an initial time slot
-    const defaultStartTime = isToday(date) ? getNextAvailableTime() : "12:00"; // Next slot for today, 12:00 otherwise
-    updatedDates = [
-      ...selectedDates,
-      {
-        date: date,
-        timeSlots: [{ startTime: defaultStartTime, duration: 1 }], // Initial time slot
-      },
-    ];
-  }
-
-  // Sort the dates in ascending order
-  updatedDates.sort((a, b) => a.date - b.date);
-
-  setSelectedDates(updatedDates);
-};
-
-const addTimeSlot = (dateIndex) => {
-  const updatedDates = selectedDates.map((dateItem, idx) => {
-    if (idx === dateIndex) {
-      const defaultStartTime = isToday(dateItem.date)
-        ? getNextAvailableTime()
-        : "12:00"; // Next slot for today, 12:00 otherwise
-
-      return {
-        ...dateItem,
-        timeSlots: [
-          ...dateItem.timeSlots,
-          { startTime: defaultStartTime, duration: 1 }, // Set default startTime
-        ],
-      };
+  // Calculate the next available time slot
+  const getNextAvailableTime = () => {
+    const now = new Date();
+    const nextMinutes = Math.ceil(now.getMinutes() / 15) * 15; // Round up to the nearest 15 minutes
+    if (nextMinutes === 60) {
+      now.setHours(now.getHours() + 1, 0, 0, 0);
+    } else {
+      now.setMinutes(nextMinutes, 0, 0);
     }
-    return dateItem;
-  });
+    const hour = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    return `${hour}:${minutes}`;
+  };
 
-  setSelectedDates(updatedDates);
-};
+  const handleDateSelect = (date) => {
+    // Check if the date is already in selectedDates
+    const exists = selectedDates.some(
+      (item) => item.date.getTime() === date.getTime()
+    );
 
+    let updatedDates;
+    if (exists) {
+      // If the date is already selected, remove it
+      updatedDates = selectedDates.filter(
+        (item) => item.date.getTime() !== date.getTime()
+      );
+    } else {
+      // Add new date with an initial time slot
+      const defaultStartTime = isToday(date) ? getNextAvailableTime() : "12:00"; // Next slot for today, 12:00 otherwise
+      updatedDates = [
+        ...selectedDates,
+        {
+          date: date,
+          timeSlots: [{ startTime: defaultStartTime, duration: 1 }], // Initial time slot
+        },
+      ];
+    }
+
+    // Sort the dates in ascending order
+    updatedDates.sort((a, b) => a.date - b.date);
+
+    setSelectedDates(updatedDates);
+  };
+
+  const addTimeSlot = (dateIndex) => {
+    const updatedDates = selectedDates.map((dateItem, idx) => {
+      if (idx === dateIndex) {
+        const defaultStartTime = isToday(dateItem.date)
+          ? getNextAvailableTime()
+          : "12:00"; // Next slot for today, 12:00 otherwise
+
+        return {
+          ...dateItem,
+          timeSlots: [
+            ...dateItem.timeSlots,
+            { startTime: defaultStartTime, duration: 1 }, // Set default startTime
+          ],
+        };
+      }
+      return dateItem;
+    });
+
+    setSelectedDates(updatedDates);
+  };
 
   const removeTimeSlot = (dateIndex, timeIndex) => {
     const updatedDates = selectedDates.map((dateItem, idx) => {

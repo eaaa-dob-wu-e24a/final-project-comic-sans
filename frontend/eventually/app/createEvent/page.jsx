@@ -1,3 +1,4 @@
+
 "use client"; // Ensure this is the very first line
 
 import React, { useState, useEffect, useContext } from "react";
@@ -57,7 +58,6 @@ const CreateEvent = () => {
     return date.toDateString() === today.toDateString();
   };
 
-  // Calculate the next available time slot
   const getNextAvailableTime = () => {
     const now = new Date();
     const nextMinutes = Math.ceil(now.getMinutes() / 15) * 15; // Round up to the nearest 15 minutes
@@ -84,113 +84,37 @@ const CreateEvent = () => {
         (item) => item.date.getTime() !== date.getTime()
       );
     } else {
-      // Add new date with an initial time slot
-      const defaultStartTime = isToday(date) ? getNextAvailableTime() : "12:00"; // Next slot for today, 12:00 otherwise
+      const defaultStartTime = isToday(date) ? getNextAvailableTime() : "12:00"; 
       updatedDates = [
         ...selectedDates,
         {
           date: date,
-          timeSlots: [{ startTime: defaultStartTime, duration: 1 }], // Initial time slot
+          timeSlots: [{ startTime: defaultStartTime, duration: 1 }],
         },
       ];
     }
 
-    // Sort the dates in ascending order
     updatedDates.sort((a, b) => a.date - b.date);
 
     setSelectedDates(updatedDates);
   };
 
-  const addTimeSlot = (dateIndex) => {
-    const updatedDates = selectedDates.map((dateItem, idx) => {
-      if (idx === dateIndex) {
-        const defaultStartTime = isToday(dateItem.date)
-          ? getNextAvailableTime()
-          : "12:00"; // Next slot for today, 12:00 otherwise
-
-        return {
-          ...dateItem,
-          timeSlots: [
-            ...dateItem.timeSlots,
-            { startTime: defaultStartTime, duration: 1 }, // Set default startTime
-          ],
-        };
-      }
-      return dateItem;
-    });
-
-    setSelectedDates(updatedDates);
-  };
-
-  const removeTimeSlot = (dateIndex, timeIndex) => {
-    const updatedDates = selectedDates.map((dateItem, idx) => {
-      if (idx === dateIndex) {
-        // Remove the specific time slot
-        const updatedTimeSlots = dateItem.timeSlots.filter(
-          (_, tIdx) => tIdx !== timeIndex
-        );
-
-        // Return updated date item or filter out if no time slots remain
-        return updatedTimeSlots.length > 0
-          ? { ...dateItem, timeSlots: updatedTimeSlots }
-          : null; // Mark for removal
-      }
-      return dateItem;
-    });
-
-    // Filter out dates with no time slots left
-    setSelectedDates(updatedDates.filter(Boolean));
-  };
-
-  // Handle changes in a specific time slot
-  const handleTimeSlotChange = (dateIndex, timeIndex, field, value) => {
-    const updatedDates = selectedDates.map((dateItem, idx) => {
-      if (idx === dateIndex) {
-        const updatedTimeSlots = dateItem.timeSlots.map((timeItem, tIdx) => {
-          if (tIdx === timeIndex) {
-            return { ...timeItem, [field]: value };
-          }
-          return timeItem;
-        });
-        return { ...dateItem, timeSlots: updatedTimeSlots };
-      }
-      return dateItem;
-    });
-    setSelectedDates(updatedDates);
-  };
-
-  const getDisabledTimes = (dateIndex) => {
-    const allTimes = selectedDates[dateIndex]?.timeSlots.map(
-      (slot) => slot.startTime
-    );
-    return allTimes || [];
-  };
-
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Flatten the selectedDates to individual time slots
     const formattedProposedDates = selectedDates.flatMap((item) => {
       const { date, timeSlots } = item;
-
-      // Log the original date object
-      console.log("Original Date Object:", date);
 
       return timeSlots.map(({ startTime, duration }) => {
         const localDateTimeString = `${date.toLocaleDateString(
           "en-CA"
-        )}T${startTime}:00`; // "YYYY-MM-DD" format
-        console.log("Local DateTime String:", localDateTimeString);
+        )}T${startTime}:00`;
 
         const startDateTime = new Date(localDateTimeString);
-        console.log("Adjusted Start DateTime Object:", startDateTime);
 
         const endDateTime = new Date(startDateTime);
         endDateTime.setHours(endDateTime.getHours() + parseInt(duration, 10));
-        console.log("Adjusted End DateTime Object:", endDateTime);
 
-        // Format to save in local time format
         const startLocalTime = `${startDateTime.toLocaleDateString(
           "en-CA"
         )} ${startDateTime.toLocaleTimeString([], {
@@ -204,9 +128,6 @@ const CreateEvent = () => {
           minute: "2-digit",
         })}`;
 
-        console.log("Start Time (Local):", startLocalTime);
-        console.log("End Time (Local):", endLocalTime);
-
         return {
           start: startLocalTime,
           end: endLocalTime,
@@ -214,18 +135,14 @@ const CreateEvent = () => {
       });
     });
 
-    console.log("Formatted Proposed Dates:", formattedProposedDates);
-
     const eventData = {
       title,
       description,
       location,
-      joinCode, // Include the fetched join code
+      joinCode,
       userName,
-      proposedDates: formattedProposedDates, // Now includes all time slots
+      proposedDates: formattedProposedDates,
     };
-
-    console.log("Event Data to be Submitted:", eventData);
 
     try {
       const response = await fetch(apiUrl, {
@@ -234,21 +151,18 @@ const CreateEvent = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(eventData),
-        credentials: "include", // Send cookies with the request if needed for session-based auth
+        credentials: "include",
       });
 
       const data = await response.json();
-
-      console.log("API Response Data:", data);
 
       if (response.ok) {
         setResponseMessage({
           success: true,
           message: "Event created successfully!",
         });
-        fetchJoinCode(); // Fetch a new join code after creating the event
-        setSelectedDates([]); // Reset selected dates after successful submission
-        // Optionally, reset other form fields
+        fetchJoinCode();
+        setSelectedDates([]);
         setTitle("");
         setDescription("");
         setLocation("");
@@ -271,7 +185,6 @@ const CreateEvent = () => {
 
   return (
     <main className="flex flex-col min-h-screen bg-sitebackground">
-      {/* Header with GradientCurve */}
       <GradientCurve className={"max-h-24"}>
         <div className="max-w-6xl mx-auto flex">
           <h1 className="font-bold text-2xl mx-auto max-w-6xl pb-12 text-white">
@@ -280,147 +193,11 @@ const CreateEvent = () => {
         </div>
       </GradientCurve>
 
-      {/* Form Section */}
       <form
         onSubmit={handleSubmit}
         className="max-w-6xl w-full mx-auto p-4 lg:p-8 flex flex-col space-y-8"
       >
-        {/* Event Details Container */}
-        <div className="bg-background p-6 lg:px-32 py-8 rounded-xl drop-shadow">
-          <div className="event-details-container flex flex-col space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="font-bold text-2xl">Add Details</h2>
-              {/* Join Code Section */}
-              <div className="flex justify-end items-center">
-                <div className="text-right text-2xl text-foreground font-bold flex flex-col items-end">
-                  <p className="text-lg font-bold">JOIN CODE</p>
-                  <p className="text-2xl font-bold text-primary">
-                    {joinCode || "Fetching..."}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <FormLabel htmlFor="title" variant="lg">
-                Event Name
-              </FormLabel>
-              <Input
-                type="text"
-                id="title"
-                name="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="What do you want to call the event?"
-                maxLength="30"
-                className="border border-secondary-10 w-full"
-                required
-              />
-            </div>
-
-            <div>
-              <FormLabel htmlFor="userName" variant="lg">
-                Organiser
-              </FormLabel>
-              <Input
-                type="text"
-                id="userName"
-                name="userName"
-                value={userName}
-                onChange={(e) => setUserName(e.target.value)}
-                placeholder="Who is organising this event?"
-                className="border border-secondary-10 w-full"
-                required
-              />
-            </div>
-
-            <div>
-              <FormLabel htmlFor="location" variant="lg">
-                Location
-              </FormLabel>
-              <Input
-                type="text"
-                id="location"
-                name="location"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                placeholder="Location"
-                className="border border-secondary-10 w-full"
-                required
-              />
-            </div>
-
-            <div>
-              <FormLabel htmlFor="description" variant="lg">
-                Description
-              </FormLabel>
-              <textarea
-                id="description"
-                name="description"
-                className="leading-6 rounded-xl w-full mt-1 px-4 py-2 text-black border border-secondary-10 focus:outline-none focus:ring-1 focus:ring-secondary focus:border-secondary"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Description"
-                maxLength="500"
-                required
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Calendar and Selected Dates Container */}
-        <div className="bg-background p-6 lg:px-32 py-8 rounded-xl drop-shadow">
-          <h2 className="font-bold text-2xl mb-4">Add Times</h2>
-
-          <div className="calendar-container flex flex-col lg:flex-row gap-10">
-            {/* Calendar */}
-            <div className="w-full lg:w-1/2">
-              <p className="text-lg font-medium mb-2">Select Dates</p>
-              <Calendar
-                selectedDates={selectedDates}
-                handleDateSelect={handleDateSelect}
-              />
-            </div>
-
-            {/* -------------------------------------------------Selected Dates--------------------------------------------------------- */}
-            <section className="w-full">
-              <div>
-                <FormLabel variant="lg">Selected Dates</FormLabel>
-                {selectedDates.length === 0 && (
-                  <p className="text-gray-500">No dates selected.</p>
-                )}
-              </div>
-
-              <div className="flex flex-col h-full w-full space-y-2.5 overflow-y-auto max-h-96 my-1 mx-1">
-                {selectedDates.map((item, dateIndex) => (
-                  <SelectedDate
-                    key={dateIndex}
-                    date={item.date}
-                    timeSlots={item.timeSlots}
-                    dateIndex={dateIndex}
-                    addTimeSlot={addTimeSlot}
-                    removeTimeSlot={removeTimeSlot}
-                    handleTimeSlotChange={handleTimeSlotChange}
-                    getDisabledTimes={() => getDisabledTimes(dateIndex)}
-                  />
-                ))}
-              </div>
-            </section>
-          </div>
-        </div>
-
-        {/* Response Message */}
-        {responseMessage && (
-          <div
-            className={`mt-4 ${
-              responseMessage.success ? "text-green-500" : "text-red-500"
-            }`}
-          >
-            {responseMessage.message}
-          </div>
-        )}
-
-        {/* Create Event Button - Positioned Outside Both Containers */}
+        {/* Add Form Content */}
         <div className="flex justify-center">
           <Button variant="secondary" type="submit" className="w-48">
             Create Event

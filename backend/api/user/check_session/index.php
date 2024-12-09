@@ -7,13 +7,6 @@ header("Access-Control-Allow-Credentials: true"); // Allow credentials
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 
-// Handle OPTIONS requests for CORS preflight
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200); // Respond OK to preflight
-    exit();
-}
-
-
 session_start();
 
 if (isset($_SESSION['user'])) {

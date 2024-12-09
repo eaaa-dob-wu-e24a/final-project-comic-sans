@@ -1,6 +1,6 @@
 <?php
 // Include necessary headers for CORS
-$allowedOrigins = ["http://final-project-comic-sans-fork.vercel.app", "http://localhost:3001", "http://localhost:3000"];
+$allowedOrigins = ["https://final-project-comic-sans-fork.vercel.app", "http://localhost:3001", "http://localhost:3000"];
 if (isset($_SERVER['HTTP_ORIGIN']) && in_array($_SERVER['HTTP_ORIGIN'], $allowedOrigins)) {
     header("Access-Control-Allow-Origin: " . $_SERVER['HTTP_ORIGIN']);
 }
@@ -11,6 +11,12 @@ header('Content-Type: application/json');
 
 require_once __DIR__ . "/../../../database/dbconn.php";
 
+// Handle preflight OPTIONS request
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
 function showError($msgString)
 {
     $msg = ["status" => "error", "message" => $msgString];
@@ -19,11 +25,6 @@ function showError($msgString)
 
 session_start();
 
-// Handle preflight OPTIONS request
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 

@@ -6,7 +6,7 @@ function getCode() {
 const code = getCode();
 console.log(code);
 
-const baseURL = "http://final-project-comic-sans-fork.vercel.app/";
+const baseURL = "https://final-project-comic-sans-fork.vercel.app/";
 const apiURL = "http://localhost:4000/api";
 
 const title = document.getElementById("title");
@@ -24,7 +24,7 @@ const qrCode = new QRCodeStyling({
   width: 280,
   height: 280,
   type: "svg",
-  data: "http://final-project-comic-sans-fork.vercel.app/join/" + code,
+  data: "https://final-project-comic-sans-fork.vercel.app/join/" + code,
   dotsOptions: {
     color: "hsl(244 38% 30%)",
     type: "square",

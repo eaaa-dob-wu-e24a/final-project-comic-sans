@@ -16,18 +16,19 @@ export default function SelectedDate({
 
   const disabledTimes = getDisabledTimes();
 
-  const generateTimeOptions = () => {
-    const times = [];
-    for (let hour = 12; hour < 24; hour++) {
-      for (let minute = 0; minute < 60; minute += 15) {
-        const time = `${String(hour).padStart(2, "0")}:${String(
-          minute
-        ).padStart(2, "0")}`;
-        times.push(time);
-      }
+const generateTimeOptions = () => {
+  const times = [];
+  for (let hour = 0; hour < 24; hour++) {
+    for (let minute = 0; minute < 60; minute += 15) {
+      const time = `${String(hour).padStart(2, "0")}:${String(minute).padStart(
+        2,
+        "0"
+      )}`;
+      times.push(time);
     }
-    return times;
-  };
+  }
+  return times;
+};
 
   const isPastTime = (time) => {
     const [hour, minute] = time.split(":").map(Number);
@@ -58,6 +59,26 @@ export default function SelectedDate({
       document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, []);
+
+const handleDropdownOpen = (timeIndex) => {
+  setDropdownOpen(dropdownOpen === timeIndex ? null : timeIndex);
+
+  if (dropdownOpen !== timeIndex) {
+    setTimeout(() => {
+      if (dropdownRef.current) {
+        const noonIndex = allTimes.findIndex((time) => time === "12:00");
+        const noonElement = dropdownRef.current.children[noonIndex];
+        if (noonElement) {
+          // Adjust scrollTop to bring "12:00" into view
+          const dropdownHeight = dropdownRef.current.clientHeight;
+          const noonOffset = noonElement.offsetTop;
+          dropdownRef.current.scrollTop =
+            noonOffset - dropdownHeight / 7 + noonElement.offsetHeight / 2;
+        }
+      }
+    }, 0);
+  }
+};
 
   return (
     <div className="flex flex-col overflow-visible py-2 px-4 rounded-lg shadow-sm bg-secondary-100 border border-secondary-10">
@@ -96,20 +117,19 @@ export default function SelectedDate({
                 className="rounded-full border px-2 py-1 text-sm text-dark focus:outline-none focus:none focus:border-primary cursor-pointer"
                 value={timeSlot.startTime}
                 readOnly
-                onClick={() =>
-                  setDropdownOpen(dropdownOpen === timeIndex ? null : timeIndex)
-                }
+                onClick={() => handleDropdownOpen(timeIndex)}
               />
               {dropdownOpen === timeIndex && (
                 <ul
                   ref={dropdownRef}
                   className={`absolute z-10 ${
                     timeIndex === 0 ? "mt-3.5" : "mt-3.75"
-                  } max-h-32 w-28 overflow-y-scroll border rounded-lg bg-white shadow-lg`}
+                  } max-h-40 w-28 overflow-y-scroll border rounded-lg bg-white shadow-lg`}
                 >
                   {allTimes.map((time) => (
                     <li
                       key={time}
+                      data-time={time}
                       onClick={() =>
                         !isPastTime(time) && handleTimeClick(time, timeIndex)
                       }
@@ -129,7 +149,7 @@ export default function SelectedDate({
             <div className="flex flex-col items-start">
               {timeIndex === 0 && (
                 <label
-                  htmlFor={`duration-${dateIndex}-${timeIndex}`}
+                  htmlFor={`durat<ion-${dateIndex}-${timeIndex}`}
                   className="text-xs text-dark"
                 >
                   Duration

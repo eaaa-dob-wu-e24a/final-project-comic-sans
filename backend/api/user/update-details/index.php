@@ -63,6 +63,8 @@ if (!$currentUser) {
 // If no Name/Email is provided, set them to be the old ones
 $newName = isset($input['Name']) ? $input['Name'] : $currentUser['Name'];
 $newEmail = isset($input['Email']) ? $input['Email'] : $currentUser['Email'];
+$imagePath = isset($input['imagePath']) ? $input['imagePath'] : $currentUser['ImagePath']; // Retain current imagePath if not provided
+
 
 // Validate inputs
 if (!filter_var($newEmail, FILTER_VALIDATE_EMAIL)) {
@@ -109,7 +111,7 @@ if (isset($input['currentPassword']) && isset($input['newPassword'])) {
 // Prepare the update query with placeholders
 $updateSql = "UPDATE Eventually_User SET Name = ?, Email = ?, Password = ?, imagePath = ? WHERE PK_ID = ?";
 $updateStmt = $mysqli->prepare($updateSql);
-$updateStmt->bind_param("ssssi", $newName, $newEmail, $imagePath, $hashedPassword, $userID);
+$updateStmt->bind_param("ssssi", $newName, $newEmail, $hashedPassword, $imagePath, $userID);
 
 // Execute the update statement
 if ($updateStmt->execute()) {
@@ -128,7 +130,6 @@ if ($updateStmt->execute()) {
             'name' => $updatedUser['Name'],
             'email' => $updatedUser['Email'],
             'imagePath' => $currentUser['ImagePath']
-            // Removed password and imagePath
         ];
 
         http_response_code(200);

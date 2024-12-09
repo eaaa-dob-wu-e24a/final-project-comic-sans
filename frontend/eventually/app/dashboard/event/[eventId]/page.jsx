@@ -8,6 +8,7 @@ import EventDateDetailCard from "@/components/event-date-detail-card";
 export default function EventPage() {
   const { eventId } = useParams();
   const [event, setEvent] = useState(null);
+  const [usernameInput, setUsernameInput] = useState("");
   const [loading, setLoading] = useState(true);
   const [loggedInUser, setLoggedInUser] = useState({
     userId: null,
@@ -101,7 +102,10 @@ export default function EventPage() {
             body: JSON.stringify({
               eventId,
               dateId: date.PK_ID,
-              userId: loggedInUser.userId,
+              userId: loggedInUser.userId, // Null for non-logged-in users
+              username: loggedInUser.userId
+                ? loggedInUser.username
+                : usernameInput,
             }),
           });
 
@@ -110,9 +114,10 @@ export default function EventPage() {
           // Update UserVotes based on server response
           if (isSelected) {
             date.UserVotes.push({
-              FK_User: loggedInUser.userId,
-              UserName: loggedInUser.username,
-              UserImagePath: loggedInUser.imagePath,
+              FK_User: loggedInUser.userId || null,
+              UserName: loggedInUser.userId
+                ? loggedInUser.username
+                : usernameInput,
             });
           } else {
             date.UserVotes = date.UserVotes.filter(
@@ -143,6 +148,21 @@ export default function EventPage() {
           onPendingSelection={handlePendingSelection}
           loggedInUser={loggedInUser}
         />
+        {/* ADD conditional rendering if only for non logged in users */}
+        <div className="mb-4">
+          <label htmlFor="username" className="block text-gray-700 font-bold">
+            Enter Your Name:
+          </label>
+          <input
+            id="username"
+            type="text"
+            value={usernameInput}
+            onChange={(e) => setUsernameInput(e.target.value)}
+            className="p-2 border border-gray-300 rounded w-full mt-2"
+            placeholder="Your name"
+          />
+        </div>
+
         <div className="mt-8">
           <button
             onClick={confirmSelections}

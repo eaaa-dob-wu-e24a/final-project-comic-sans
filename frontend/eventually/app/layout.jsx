@@ -4,6 +4,8 @@ import Navbar from "../components/navbar";
 import Footer from "../components/footer";
 import { AuthProvider } from "../contexts/authcontext";
 import { NotifProvider } from "@/components/ui/notif";
+import 'react-datepicker/dist/react-datepicker.css'; // Import react-datepicker styles
+
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",

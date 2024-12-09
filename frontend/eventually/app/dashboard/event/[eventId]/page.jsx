@@ -47,7 +47,7 @@ export default function EventPage() {
       if (eventId && loggedInUser.userId !== null) {
         try {
           const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/event/id/${eventId}`,
+            `${process.env.NEXT_PUBLIC_API_URL}/api/event/id/?id=${eventId}`,
             {
               method: "GET",
               headers: { "Content-Type": "application/json" },
@@ -102,9 +102,9 @@ export default function EventPage() {
       // Update the UserVotes array and selected state
       const updatedUserVotes = isCurrentlySelected
         ? selectedDate.UserVotes.filter(
-          (vote) =>
-            parseInt(vote.FK_User, 10) !== parseInt(loggedInUser.userId, 10)
-        )
+            (vote) =>
+              parseInt(vote.FK_User, 10) !== parseInt(loggedInUser.userId, 10)
+          )
         : [
             ...selectedDate.UserVotes,
             {
@@ -117,10 +117,10 @@ export default function EventPage() {
       const updatedDates = event.EventDates.map((date, i) =>
         i === index
           ? {
-            ...date,
-            UserVotes: updatedUserVotes,
-            selected: !isCurrentlySelected,
-          }
+              ...date,
+              UserVotes: updatedUserVotes,
+              selected: !isCurrentlySelected,
+            }
           : date
       );
 

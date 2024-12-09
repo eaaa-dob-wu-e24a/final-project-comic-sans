@@ -20,7 +20,9 @@ export default function JoinForm() {
 
     try {
       // Construct the API endpoint
-      const joinEvent = `${process.env.NEXT_PUBLIC_API_URL}/api/event/code/${joinCode.toUpperCase()}`;
+      const joinEvent = `${
+        process.env.NEXT_PUBLIC_API_URL
+      }/api/event/code/?joincode=${joinCode.toUpperCase()}`;
 
       // Fetch the event data
       const response = await fetch(joinEvent, {
@@ -42,7 +44,6 @@ export default function JoinForm() {
 
       // Redirect to the event's page after successful fetch
       router.push(`/join/${joinCode.toUpperCase()}`);
-
     } catch (err) {
       console.error("Error during join process:", err);
       setError("Something went wrong. Please try again later.");
@@ -57,8 +58,8 @@ export default function JoinForm() {
       <form onSubmit={handleSubmit} className="flex flex-col">
         <input
           type="text"
-          placeholder="JX6S7YA1"
-          maxLength={8}
+          placeholder="JX6S7Y"
+          maxLength={6}
           className="rounded-full h-14 w-full text-background uppercase font-semibold text-4xl py-2 px-8"
           name="joincode"
           id="joincode"

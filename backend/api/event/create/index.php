@@ -4,7 +4,7 @@ require_once __DIR__ . "/../../../database/dbconn.php";
 // Start the session to check if the user is logged in
 session_start();
 
-header("Access-Control-Allow-Origin: http://localhost:3000"); // Only allow specific origin
+header("Access-Control-Allow-Origin: http://final-project-comic-sans-fork.vercel.app"); // Only allow specific origin
 header("Access-Control-Allow-Credentials: true"); // Allow credentials
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
@@ -13,7 +13,7 @@ header('Content-Type: application/json');
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     http_response_code(200); // OK
     header("Access-Control-Allow-Headers: Content-Type, Authorization");
-    header("Access-Control-Allow-Origin: http://localhost:3000"); // Only allow specific origin
+    header("Access-Control-Allow-Origin: http://final-project-comic-sans-fork.vercel.app"); // Only allow specific origin
     exit();
 }
 
@@ -106,7 +106,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Respond with success message after all operations
         http_response_code(201);
         echo json_encode(["message" => "Event and dates created successfully"]);
-
     } catch (mysqli_sql_exception $e) {
         http_response_code(500); // Internal Server Error
         echo json_encode(["error" => "Database error: " . $e->getMessage()]);
@@ -116,5 +115,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     http_response_code(405); // Method Not Allowed
     echo json_encode(["error" => "Method not allowed"]);
 }
-
-?>

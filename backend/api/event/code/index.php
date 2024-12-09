@@ -1,6 +1,6 @@
 <?php
 // Include necessary headers for CORS
-$allowedOrigins = ["http://localhost:3000", "http://localhost:3001"];
+$allowedOrigins = ["http://final-project-comic-sans-fork.vercel.app", "http://localhost:3001"];
 if (isset($_SERVER['HTTP_ORIGIN']) && in_array($_SERVER['HTTP_ORIGIN'], $allowedOrigins)) {
     header("Access-Control-Allow-Origin: " . $_SERVER['HTTP_ORIGIN']);
 }
@@ -18,9 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 // Extract joincode from the URL path
-$url = $_SERVER['REQUEST_URI']; // Full URL, e.g., /api/event/code/TGWQ3145
-$urlComponents = explode('/', $url); // Split into parts
-$joinCode = end($urlComponents); // Get the last part (the joincode)
+$joinCode = isset($_GET['joincode']) ? $_GET['joincode'] : '';
 
 // Validate joincode
 if (empty($joinCode)) {

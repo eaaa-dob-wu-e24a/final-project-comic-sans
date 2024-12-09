@@ -21,12 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    // Fetches the URL of the current page
-    $url = $_SERVER['REQUEST_URI'];
-    // Splits the URL into an array of components
-    $urlComponents = explode('/', $url);
-    // Gets the last component of the URL array e.g., /user/id/1 => 1
-    $id = end($urlComponents);
+    // Get the 'id' parameter from the query string
+    $id = isset($_GET['id']) ? intval($_GET['id']) : null;
 
     if ($id) {
         $eventQuery = "SELECT * FROM Eventually_Event WHERE PK_ID = $id";

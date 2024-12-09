@@ -6,7 +6,7 @@ function getCode() {
 const code = getCode();
 console.log(code);
 
-const baseURL = "http://localhost:3000/";
+const baseURL = "http://final-project-comic-sans-fork.vercel.app/";
 const apiURL = "http://localhost:4000/api";
 
 const title = document.getElementById("title");
@@ -24,7 +24,7 @@ const qrCode = new QRCodeStyling({
   width: 280,
   height: 280,
   type: "svg",
-  data: "http://localhost:3000/join/" + code,
+  data: "http://final-project-comic-sans-fork.vercel.app/join/" + code,
   dotsOptions: {
     color: "hsl(244 38% 30%)",
     type: "square",
@@ -42,16 +42,16 @@ qrCode.append(document.getElementById("canvas"));
 
 async function getEventInfo(joincode) {
   try {
-    const response = await fetch(apiURL + "/event/code/" + joincode);
+    const response = await fetch(apiURL + "/event/code/?joincode=" + joincode);
     const data = await response.json();
     codeElement.innerText = data["JoinCode"];
     title.innerText = data["Title"];
     loc.innerText = data["Location"];
 
-    if (data['FinalDate'] && data['FinalDate'].length > 1) {
+    if (data["FinalDate"] && data["FinalDate"].length > 1) {
       time.innerText = data["FinalDate"];
     } else {
-      time.innerText = "Awaiting votes for final date..."
+      time.innerText = "Awaiting votes for final date...";
     }
 
     console.log(data);
@@ -65,10 +65,10 @@ getEventInfo(code);
 async function copyText() {
   try {
     await navigator.clipboard.writeText(code);
-    const icon = document.getElementById("copyicon")
-    icon.src = 'assets/check.svg'
-    console.log('copied "' + code + '" to clipboard')
+    const icon = document.getElementById("copyicon");
+    icon.src = "assets/check.svg";
+    console.log('copied "' + code + '" to clipboard');
   } catch (error) {
-    console.error('failed to copy text: ' + error)
+    console.error("failed to copy text: " + error);
   }
 }

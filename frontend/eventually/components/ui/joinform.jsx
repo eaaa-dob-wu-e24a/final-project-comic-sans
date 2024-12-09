@@ -20,7 +20,9 @@ export default function JoinForm() {
 
     try {
       // Construct the API endpoint
-      const joinEvent = `${process.env.NEXT_PUBLIC_API_URL}/api/event/code/${joinCode.toUpperCase()}`;
+      const joinEvent = `${
+        process.env.NEXT_PUBLIC_API_URL
+      }/api/event/code/?joincode=${joinCode.toUpperCase()}`;
 
       // Fetch the event data
       const response = await fetch(joinEvent, {
@@ -42,7 +44,6 @@ export default function JoinForm() {
 
       // Redirect to the event's page after successful fetch
       router.push(`/join/${joinCode.toUpperCase()}`);
-
     } catch (err) {
       console.error("Error during join process:", err);
       setError("Something went wrong. Please try again later.");

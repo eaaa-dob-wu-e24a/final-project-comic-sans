@@ -36,7 +36,7 @@ export default function ProfileDropdown() {
   }, []);
 
   const handleLogout = async () => {
-    const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/logout";
+    const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/logout/";
     await fetch(url, {
       method: "POST",
       credentials: "include",

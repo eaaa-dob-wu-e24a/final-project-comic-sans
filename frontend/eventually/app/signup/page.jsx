@@ -14,7 +14,7 @@ const Register = () => {
   });
   const [errorMessage, setErrorMessage] = useState(""); // State variable for error message
 
-  const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/signup";
+  const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/signup/";
   const router = useRouter();
 
   console.log(url);
@@ -141,7 +141,7 @@ const Register = () => {
       </div>
       <GradientCurve />
       {/* Dynamic Section Below the Gradient Curve */}
-      <section className="flex-grow bg-page-background"/>
+      <section className="flex-grow bg-page-background" />
     </div>
   );
 };

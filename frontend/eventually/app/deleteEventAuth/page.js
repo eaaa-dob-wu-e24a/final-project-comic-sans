@@ -6,7 +6,7 @@ const DeleteEvent = () => {
   const url = process.env.NEXT_PUBLIC_API_URL + "/api/event/delete/id/";
 
   const handleDelete = async () => {
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/api/event/delete`;
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/api/event/delete/`;
 
     try {
       const response = await fetch(url, {

@@ -11,6 +11,12 @@ header('Content-Type: application/json');
 
 require_once __DIR__ . "/../../../database/dbconn.php";
 
+// Handle preflight OPTIONS request
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
 function showError($msgString)
 {
     $msg = ["status" => "error", "message" => $msgString];

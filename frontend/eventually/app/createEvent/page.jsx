@@ -1,46 +1,38 @@
-"use client"; // Mark as a client component for using React hooks
 
-import React, { useState, useEffect } from "react";
+"use client"; // Ensure this is the very first line
+
+import React, { useState, useEffect, useContext } from "react";
 import GradientCurve from "@/components/gradientcurve";
+import Calendar from "@/components/calendar";
+import Button from "@/components/ui/button";
+import Input from "@/components/ui/input";
+import FormLabel from "@/components/ui/formlabel";
+import SelectedDate from "@/components/selected-date";
+import { AuthContext } from "@/contexts/authcontext";
 
 const CreateEvent = () => {
-  const getCurrentDateTime = () => {
-    const now = new Date();
-    return now.toISOString().slice(0, 16); // Format as 'YYYY-MM-DDTHH:mm'
-  };
+  const { user } = useContext(AuthContext);
 
+  // State variables
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
   const [joinCode, setJoinCode] = useState("");
   const [userName, setUserName] = useState("");
-  const [proposedDates, setProposedDates] = useState([
-    { start: getCurrentDateTime(), end: getCurrentDateTime() },
-  ]);
+  const [selectedDates, setSelectedDates] = useState([]); // Array of { date: Date, timeSlots: [{ startTime: string, duration: number }] }
   const [responseMessage, setResponseMessage] = useState(null);
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL + "/api/event/create/";
+  // API endpoints
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL + "/api/event/create";
   const joinCodeEndpoint =
-    process.env.NEXT_PUBLIC_API_URL + "/api/code/generate/";
-  const userSessionEndpoint =
-    process.env.NEXT_PUBLIC_API_URL + "/api/user/check_session/";
+    process.env.NEXT_PUBLIC_API_URL + "/api/code/generate";
 
-  const fetchUserSession = async () => {
-    try {
-      const response = await fetch(userSessionEndpoint, {
-        method: "GET",
-        credentials: "include",
-      });
-      const data = await response.json();
-
-      if (data.status === "success" && data.user) {
-        setUserName(data.user.name); // Set the username if user is logged in
-      }
-    } catch (error) {
-      console.error("Error fetching user session:", error);
-      // Leave userName as an empty string if fetching fails
+  useEffect(() => {
+    if (user) {
+      setUserName(user.name); // Set the username from AuthContext
     }
-  };
+    fetchJoinCode(); // Fetch join code
+  }, [user]);
 
   const fetchJoinCode = async () => {
     try {
@@ -61,21 +53,95 @@ const CreateEvent = () => {
     }
   };
 
-  useEffect(() => {
-    fetchUserSession(); // Attempt to fetch user data
-    fetchJoinCode(); // Fetch join code
-  }, []);
+  const isToday = (date) => {
+    const today = new Date();
+    return date.toDateString() === today.toDateString();
+  };
+
+  const getNextAvailableTime = () => {
+    const now = new Date();
+    const nextMinutes = Math.ceil(now.getMinutes() / 15) * 15; // Round up to the nearest 15 minutes
+    if (nextMinutes === 60) {
+      now.setHours(now.getHours() + 1, 0, 0, 0);
+    } else {
+      now.setMinutes(nextMinutes, 0, 0);
+    }
+    const hour = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    return `${hour}:${minutes}`;
+  };
+
+  const handleDateSelect = (date) => {
+    // Check if the date is already in selectedDates
+    const exists = selectedDates.some(
+      (item) => item.date.getTime() === date.getTime()
+    );
+
+    let updatedDates;
+    if (exists) {
+      // If the date is already selected, remove it
+      updatedDates = selectedDates.filter(
+        (item) => item.date.getTime() !== date.getTime()
+      );
+    } else {
+      const defaultStartTime = isToday(date) ? getNextAvailableTime() : "12:00"; 
+      updatedDates = [
+        ...selectedDates,
+        {
+          date: date,
+          timeSlots: [{ startTime: defaultStartTime, duration: 1 }],
+        },
+      ];
+    }
+
+    updatedDates.sort((a, b) => a.date - b.date);
+
+    setSelectedDates(updatedDates);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const formattedProposedDates = selectedDates.flatMap((item) => {
+      const { date, timeSlots } = item;
+
+      return timeSlots.map(({ startTime, duration }) => {
+        const localDateTimeString = `${date.toLocaleDateString(
+          "en-CA"
+        )}T${startTime}:00`;
+
+        const startDateTime = new Date(localDateTimeString);
+
+        const endDateTime = new Date(startDateTime);
+        endDateTime.setHours(endDateTime.getHours() + parseInt(duration, 10));
+
+        const startLocalTime = `${startDateTime.toLocaleDateString(
+          "en-CA"
+        )} ${startDateTime.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}`;
+        const endLocalTime = `${endDateTime.toLocaleDateString(
+          "en-CA"
+        )} ${endDateTime.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}`;
+
+        return {
+          start: startLocalTime,
+          end: endLocalTime,
+        };
+      });
+    });
 
     const eventData = {
       title,
       description,
       location,
-      joinCode, // Include the fetched join code
+      joinCode,
       userName,
-      proposedDates,
+      proposedDates: formattedProposedDates,
     };
 
     try {
@@ -85,7 +151,7 @@ const CreateEvent = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(eventData),
-        credentials: "include", // Send cookies with the request if needed for session-based auth
+        credentials: "include",
       });
 
       const data = await response.json();
@@ -95,8 +161,12 @@ const CreateEvent = () => {
           success: true,
           message: "Event created successfully!",
         });
-        console.log("Event created:", data.message);
-        fetchJoinCode(); // Fetch a new join code after creating the event
+        fetchJoinCode();
+        setSelectedDates([]);
+        setTitle("");
+        setDescription("");
+        setLocation("");
+        setUserName("");
       } else {
         setResponseMessage({
           success: false,
@@ -113,26 +183,8 @@ const CreateEvent = () => {
     }
   };
 
-  const handleProposedDateChange = (index, field, value) => {
-    const updatedDates = [...proposedDates];
-    updatedDates[index][field] = value;
-    setProposedDates(updatedDates);
-  };
-
-  const addProposedDate = () => {
-    setProposedDates([
-      ...proposedDates,
-      { start: getCurrentDateTime(), end: getCurrentDateTime() },
-    ]);
-  };
-
-  const removeProposedDate = (index) => {
-    const updatedDates = proposedDates.filter((_, i) => i !== index);
-    setProposedDates(updatedDates);
-  };
-
   return (
-    <main className="flex flex-col">
+    <main className="flex flex-col min-h-screen bg-sitebackground">
       <GradientCurve className={"max-h-24"}>
         <div className="max-w-6xl mx-auto flex">
           <h1 className="font-bold text-2xl mx-auto max-w-6xl pb-12 text-white">
@@ -141,145 +193,17 @@ const CreateEvent = () => {
         </div>
       </GradientCurve>
 
-      <section className="max-w-6xl w-full p-8 lg:p-12 rounded-xl drop-shadow mx-auto flex flex-col color: var(--foreground) place-content-center bg-background my-12">
-        <form onSubmit={handleSubmit}>
-          <div className="flex justify-between mb-8 flex-col lg:flex-row lg:gap-0 gap-4">
-            <input
-              type="text"
-              id="title"
-              name="title"
-              className="flex-grow max-w-lg mt-1 text-black px-4 min-h-12 rounded-full bg-page-foreground hover:border-b-4 hover:border-transparent hover:border-b-gray-300 focus:outline-none font-bold text-2xl"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Event Name"
-              maxLength="30"
-            />
-            <div className="flex flex-col lg:flex-row w-fit mx-auto text-center">
-              <div
-                id="joinCode"
-                className="hover:border-transparent focus:outline-none mt-1 text-2xl  font-bold px-4 py-2  rounded-full"
-              >
-                {joinCode || "Fetching..."}
-              </div>
-              <button
-                type="submit"
-                className="text-white max-w-fit text-m font-bold py-2 px-16 uppercase rounded-full shadow-md hover:cursor-pointer bg-secondary hover:bg-secondary-hover transition-all duration-200r undefined"
-              >
-                Create Event
-              </button>
-            </div>
-          </div>
-
-          <div className="flex gap-16 flex-col flex-shrink lg:flex-row ">
-            <div className="lg:w-2/5 space-y-4 ">
-              <div>
-                <label htmlFor="userName" className="block text-lg font-medium">
-                  User Name:
-                </label>
-                <input
-                  type="text"
-                  id="userName"
-                  name="userName"
-                  className="max-w-lg text-black w-full rounded-full mt-1 px-4 py-2 border-2 border-grey-300"
-                  value={userName}
-                  onChange={(e) => setUserName(e.target.value)}
-                  placeholder="User Name"
-                />
-              </div>
-              <div>
-                <label htmlFor="location" className="block text-lg font-medium">
-                  Location:
-                </label>
-                <input
-                  type="text"
-                  id="location"
-                  name="location"
-                  className="max-w-lg w-full text-black rounded-full mt-1 px-4 py-2  border-2 border-grey-300"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  placeholder="Location"
-                />
-              </div>
-              <div className="flex flex-col min-h-[4rem] w-full">
-                <label
-                  htmlFor="description"
-                  className="block text-lg  font-medium"
-                >
-                  Description:
-                </label>
-                <textarea
-                  type="text"
-                  id="description"
-                  name="description"
-                  className="leading-6 rounded-xl max-w-lg w-full mt-1 px-4 py-2 text-black border-2 border-grey-300"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Description"
-                />
-              </div>
-            </div>
-
-            <div>
-              {/* Proposed Dates Section */}
-
-              <label className="text-lg font-medium mr-4 color: var(--foreground)">
-                Proposed Dates:
-              </label>
-              <div className="lg:w-3/5 space-y-4">
-                {proposedDates.map((date, index) => (
-                  <div
-                    key={index}
-                    className="flex lg:space-x-2 flex-col lg:flex-row gap-4 lg:gap-0"
-                  >
-                    <input
-                      type="datetime-local"
-                      value={date.start}
-                      onChange={(e) =>
-                        handleProposedDateChange(index, "start", e.target.value)
-                      }
-                      className="max-w-lg rounded-full  px-4 py-2 text-black border-2 border-grey-300"
-                      placeholder="Start Date"
-                    />
-                    <input
-                      type="datetime-local"
-                      value={date.end}
-                      onChange={(e) =>
-                        handleProposedDateChange(index, "end", e.target.value)
-                      }
-                      className="max-w-lg rounded-full  px-4 py-2 text-black border-2 border-grey-300"
-                      placeholder="End Date"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => removeProposedDate(index)}
-                      className="rounded-full  px-2 py-1 bg-red-500 text-foregorund font-bold max-w-fit"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))}
-                <button
-                  type="button"
-                  onClick={addProposedDate}
-                  className="rounded-full mt-2 px-4 py-2 bg-blue-500 text-white"
-                >
-                  +
-                </button>
-              </div>
-            </div>
-          </div>
-        </form>
-
-        {responseMessage && (
-          <div
-            className={`mt-4 ${
-              responseMessage.success ? "text-green-500" : "text-red-500"
-            }`}
-          >
-            {responseMessage.message}
-          </div>
-        )}
-      </section>
+      <form
+        onSubmit={handleSubmit}
+        className="max-w-6xl w-full mx-auto p-4 lg:p-8 flex flex-col space-y-8"
+      >
+        {/* Add Form Content */}
+        <div className="flex justify-center">
+          <Button variant="secondary" type="submit" className="w-48">
+            Create Event
+          </Button>
+        </div>
+      </form>
     </main>
   );
 };

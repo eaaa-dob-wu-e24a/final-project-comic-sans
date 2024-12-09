@@ -1,6 +1,11 @@
 <?php
 require_once __DIR__ . "/../../../database/dbconn.php";
 
+// Handle preflight OPTIONS request
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // Fetches the ID from the GET parameters

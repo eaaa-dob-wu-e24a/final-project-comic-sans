@@ -8,6 +8,13 @@ header("Access-Control-Allow-Credentials: true"); // Allow credentials
 header("Access-Control-Allow-Methods: PATCH, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
+
+// Handle OPTIONS requests for CORS preflight
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200); // Respond OK to preflight
+    exit();
+}
+
 session_start();
 $user = $_SESSION['user'];
 // $user['id'] = 9; //debug for auth testing

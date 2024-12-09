@@ -14,7 +14,7 @@ const LoginSite = () => {
 
   // Check if user is logged in
   const checkSession = async () => {
-    const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/check_session";
+    const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/check_session/";
     try {
       const response = await fetch(url, {
         method: "GET",
@@ -37,7 +37,7 @@ const LoginSite = () => {
   };
 
   const fetchEvents = async () => {
-    const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/events";
+    const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/events/";
     try {
       const response = await fetch(url, {
         method: "GET",
@@ -61,7 +61,7 @@ const LoginSite = () => {
   }, []);
 
   const handleLogout = async () => {
-    const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/logout";
+    const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/logout/";
     await fetch(url, {
       method: "POST",
       credentials: "include",

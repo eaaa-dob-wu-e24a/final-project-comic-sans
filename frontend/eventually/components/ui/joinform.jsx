@@ -58,8 +58,8 @@ export default function JoinForm() {
       <form onSubmit={handleSubmit} className="flex flex-col">
         <input
           type="text"
-          placeholder="JX6S7YA1"
-          maxLength={8}
+          placeholder="JX6S7Y"
+          maxLength={6}
           className="rounded-full h-14 w-full text-background uppercase font-semibold text-4xl py-2 px-8"
           name="joincode"
           id="joincode"

@@ -8,6 +8,12 @@ header("Access-Control-Allow-Headers: Content-Type");
 
 require_once __DIR__ . "/../../../database/dbconn.php";
 
+// Handle preflight OPTIONS request
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
 // Check connection
 if ($mysqli->connect_error) {
     die("Connection failed: " . $mysqli->connect_error);

@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
   const fetchAuthStatus = async () => {
     try {
       const response = await fetch(
-        process.env.NEXT_PUBLIC_API_URL + "/api/user/check_session",
+        process.env.NEXT_PUBLIC_API_URL + "/api/user/check_session/",
         {
           method: "GET",
           credentials: "include", // Include cookies in the request

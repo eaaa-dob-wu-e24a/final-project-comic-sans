@@ -15,7 +15,7 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(""); // State variable for error message
 
-  const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/login";
+  const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/login/";
 
   // Login function
   const handleSubmit = async (event) => {
@@ -95,11 +95,7 @@ const LoginPage = () => {
               </div>
 
               {errorMessage && (
-                <div
-                  className="text-white "
-                  role="alert"
-                  aria-live="assertive"
-                >
+                <div className="text-white " role="alert" aria-live="assertive">
                   {errorMessage}
                 </div>
               )}

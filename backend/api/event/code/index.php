@@ -1,6 +1,6 @@
 <?php
 // Include necessary headers for CORS
-$allowedOrigins = ["http://final-project-comic-sans-fork.vercel.app", "http://localhost:3001"];
+$allowedOrigins = ["http://final-project-comic-sans-fork.vercel.app", "http://localhost:3001", "http://localhost:3000"];
 if (isset($_SERVER['HTTP_ORIGIN']) && in_array($_SERVER['HTTP_ORIGIN'], $allowedOrigins)) {
     header("Access-Control-Allow-Origin: " . $_SERVER['HTTP_ORIGIN']);
 }

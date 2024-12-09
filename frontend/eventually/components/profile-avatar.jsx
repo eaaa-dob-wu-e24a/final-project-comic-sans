@@ -1,8 +1,10 @@
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../contexts/authcontext";
 
 export default function ProfileAvatar({ className = "", variant = "small" }) {
   const { user } = useContext(AuthContext);
+  const [imageError, setImageError] = useState(false);
+
   const baseStyles =
     "rounded-full bg-secondary text-white flex items-center justify-center font-bold";
   const variants = {
@@ -12,13 +14,25 @@ export default function ProfileAvatar({ className = "", variant = "small" }) {
 
   const imageClass = `${variants[variant]} rounded-full object-cover ${className}`;
 
+  useEffect(() => {
+    // Reset imageError when user.imagePath changes
+    setImageError(false);
+  }, [user.imagePath]);
+
+  if (!user) {
+    return null; // Or render a placeholder
+  }
+
+  const imageUrl = process.env.NEXT_PUBLIC_API_URL + user.imagePath;
+
   return (
     <div>
-      {user.imagePath ? (
+      {user.imagePath && !imageError ? (
         <img
-          src={process.env.NEXT_PUBLIC_API_URL + user.imagePath}
+          src={imageUrl}
           alt={user.name}
           className={imageClass}
+          onError={() => setImageError(true)}
         />
       ) : (
         <div className={`${baseStyles} ${variants[variant]} ${className}`}>

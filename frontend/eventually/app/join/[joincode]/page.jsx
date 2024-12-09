@@ -5,14 +5,16 @@ import { useEffect, useState } from "react";
 import EventDetail from "@/components/event-detail";
 import EventDateDetailCard from "@/components/event-date-detail-card";
 
-export default function EventPage() {
-  const { eventId } = useParams();
+export default function JoinEventPage() {
+  const { joincode } = useParams(); // Extract joincode from the URL
+  console.log("Join code from URL:", joincode); // Debug joincode value
+
   const [event, setEvent] = useState(null);
+  const [eventId, setEventId] = useState(null); // Store eventId separately
   const [loading, setLoading] = useState(true);
   const [loggedInUser, setLoggedInUser] = useState({
     userId: null,
     username: "",
-    imagePath: "", // Added imagePath to store the user's avatar path
   });
 
   // Fetch the logged-in user's data
@@ -23,7 +25,7 @@ export default function EventPage() {
           `${process.env.NEXT_PUBLIC_API_URL}/api/user/check_session`,
           {
             method: "GET",
-            credentials: "include", // Include credentials to maintain session
+            credentials: "include", // Ensure cookies are sent
           }
         );
         const userData = await res.json();
@@ -31,8 +33,8 @@ export default function EventPage() {
         setLoggedInUser({
           userId: userData.user.id,
           username: userData.user.name,
-          imagePath: userData.user.imagePath, // Ensure avatar is captured
         });
+        console.log("Logged-in user:", userData);
       } catch (err) {
         console.error("Failed to fetch user data:", err);
       }
@@ -41,19 +43,41 @@ export default function EventPage() {
     fetchUserData();
   }, []);
 
-  // Fetch event data
+  // Fetch event data based on joincode
   useEffect(() => {
     const fetchEventData = async () => {
-      if (eventId && loggedInUser.userId !== null) {
+      if (joincode) {
         try {
+          console.log(
+            "Fetching event data from:",
+            `${process.env.NEXT_PUBLIC_API_URL}/api/event/code/?joincode=${joincode}`
+          );
+
           const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/event/id/?id=${eventId}`,
+            `${process.env.NEXT_PUBLIC_API_URL}/api/event/code/?joincode=${joincode}`, // Path-based URL
             {
               method: "GET",
               headers: { "Content-Type": "application/json" },
+              credentials: "include",
             }
           );
+
+          if (!res.ok) {
+            const error = await res.json();
+            console.error("Error from backend:", error);
+            throw new Error(error.Error || "Failed to fetch event data.");
+          }
+
           const data = await res.json();
+          console.log("Event data fetched:", data);
+
+          if (!data || !data.EventDates) {
+            console.error("Invalid event data received:", data);
+            throw new Error("Event data is invalid.");
+          }
+
+          // Store eventId from response
+          setEventId(data.PK_ID);
 
           // Recalculate selected state
           const eventDatesWithVotes = data.EventDates.map((date) => {
@@ -67,14 +91,15 @@ export default function EventPage() {
           setEvent({ ...data, EventDates: eventDatesWithVotes });
           setLoading(false);
         } catch (err) {
-          console.error(err);
+          console.error("Error fetching event data:", err);
         }
       }
     };
-    fetchEventData();
-  }, [eventId, loggedInUser.userId]);
 
-  // Handle event date selection
+    fetchEventData();
+  }, [joincode, loggedInUser.userId]);
+
+  // Handle date click logic
   const handleEventClick = async (index) => {
     const selectedDate = event.EventDates[index];
     const isCurrentlySelected = selectedDate.selected;
@@ -84,12 +109,14 @@ export default function EventPage() {
         ? `${process.env.NEXT_PUBLIC_API_URL}/api/vote/delete`
         : `${process.env.NEXT_PUBLIC_API_URL}/api/vote/create`;
 
+      console.log("Submitting vote with eventId:", eventId);
+
       const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        credentials: "include", // Send credentials to server
         body: JSON.stringify({
-          eventId,
+          eventId, // Use eventId retrieved from join endpoint
           dateId: selectedDate.PK_ID,
           userId: loggedInUser.userId,
         }),
@@ -107,11 +134,7 @@ export default function EventPage() {
           )
         : [
             ...selectedDate.UserVotes,
-            {
-              UserName: loggedInUser.username,
-              FK_User: loggedInUser.userId,
-              UserImagePath: loggedInUser.imagePath,
-            },
+            { UserName: loggedInUser.username, FK_User: loggedInUser.userId },
           ];
 
       const updatedDates = event.EventDates.map((date, i) =>
@@ -126,7 +149,7 @@ export default function EventPage() {
 
       setEvent({ ...event, EventDates: updatedDates });
     } catch (err) {
-      console.error(err);
+      console.error("Error updating vote:", err);
     }
   };
 

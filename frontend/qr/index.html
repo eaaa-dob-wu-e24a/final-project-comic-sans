@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Eventually</title>
+    <link rel="stylesheet" href="style.css" />
+    <script
+      type="text/javascript"
+      src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"
+    ></script>
+  </head>
+  <body>
+    <div>
+      <h1 id="title">Loading event info...</h1>
+
+      <div class="code-container margin-container">
+        <img class="icon" src="assets/pin.svg" alt="" />
+        <p id="location"></p>
+      </div>
+
+      <div class="code-container margin-container">
+        <img class="icon" src="assets/clock.svg" alt="" />
+        <p id="time">Awaiting final date...</p>
+      </div>
+
+      <div class="margin-container">
+        <p class="faded">Event Code</p>
+        <div class="code-container">
+          <p id="joincode">loading...</p>
+          <button class="copybutton faded" onclick="copyText()">
+            <img src="assets/copy.svg" id="copyicon" alt="" />
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="margin-container">
+      <div id="canvas"></div>
+      <button class="button" id="toevent">To event ▶</button>
+    </div>
+    <footer>
+      <p class="faded">powered by</p>
+      <a
+        href="http:final-project-comic-sans-fork.vercel.app/"
+        class="logo-container"
+      >
+        <img class="logo" src="assets/logo.svg" alt="The Eventuall logo" />
+        <p>Eventually</p>
+      </a>
+    </footer>
+  </body>
+  <script src="script.js"></script>
+</html>

@@ -1,6 +1,6 @@
 <?php
 // Include necessary headers for CORS
-header("Access-Control-Allow-Origin: http://localhost:3000");
+header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Credentials: true"); // Allow credentials
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
@@ -21,12 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    // Fetches the URL of the current page
-    $url = $_SERVER['REQUEST_URI'];
-    // Splits the URL into an array of components
-    $urlComponents = explode('/', $url);
-    // Gets the last component of the URL array e.g., /user/id/1 => 1
-    $id = end($urlComponents);
+    // Get the 'id' parameter from the query string
+    $id = isset($_GET['id']) ? intval($_GET['id']) : null;
 
     if ($id) {
         $eventQuery = "SELECT * FROM Eventually_Event WHERE PK_ID = $id";
@@ -45,13 +41,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                     v.PK_ID AS VoteID,
                     v.FK_User,
                     v.Status,
-                    v.UserName
+                    v.UserName,
+                    u.ImagePath AS UserImagePath
                 FROM 
                     Eventually_Event_Dates d
                 LEFT JOIN 
                     Eventually_Event_User_Voting v
                 ON 
                     d.PK_ID = v.FK_Event_Dates
+                LEFT JOIN 
+                    Eventually_User u
+                ON 
+                    v.FK_User = u.PK_ID
                 WHERE 
                     d.FK_Event = $id
             ";
@@ -77,7 +78,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                         "VoteID" => $row['VoteID'],
                         "FK_User" => $row['FK_User'],
                         "Status" => $row['Status'],
-                        "UserName" => $row['UserName']
+                        "UserName" => $row['UserName'],
+                        "UserImagePath" => $row['UserImagePath']
                     ];
                 }
             }

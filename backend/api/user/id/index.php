@@ -3,14 +3,17 @@ require_once __DIR__ . "/../../../database/dbconn.php";
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    //Fetches the URL of the current page
-    $url = $_SERVER['REQUEST_URI'];
-    //Splits the URL into an array of components
-    $urlComponents = explode('/', $url);
-    //Gets the last component of the URL array e.g., /user/id/1 => 1
-    $id = end($urlComponents);
+    // Fetches the ID from the GET parameters
+    if (isset($_GET['id'])) {
+        $id = $_GET['id'];
+    } else {
+        http_response_code(400);
+        showError("ID parameter is missing");
+        exit;
+    }
 
-    function showError($msgString) {
+    function showError($msgString)
+    {
         $msg = ["Error" => $msgString];
         header('Content-Type: application/json');
         echo json_encode($msg, JSON_PRETTY_PRINT);

@@ -1,7 +1,7 @@
 export default function Loading() {
   return (
-    <div className="w-full min-h-44 flex flex-col place-items-center gap-8">
-        <p className="text-primary text-sm">Loading...</p>
+    <div className="w-full min-h-44 flex flex-col place-items-center justify-center gap-8">
+        {/* <p className="text-primary text-sm">Loading...</p> */}
       <svg className="mask-anim"
         width="114"
         height="15"

@@ -19,6 +19,14 @@
   );
 }
 
+.curve-gradient {
+  height: 10rem;
+  width: 100%;
+  background-image: var(--gradient);
+  clip-path: ellipse(110% 100% at 0% 0%);
+  z-index: -1;
+}
+
 .mask-anim {
   mask-image: linear-gradient(
     to right,
@@ -38,14 +46,6 @@
   100% {
     mask-position: 200%;
   }
-}
-
-.curve-gradient {
-  height: 10rem;
-  width: 100%;
-  background-image: var(--gradient);
-  clip-path: ellipse(110% 100% at 0% 0%);
-  z-index: -1;
 }
 
 @media (prefers-color-scheme: dark) {

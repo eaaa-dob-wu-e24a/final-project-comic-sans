@@ -12,26 +12,25 @@ export default function EventPage() {
   const [loggedInUser, setLoggedInUser] = useState({
     userId: null,
     username: "",
-    imagePath: "", // Added imagePath to store the user's avatar path
+    imagePath: "",
   });
 
-  // Fetch the logged-in user's data
+  const [pendingSelections, setPendingSelections] = useState([]);
+
+  // Fetch user data
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/user/check_session`,
-          {
-            method: "GET",
-            credentials: "include", // Include credentials to maintain session
-          }
+          { method: "GET", credentials: "include" }
         );
         const userData = await res.json();
 
         setLoggedInUser({
           userId: userData.user.id,
           username: userData.user.name,
-          imagePath: userData.user.imagePath, // Ensure avatar is captured
+          imagePath: userData.user.imagePath,
         });
       } catch (err) {
         console.error("Failed to fetch user data:", err);
@@ -48,14 +47,10 @@ export default function EventPage() {
         try {
           const res = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/api/event/id/${eventId}`,
-            {
-              method: "GET",
-              headers: { "Content-Type": "application/json" },
-            }
+            { method: "GET", headers: { "Content-Type": "application/json" } }
           );
           const data = await res.json();
 
-          // Recalculate selected state
           const eventDatesWithVotes = data.EventDates.map((date) => {
             const userVoted = date.UserVotes.some(
               (vote) =>
@@ -65,6 +60,9 @@ export default function EventPage() {
           });
 
           setEvent({ ...data, EventDates: eventDatesWithVotes });
+          setPendingSelections(
+            eventDatesWithVotes.map((date) => date.selected)
+          );
           setLoading(false);
         } catch (err) {
           console.error(err);
@@ -74,59 +72,62 @@ export default function EventPage() {
     fetchEventData();
   }, [eventId, loggedInUser.userId]);
 
-  // Handle event date selection
-  const handleEventClick = async (index) => {
-    const selectedDate = event.EventDates[index];
-    const isCurrentlySelected = selectedDate.selected;
+  // Handle local selection changes
+  const handlePendingSelection = (index) => {
+    setPendingSelections((prev) =>
+      prev.map((selected, i) => (i === index ? !selected : selected))
+    );
+  };
 
+  // Confirm selections and update the backend
+  const confirmSelections = async () => {
     try {
-      const url = isCurrentlySelected
-        ? `${process.env.NEXT_PUBLIC_API_URL}/api/vote/delete`
-        : `${process.env.NEXT_PUBLIC_API_URL}/api/vote/create`;
+      const updatedEventDates = [...event.EventDates];
 
-      const res = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          eventId,
-          dateId: selectedDate.PK_ID,
-          userId: loggedInUser.userId,
-        }),
-      });
+      for (let i = 0; i < updatedEventDates.length; i++) {
+        const date = updatedEventDates[i];
+        const wasSelected = date.selected;
+        const isSelected = pendingSelections[i];
 
-      if (!res.ok) {
-        throw new Error("Failed to update vote");
+        if (wasSelected !== isSelected) {
+          const url = isSelected
+            ? `${process.env.NEXT_PUBLIC_API_URL}/api/vote/create`
+            : `${process.env.NEXT_PUBLIC_API_URL}/api/vote/delete`;
+
+          const res = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+              eventId,
+              dateId: date.PK_ID,
+              userId: loggedInUser.userId,
+            }),
+          });
+
+          if (!res.ok) throw new Error("Failed to update vote");
+
+          // Update UserVotes based on server response
+          if (isSelected) {
+            date.UserVotes.push({
+              FK_User: loggedInUser.userId,
+              UserName: loggedInUser.username,
+              UserImagePath: loggedInUser.imagePath,
+            });
+          } else {
+            date.UserVotes = date.UserVotes.filter(
+              (vote) =>
+                parseInt(vote.FK_User, 10) !== parseInt(loggedInUser.userId, 10)
+            );
+          }
+
+          updatedEventDates[i] = { ...date, selected: isSelected };
+        }
       }
 
-      // Update the UserVotes array and selected state
-      const updatedUserVotes = isCurrentlySelected
-        ? selectedDate.UserVotes.filter(
-            (vote) =>
-              parseInt(vote.FK_User, 10) !== parseInt(loggedInUser.userId, 10)
-          )
-        : [
-            ...selectedDate.UserVotes,
-            {
-              UserName: loggedInUser.username,
-              FK_User: loggedInUser.userId,
-              UserImagePath: loggedInUser.imagePath,
-            },
-          ];
-
-      const updatedDates = event.EventDates.map((date, i) =>
-        i === index
-          ? {
-              ...date,
-              UserVotes: updatedUserVotes,
-              selected: !isCurrentlySelected,
-            }
-          : date
-      );
-
-      setEvent({ ...event, EventDates: updatedDates });
+      setEvent({ ...event, EventDates: updatedEventDates });
     } catch (err) {
-      console.error(err);
+      console.error("Failed to confirm selections:", err);
     }
   };
 
@@ -136,12 +137,19 @@ export default function EventPage() {
     <main>
       <section className="max-w-6xl mx-auto flex flex-col gap-4 bg-background p-6 my-12 rounded-2xl shadow-md">
         <EventDetail event={event} />
-        <div>
-          <EventDateDetailCard
-            eventDates={event.EventDates}
-            onDateClick={handleEventClick}
-            loggedInUser={loggedInUser}
-          />
+        <EventDateDetailCard
+          eventDates={event.EventDates}
+          pendingSelections={pendingSelections}
+          onPendingSelection={handlePendingSelection}
+          loggedInUser={loggedInUser}
+        />
+        <div className="mt-8">
+          <button
+            onClick={confirmSelections}
+            className="bg-primary text-white p-4 rounded-full shadow-lg hover:bg-primary-dark active:bg-primary-light"
+          >
+            Confirm Selections
+          </button>
         </div>
       </section>
     </main>

@@ -4,8 +4,10 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import { useRouter } from "next/navigation";
 import { AuthContext } from "../contexts/authcontext";
 import ProfileAvatar from "./profile-avatar";
+import { useNotif } from "./notif-context";
 
-export default function ProfileDropdown () {
+export default function ProfileDropdown() {
+  const notif = useNotif();
   const { user, setUser } = useContext(AuthContext);
   console.log("User object:", user);
 
@@ -44,6 +46,7 @@ export default function ProfileDropdown () {
     });
 
     setUser(null); // Clear user state
+    notif?.send("Successfully logged out");
     router.push("/"); // Redirect to login page
   };
 
@@ -116,4 +119,4 @@ export default function ProfileDropdown () {
       )}
     </div>
   );
-};
+}

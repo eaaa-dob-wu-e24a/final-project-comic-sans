@@ -2,7 +2,7 @@ import Button from "./ui/button";
 
 export default function EventDetail({ event }) {
   const handleShare = () => {
-    const link = `https://final-project-comic-sans-fork.vercel.app/join/${event?.JoinCode}`;
+    const link = `http://final-project-comic-sans-fork.vercel.app/join/${event?.JoinCode}`;
     navigator.clipboard
       .writeText(link)
       .then(() => {

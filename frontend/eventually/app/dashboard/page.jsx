@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import UserEventList from "@/components/user-event-list";
 import Button from "@/components/ui/button";
 import GradientCurve from "@/components/gradientcurve";
-import AllEventList from "@/components/all-events-list";
+import VotedEventList from "@/components/event-participation";
 
 const LoginSite = () => {
   const router = useRouter();
@@ -90,7 +90,7 @@ const LoginSite = () => {
       </GradientCurve>
       <section className="max-w-6xl mx-auto">
         <UserEventList maxEvents={6}></UserEventList>
-        <AllEventList maxEvents={6}></AllEventList>
+        <VotedEventList maxEvents={6}></VotedEventList>
       </section>
     </main>
   );

@@ -109,9 +109,8 @@ export default function VotedEventList({ maxEvents }) {
                 : event.EventDates[0]?.DateTimeStart
             }
             title={event.Title}
-            key={event.PK_ID}
-            id={event.PK_ID}
-            onClick={() => handleEventClick(event.PK_ID)}
+            key={event.EventID}
+            id={event.EventID}
           />
         ))}
       </ul>

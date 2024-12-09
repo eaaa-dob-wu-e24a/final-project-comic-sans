@@ -29,7 +29,8 @@ const dancingScript = localFont({
 
 export const metadata = {
   title: "Eventually - Create, Join & Schedule Events",
-  description: "Let’s make it happen.. eventually. Join an event with a code now, no account required. Or make an account for more features. Want to create your own event? Schedule an event with your friends, family, co-workers, or anyone else. For free.",
+  description:
+    "Let’s make it happen.. eventually. Join an event with a code now, no account required. Or make an account for more features. Want to create your own event? Schedule an event with your friends, family, co-workers, or anyone else. For free.",
 };
 
 export default function RootLayout({ children }) {
@@ -38,13 +39,13 @@ export default function RootLayout({ children }) {
       <body
         className={`${dancingScript.variable} ${montserrat.variable} antialiased font-[family-name:var(--font-montserrat)] bg-pagebackground`}
       >
-        <AuthProvider>
-          <Navbar />
-          <NotifProvider>
-          {children}
-          </NotifProvider>
-          <Footer />
-        </AuthProvider>
+        <NotifProvider>
+          <AuthProvider>
+            <Navbar />
+            {children}
+            <Footer />
+          </AuthProvider>
+        </NotifProvider>
       </body>
     </html>
   );

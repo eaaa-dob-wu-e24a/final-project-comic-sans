@@ -15,6 +15,7 @@ export default function JoinEventPage() {
     userId: null,
     username: "",
   });
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   const [pendingSelections, setPendingSelections] = useState([]); // New pending state
 
@@ -118,28 +119,20 @@ export default function JoinEventPage() {
             body: JSON.stringify({
               eventId,
               dateId: date.PK_ID,
-              userId: loggedInUser.userId,
+              userId: loggedInUser.userId, // Null for non-logged-in users
               username: loggedInUser.userId
                 ? loggedInUser.username
                 : usernameInput,
             }),
           });
 
-          if (res.status === 409) {
-            const errorData = await res.json();
-            alert(errorData.message); // Display duplicate username error
-            return;
-          }
-
           if (!res.ok) throw new Error("Failed to update vote");
 
-          // Update UserVotes based on server response
+          // Update UserVotes locally
           if (isSelected) {
             date.UserVotes.push({
               FK_User: loggedInUser.userId || null,
-              UserName: loggedInUser.userId
-                ? loggedInUser.username
-                : usernameInput,
+              UserName: loggedInUser.username || usernameInput,
               UserImagePath: loggedInUser.imagePath || null,
             });
           } else {
@@ -154,6 +147,12 @@ export default function JoinEventPage() {
       }
 
       setEvent({ ...event, EventDates: updatedEventDates });
+
+      // Show confirmation message
+      setShowConfirmation(true);
+
+      // Hide the confirmation message after 3 seconds
+      setTimeout(() => setShowConfirmation(false), 3000);
     } catch (err) {
       console.error("Failed to confirm selections:", err);
     }
@@ -171,19 +170,21 @@ export default function JoinEventPage() {
           onPendingSelection={handlePendingSelection}
           loggedInUser={loggedInUser}
         />
-        <div className="mb-4">
-          <label htmlFor="username" className="block text-gray-700 font-bold">
-            Enter Your Name:
-          </label>
-          <input
-            id="username"
-            type="text"
-            value={usernameInput}
-            onChange={(e) => setUsernameInput(e.target.value)}
-            className="p-2 border border-gray-300 rounded w-full mt-2"
-            placeholder="Your name"
-          />
-        </div>
+        {!loggedInUser.userId && (
+          <div className="mb-4">
+            <label htmlFor="username" className="block text-gray-700 font-bold">
+              Enter Your Name:
+            </label>
+            <input
+              id="username"
+              type="text"
+              value={usernameInput}
+              onChange={(e) => setUsernameInput(e.target.value)}
+              className="p-2 border border-gray-300 rounded w-full mt-2"
+              placeholder="Your name"
+            />
+          </div>
+        )}
         <div className="mt-8 flex justify-end">
           <button
             onClick={confirmSelections}
@@ -193,6 +194,21 @@ export default function JoinEventPage() {
           </button>
         </div>
       </section>
+      {showConfirmation && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <p className="text-green-600 font-semibold">
+              Selections successfully confirmed!
+            </p>
+            <button
+              onClick={() => setShowConfirmation(false)}
+              className="mt-4 bg-primary text-white p-2 rounded-full shadow-lg hover:bg-primary-dark active:bg-primary-light"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

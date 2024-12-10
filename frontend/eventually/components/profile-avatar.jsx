@@ -8,7 +8,7 @@ export default function ProfileAvatar({ className = "", variant = "small" }) {
   const baseStyles =
     "rounded-full bg-secondary text-white flex items-center justify-center font-bold";
   const variants = {
-    small: "w-10 h-10 text-sm",
+    small: "w-8 h-8 text-sm",
     large: "w-32 h-32 text-3xl",
   };
 

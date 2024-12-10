@@ -65,8 +65,7 @@ if (!$currentUser) {
 // If no Name/Email is provided, set them to be the old ones
 $newName = isset($input['Name']) ? $input['Name'] : $currentUser['Name'];
 $newEmail = isset($input['Email']) ? $input['Email'] : $currentUser['Email'];
-$imagePath = isset($input['imagePath']) ? $input['imagePath'] : $currentUser['ImagePath']; // Retain current imagePath if not provided
-
+$newImagePath = isset($input['ImagePath']) ? $input['ImagePath'] : $currentUser['ImagePath'];
 
 // Validate inputs
 if (!filter_var($newEmail, FILTER_VALIDATE_EMAIL)) {
@@ -111,36 +110,13 @@ if (isset($input['currentPassword']) && isset($input['newPassword'])) {
 }
 
 // Prepare the update query with placeholders
-$updateSql = "UPDATE Eventually_User SET Name = ?, Email = ?, Password = ?, imagePath = ? WHERE PK_ID = ?";
+$updateSql = "UPDATE Eventually_User SET Name = ?, Email = ?, Password = ?, ImagePath = ? WHERE PK_ID = ?";
 $updateStmt = $mysqli->prepare($updateSql);
-$updateStmt->bind_param("ssssi", $newName, $newEmail, $hashedPassword, $imagePath, $userID);
+$updateStmt->bind_param("ssssi", $newName, $newEmail, $hashedPassword, $newImagePath, $userID);
 
-// Execute the update statement
 if ($updateStmt->execute()) {
-    // Fetch the updated user data
-    $sql = "SELECT PK_ID, Name, Email FROM Eventually_User WHERE PK_ID = ?";
-    $stmt = $mysqli->prepare($sql);
-    $stmt->bind_param("i", $userID);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $updatedUser = $result->fetch_assoc();
-
-    if ($updatedUser) {
-        // Update the session's user data
-        $_SESSION['user'] = [
-            'id' => $updatedUser['PK_ID'],
-            'name' => $updatedUser['Name'],
-            'email' => $updatedUser['Email'],
-            'imagePath' => $currentUser['ImagePath']
-        ];
-
-        http_response_code(200);
-        echo json_encode(["message" => "User details updated successfully."]);
-    } else {
-        // If fetching updated user fails
-        http_response_code(500);
-        showError("Failed to retrieve updated user details.");
-    }
+    http_response_code(200);
+    echo json_encode(["message" => "User details updated successfully."]);
 } else {
     http_response_code(500);
     showError("Failed to update user details.");

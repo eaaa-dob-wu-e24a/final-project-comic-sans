@@ -46,7 +46,7 @@ export default function Profile() {
 
   // Send the profile photo file to the backend
   const uploadProfilePhoto = async (file) => {
-    const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/upload-photo/";
+    const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/upload-photo";
     const formData = new FormData();
     formData.append("profilePhoto", file);
 
@@ -76,7 +76,7 @@ export default function Profile() {
 
   // Change user name and/or email
   const handleSaveDetails = async () => {
-    const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/update-details/";
+    const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/update-details";
     try {
       const response = await fetch(url, {
         method: "PATCH",
@@ -130,8 +130,7 @@ export default function Profile() {
     }
 
     // Send data to the backend
-    const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/update/";
-
+    const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/update";
     try {
       const response = await fetch(url, {
         method: "PATCH",

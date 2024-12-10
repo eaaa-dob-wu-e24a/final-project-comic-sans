@@ -17,12 +17,10 @@ module.exports = {
         primary: {
           DEFAULT: "var(--primary)", // Base primary color
           hover: "rgba(211, 69, 86, 0.75)", // Hover color with opacity
-          10: "var(--primary-10)", // 10% opacity
         },
         secondary: {
           DEFAULT: "var(--secondary)", // Base secondary color
           hover: "rgba(72, 67, 149, 0.75)", // Hover color with opacity
-          10: "var(--secondary-10)", // 10% opacity
         },
         dark: "var(--dark)",
       },

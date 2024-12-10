@@ -8,7 +8,6 @@ header("Access-Control-Allow-Headers: Content-Type");
 
 require_once __DIR__ . "/../../../database/dbconn.php";
 
-session_start(); // Start the session for login functionality
 // Handle preflight OPTIONS request
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
@@ -57,23 +56,7 @@ $stmt = $mysqli->prepare($sql);
 $stmt->bind_param("sss", $name, $email, $hashed_password);
 
 if ($stmt->execute()) {
-    // Get the newly created user's ID
-    $userId = $stmt->insert_id;
-
-    // Automatically log the user in
-    $_SESSION['user'] = [
-        'name' => $name,
-        'id' => $userId,
-        'email' => $email,
-        'imagePath' => null // Default or empty value for imagePath
-    ];
-
-    echo json_encode([
-        "status" => "success",
-        "message" => "User registered and logged in successfully.",
-        "user" => $_SESSION['user'], // Return user data for frontend use
-        "redirect" => "/dashboard" // Optional: Include redirect path for frontend
-    ]);
+    echo json_encode(["status" => "success", "message" => "User registered successfully."]);
 } else {
     echo json_encode(["status" => "error", "message" => "Registration failed. Please try again."]);
 }

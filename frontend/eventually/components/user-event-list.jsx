@@ -6,7 +6,7 @@ import Arrow from "./ui/arrow";
 import Loading from "./ui/loading-spinner";
 
 export default function UserEventList({ maxEvents }) {
-  const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/events/";
+  const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/events";
 
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);

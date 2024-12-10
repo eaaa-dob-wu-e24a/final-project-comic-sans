@@ -1,15 +1,8 @@
-export default function FormLabel({
-  htmlFor,
-  children,
-  className,
-  variant = "sm",
-}) {
-  const sizeClass = variant === "lg" ? "text-lg" : "text-sm";
-
+export default function FormLabel({ htmlFor, children, className }) {
   return (
     <label
       htmlFor={htmlFor}
-      className={`block ${sizeClass} text-foreground py-0.5 font-medium ${className}`}
+      className={`block text-sm text-foreground py-0.5 ${className}`}
     >
       {children}
     </label>

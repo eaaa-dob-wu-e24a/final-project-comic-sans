@@ -90,7 +90,8 @@ export default function EventDateDetailCard({
                           }}
                         />
                         <span className="ml-2 truncate text-sm">
-                          {vote.FK_User == loggedInUser.userId
+                          {vote.FK_User !== null &&
+                          vote.FK_User === loggedInUser.userId
                             ? `${vote.UserName} (you)`
                             : vote.UserName}
                         </span>

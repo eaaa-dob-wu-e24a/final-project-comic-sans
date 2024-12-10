@@ -75,7 +75,7 @@ export default function EventDateDetailCard({
               <div className="mt-4 ml-2 text-sm relative group">
                 <h3>Currently {date.UserVotes.length} participants... </h3>
 
-                <div className="absolute left-0 mt-2 w-48 bg-background border border-gray-300 rounded-xl shadow-lg p-2 hidden group-hover:block">
+                <div className="absolute left-0 mt-2 w-48 bg-background border border-gray-300 rounded-xl shadow-lg p-2 hidden group-hover:block z-50">
                   <ul className="space-y-2">
                     {date.UserVotes.map((vote, i) => (
                       <li key={i} className="flex items-center">

@@ -135,6 +135,7 @@ export default function JoinEventPage() {
               UserName: loggedInUser.userId
                 ? loggedInUser.username
                 : usernameInput,
+              UserImagePath: loggedInUser.imagePath || null, // Include the image path
             });
           } else {
             date.UserVotes = date.UserVotes.filter(

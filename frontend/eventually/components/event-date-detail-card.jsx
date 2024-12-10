@@ -28,7 +28,7 @@ export default function EventDateDetailCard({
         {eventDates.map((date, index) => {
           const selectedClasses =
             "bg-gradient-to-r from-gradientstart to-gradientend text-white border-none shadow-md";
-          const unselectedClasses = "bg-white text-black border-gradientstart";
+          const unselectedClasses = "bg-background text-foreground border-gradientstart";
 
           const startDate = formatDate(date.DateTimeStart);
           const endDate = formatDate(date.DateTimeEnd);
@@ -36,7 +36,7 @@ export default function EventDateDetailCard({
           return (
             <div key={index} className="w-64 mb-4">
               <li
-                className={`flex flex-col items-center h-48 w-64 border p-4 rounded-lg cursor-pointer ${
+                className={`flex flex-col items-center h-48 w-64 border p-4 rounded-xl cursor-pointer ${
                   date.selected ? selectedClasses : unselectedClasses
                 }`}
                 onClick={() => onDateClick(index)}
@@ -51,14 +51,14 @@ export default function EventDateDetailCard({
                   </p>
                   <p
                     className={`font-bold ${
-                      date.selected ? "text-white" : "text-gray-600"
+                      date.selected ? "text-white" : "text-foreground opacity-60"
                     }`}
                   >
                     {startDate.month}
                   </p>
                   <p
                     className={`font-bold mb-3 ${
-                      date.selected ? "text-white" : "text-gray-600"
+                      date.selected ? "text-white" : "text-foreground opacity-60"
                     }`}
                   >
                     {startDate.year}
@@ -75,7 +75,7 @@ export default function EventDateDetailCard({
               <div className="mt-4 ml-2 text-sm relative group">
                 <h3>Currently {date.UserVotes.length} participants... </h3>
 
-                <div className="absolute left-0 mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg p-2 hidden group-hover:block">
+                <div className="absolute left-0 mt-2 w-48 bg-background border border-gray-300 rounded-xl shadow-lg p-2 hidden group-hover:block">
                   <ul className="space-y-2">
                     {date.UserVotes.map((vote, i) => (
                       <li key={i} className="flex items-center">

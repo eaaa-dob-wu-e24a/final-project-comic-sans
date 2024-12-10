@@ -50,14 +50,14 @@
     mask-position: 200%;
   }
 }
-
+/* 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #23203b;
     --page-background: #1a192c;
     --foreground: #ffffff;
   }
-}
+} */
 
 body {
   color: var(--foreground);

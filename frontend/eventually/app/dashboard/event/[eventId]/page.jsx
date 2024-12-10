@@ -23,8 +23,11 @@ export default function EventPage() {
     const fetchUserData = async () => {
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/user/check_session`,
-          { method: "GET", credentials: "include" }
+          `${process.env.NEXT_PUBLIC_API_URL}/api/user/check_session/`,
+          {
+            method: "GET",
+            credentials: "include", // Include credentials to maintain session
+          }
         );
         const userData = await res.json();
 
@@ -95,8 +98,8 @@ export default function EventPage() {
 
         if (wasSelected !== isSelected) {
           const url = isSelected
-            ? `${process.env.NEXT_PUBLIC_API_URL}/api/vote/create`
-            : `${process.env.NEXT_PUBLIC_API_URL}/api/vote/delete`;
+            ? `${process.env.NEXT_PUBLIC_API_URL}/api/vote/create/`
+            : `${process.env.NEXT_PUBLIC_API_URL}/api/vote/delete/`;
 
           const res = await fetch(url, {
             method: "POST",

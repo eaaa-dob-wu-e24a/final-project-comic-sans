@@ -36,9 +36,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    // Prepare to insert vote
-    $stmt = $mysqli->prepare("INSERT INTO Eventually_Event_User_Voting (FK_User, FK_Event_Dates, UserName) VALUES (?, ?, ?)");
-    $userIdValue = $userId ?: null; // Set FK_User to null for guests
+    // Check for duplicate usernames for the same event date
+    $checkStmt = $mysqli->prepare("
+    SELECT COUNT(*) 
+    FROM Eventually_Event_User_Voting 
+    WHERE FK_Event_Dates = ? AND UserName = ?
+");
+    $checkStmt->bind_param("is", $dateId, $username);
+    $checkStmt->execute();
+    $checkStmt->bind_result($count);
+    $checkStmt->fetch();
+    $checkStmt->close();
+
+    if ($count > 0) {
+        http_response_code(409); // Conflict status code
+        echo json_encode(["status" => "error", "message" => "Username already exists for this event date."], JSON_PRETTY_PRINT);
+        exit();
+    }
+
+    // Proceed to insert vote
+    $stmt = $mysqli->prepare("
+    INSERT INTO Eventually_Event_User_Voting (FK_User, FK_Event_Dates, UserName) 
+    VALUES (?, ?, ?)
+");
+    $userIdValue = $userId ?: null;
     $stmt->bind_param("iis", $userIdValue, $dateId, $username);
 
     if ($stmt->execute()) {

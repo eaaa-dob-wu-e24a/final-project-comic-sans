@@ -118,16 +118,21 @@ export default function JoinEventPage() {
             body: JSON.stringify({
               eventId,
               dateId: date.PK_ID,
-              userId: loggedInUser.userId, // Null for non-logged-in users
+              userId: loggedInUser.userId,
               username: loggedInUser.userId
                 ? loggedInUser.username
                 : usernameInput,
             }),
           });
 
+          if (res.status === 409) {
+            const errorData = await res.json();
+            alert(errorData.message); // Display duplicate username error
+            return;
+          }
+
           if (!res.ok) throw new Error("Failed to update vote");
 
-          // Update UserVotes based on server response
           // Update UserVotes based on server response
           if (isSelected) {
             date.UserVotes.push({
@@ -135,7 +140,7 @@ export default function JoinEventPage() {
               UserName: loggedInUser.userId
                 ? loggedInUser.username
                 : usernameInput,
-              UserImagePath: loggedInUser.imagePath || null, // Include the image path
+              UserImagePath: loggedInUser.imagePath || null,
             });
           } else {
             date.UserVotes = date.UserVotes.filter(

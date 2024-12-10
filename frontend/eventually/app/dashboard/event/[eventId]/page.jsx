@@ -47,8 +47,11 @@ export default function EventPage() {
       if (eventId && loggedInUser.userId !== null) {
         try {
           const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/event/id/${eventId}`,
-            { method: "GET", headers: { "Content-Type": "application/json" } }
+            `${process.env.NEXT_PUBLIC_API_URL}/api/event/id/?id=${eventId}`,
+            {
+              method: "GET",
+              headers: { "Content-Type": "application/json" },
+            }
           );
           const data = await res.json();
 

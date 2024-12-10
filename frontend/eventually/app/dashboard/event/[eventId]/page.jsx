@@ -98,8 +98,8 @@ export default function EventPage() {
 
         if (wasSelected !== isSelected) {
           const url = isSelected
-            ? `${process.env.NEXT_PUBLIC_API_URL}/api/vote/create`
-            : `${process.env.NEXT_PUBLIC_API_URL}/api/vote/delete`;
+            ? `${process.env.NEXT_PUBLIC_API_URL}/api/vote/create/`
+            : `${process.env.NEXT_PUBLIC_API_URL}/api/vote/delete/`;
 
           const res = await fetch(url, {
             method: "POST",

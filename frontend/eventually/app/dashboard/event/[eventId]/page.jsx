@@ -148,7 +148,7 @@ export default function EventPage() {
           onPendingSelection={handlePendingSelection}
           loggedInUser={loggedInUser}
         />
-        {/* ADD conditional rendering if only for non logged in users */}
+        {/* MAYBE TODO ADD conditional rendering if only for non logged in users */}
         <div className="mb-4">
           <label htmlFor="username" className="block text-gray-700 font-bold">
             Enter Your Name:

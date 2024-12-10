@@ -7,8 +7,10 @@ import GradientCurve from "../../components/gradientcurve";
 import FormLabel from "../../components/ui/formlabel";
 import Input from "../../components/ui/input";
 import Button from "../../components/ui/button";
+import { useNotif } from "@/components/notif-context";
 
 const LoginPage = () => {
+  const notif = useNotif();
   const { setUser } = useContext(AuthContext);
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -45,6 +47,7 @@ const LoginPage = () => {
       if (data.status === "success") {
         console.log("Login successful");
         setUser(data.user); // Update the global user state
+        notif?.send(`Signed in as ${data.user.name}`)
         router.push("/dashboard"); // Redirect to dashboard or desired page
       } else {
         setErrorMessage(data.message); // Set the error message from backend

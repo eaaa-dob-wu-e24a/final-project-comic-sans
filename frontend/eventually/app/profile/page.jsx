@@ -179,13 +179,34 @@ export default function Profile() {
   };
 
   // Delete account
-  const handleDeleteAccount = () => {
+  const handleDeleteAccount = async () => {
     if (
       confirm(
         "Are you sure you want to delete your account? This action cannot be undone."
       )
     ) {
-      alert("Account deleted successfully.");
+      const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/delete";
+      try {
+        const response = await fetch(url, {
+          method: "DELETE",
+          credentials: "include",
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          alert("Account deleted successfully.");
+          // Clear user context and redirect to home or login
+          if (setUser) {
+            setUser(null);
+          }
+          window.location.href = "/"; // or router.push("/login") if using Next.js router
+        } else {
+          alert(`Error: ${data.error || "Failed to delete account."}`);
+        }
+      } catch (error) {
+        console.error("Error deleting account:", error);
+        alert("An error occurred while deleting account.");
+      }
     }
   };
 
@@ -350,13 +371,13 @@ export default function Profile() {
             <select
               value={timeZone}
               onChange={(e) => setTimeZone(e.target.value)}
-              className="p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-500"
+              className="p-2 border rounded-lg bg-white"
             >
-              <option>Central Time - US & Canada</option>
+              <option>Central European Standard Time</option>
               <option>Eastern Time - US & Canada</option>
               <option>Pacific Time - US & Canada</option>
             </select>
-            <p className="text-xs text-gray-500 mt-2">Current Time: 10:02pm</p>
+            <p className="text-xs text-secondary mt-2">Current Time:</p>
           </div>
         </div>
 

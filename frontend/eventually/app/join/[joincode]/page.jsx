@@ -9,6 +9,7 @@ export default function JoinEventPage() {
   const { joincode } = useParams(); // Extract joincode from the URL
   const [event, setEvent] = useState(null);
   const [eventId, setEventId] = useState(null); // Store eventId separately
+  const [usernameInput, setUsernameInput] = useState("");
   const [loading, setLoading] = useState(true);
   const [loggedInUser, setLoggedInUser] = useState({
     userId: null,
@@ -30,10 +31,12 @@ export default function JoinEventPage() {
         );
         const userData = await res.json();
 
-        setLoggedInUser({
-          userId: userData.user.id,
-          username: userData.user.name,
-        });
+        if (userData.user) {
+          setLoggedInUser({
+            userId: userData.user.id,
+            username: userData.user.name,
+          });
+        }
       } catch (err) {
         console.error("Failed to fetch user data:", err);
       }
@@ -115,17 +118,23 @@ export default function JoinEventPage() {
             body: JSON.stringify({
               eventId,
               dateId: date.PK_ID,
-              userId: loggedInUser.userId,
+              userId: loggedInUser.userId, // Null for non-logged-in users
+              username: loggedInUser.userId
+                ? loggedInUser.username
+                : usernameInput,
             }),
           });
 
           if (!res.ok) throw new Error("Failed to update vote");
 
           // Update UserVotes based on server response
+          // Update UserVotes based on server response
           if (isSelected) {
             date.UserVotes.push({
-              FK_User: loggedInUser.userId,
-              UserName: loggedInUser.username,
+              FK_User: loggedInUser.userId || null,
+              UserName: loggedInUser.userId
+                ? loggedInUser.username
+                : usernameInput,
             });
           } else {
             date.UserVotes = date.UserVotes.filter(
@@ -156,6 +165,19 @@ export default function JoinEventPage() {
           onPendingSelection={handlePendingSelection}
           loggedInUser={loggedInUser}
         />
+        <div className="mb-4">
+          <label htmlFor="username" className="block text-gray-700 font-bold">
+            Enter Your Name:
+          </label>
+          <input
+            id="username"
+            type="text"
+            value={usernameInput}
+            onChange={(e) => setUsernameInput(e.target.value)}
+            className="p-2 border border-gray-300 rounded w-full mt-2"
+            placeholder="Your name"
+          />
+        </div>
         <div className="mt-8 flex justify-end">
           <button
             onClick={confirmSelections}

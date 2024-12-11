@@ -8,7 +8,7 @@ header("Access-Control-Allow-Headers: Content-Type");
 
 require_once __DIR__ . "/../../../database/dbconn.php";
 
-session_start(); // Start the session for login functionality
+session_start(['cookie_secure' => true, 'cookie_samesite' => 'None']);; // Start the session for login functionality
 // Handle preflight OPTIONS request
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);

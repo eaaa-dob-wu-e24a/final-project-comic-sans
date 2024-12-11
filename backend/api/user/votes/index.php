@@ -11,6 +11,8 @@ header('Content-Type: application/json');
 
 require_once __DIR__ . "/../../../database/dbconn.php";
 
+session_start(['cookie_secure' => true, 'cookie_samesite' => 'None']);
+
 
 function showError($msgString)
 {
@@ -26,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    session_start();
+
 
     // Check if the user is authenticated
     if (!isset($_SESSION['user']) || !isset($_SESSION['user']['id'])) {
@@ -125,5 +127,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     http_response_code(405);
     showError("Invalid request method.");
 }
-
-?>

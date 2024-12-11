@@ -27,12 +27,12 @@ export default function EventDetail({ event }) {
       </div>
 
       <div className="flex place-content-between mt-2">
-        <p className="text-primary font-bold">
+        <p className="text-primary font-bold text-lg">
           Location: {event?.Location || "DummyLocation"}
         </p>
         <p>Created by {event?.UserName || "DummyUser"}</p>
       </div>
-      <h2 className="text-primary font-bold">Description </h2>
+      <h2 className="text-primary font-bold text-lg">Description </h2>
 
       <div className="shadow-md p-4 rounded-xl">
         <p>{event?.Description}</p>

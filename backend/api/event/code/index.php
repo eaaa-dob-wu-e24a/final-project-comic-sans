@@ -39,7 +39,7 @@ $result = $stmt->get_result();
 if ($result && $result->num_rows > 0) {
     $event = $result->fetch_assoc();
 
-    // Fetch associated dates and votes for the event
+    // Fetch associated dates and votes for the event, including user images
     $dateVotesQuery = "
         SELECT 
             d.PK_ID AS DateID,
@@ -48,22 +48,25 @@ if ($result && $result->num_rows > 0) {
             v.PK_ID AS VoteID,
             v.FK_User,
             v.Status,
-            v.UserName
+            v.UserName,
+            u.ImagePath AS UserImagePath
         FROM 
             Eventually_Event_Dates d
         LEFT JOIN 
-            Eventually_Event_User_Voting v
-        ON 
-            d.PK_ID = v.FK_Event_Dates
+            Eventually_Event_User_Voting v ON d.PK_ID = v.FK_Event_Dates
+        LEFT JOIN 
+            Eventually_User u ON v.FK_User = u.PK_ID
         WHERE 
             d.FK_Event = ?
     ";
 
+    // Use prepared statements for security
     $dateStmt = $mysqli->prepare($dateVotesQuery);
     $dateStmt->bind_param("i", $event['PK_ID']);
     $dateStmt->execute();
     $dateVotesResult = $dateStmt->get_result();
 
+    // Build the event data with votes and image paths
     $datesArray = [];
     while ($row = $dateVotesResult->fetch_assoc()) {
         $dateID = $row['DateID'];
@@ -82,7 +85,8 @@ if ($result && $result->num_rows > 0) {
                 "VoteID" => $row['VoteID'],
                 "FK_User" => $row['FK_User'],
                 "Status" => $row['Status'],
-                "UserName" => $row['UserName']
+                "UserName" => $row['UserName'],
+                "UserImagePath" => $row['UserImagePath'] // Include the image path
             ];
         }
     }

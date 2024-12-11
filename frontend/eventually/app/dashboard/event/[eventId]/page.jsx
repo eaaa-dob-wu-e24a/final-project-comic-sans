@@ -4,6 +4,10 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import EventDetail from "@/components/event-detail";
 import EventDateDetailCard from "@/components/event-date-detail-card";
+import { useNotif } from "@/components/notif-context";
+import Button from "@/components/ui/button";
+import Input from "@/components/ui/input";
+import FormLabel from "@/components/ui/formlabel";
 
 export default function EventPage() {
   const { eventId } = useParams();
@@ -17,6 +21,7 @@ export default function EventPage() {
   });
 
   const [pendingSelections, setPendingSelections] = useState([]);
+  const notif = useNotif();
 
   // Fetch user data
   useEffect(() => {
@@ -124,6 +129,7 @@ export default function EventPage() {
               UserName: loggedInUser.userId
                 ? loggedInUser.username
                 : usernameInput,
+              UserImagePath: loggedInUser.imagePath || null, // Include the image path
             });
           } else {
             date.UserVotes = date.UserVotes.filter(
@@ -131,7 +137,7 @@ export default function EventPage() {
                 parseInt(vote.FK_User, 10) !== parseInt(loggedInUser.userId, 10)
             );
           }
-
+          notif.send("Votes updated successfully!");
           updatedEventDates[i] = { ...date, selected: isSelected };
         }
       }
@@ -154,28 +160,8 @@ export default function EventPage() {
           onPendingSelection={handlePendingSelection}
           loggedInUser={loggedInUser}
         />
-        {/* MAYBE TODO ADD conditional rendering if only for non logged in users */}
-        <div className="mb-4">
-          <label htmlFor="username" className="block text-gray-700 font-bold">
-            Enter Your Name:
-          </label>
-          <input
-            id="username"
-            type="text"
-            value={usernameInput}
-            onChange={(e) => setUsernameInput(e.target.value)}
-            className="p-2 border border-gray-300 rounded w-full mt-2"
-            placeholder="Your name"
-          />
-        </div>
-
-        <div className="mt-8 flex justify-end">
-          <button
-            onClick={confirmSelections}
-            className="bg-primary text-white p-4 rounded-full shadow-lg hover:bg-primary-dark active:bg-primary-light"
-          >
-            Confirm Selections
-          </button>
+        <div className="mt-8 flex justify-center">
+          <Button onClick={confirmSelections}>Confirm Selections</Button>
         </div>
       </section>
     </main>

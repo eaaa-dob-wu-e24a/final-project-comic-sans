@@ -26,17 +26,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $postData = json_decode(file_get_contents('php://input'), true);
 
     // Validate incoming data
-    if (!$userId || !isset($postData['dateId']) || !isset($postData['eventId'])) {
+    if ((!$userId && !isset($postData['username'])) || !isset($postData['dateId']) || !isset($postData['eventId'])) {
         http_response_code(400);
         echo json_encode(["status" => "error", "message" => "Invalid input."], JSON_PRETTY_PRINT);
         exit();
     }
 
     $dateId = $postData['dateId'];
+    $eventId = $postData['eventId'];
+    $username = $postData['username'] ?? null;
 
-    // Delete vote from the database
-    $stmt = $mysqli->prepare("DELETE FROM Eventually_Event_User_Voting WHERE FK_User = ? AND FK_Event_Dates = ?");
-    $stmt->bind_param("ii", $userId, $dateId);
+    if ($userId) {
+        // Delete vote for logged-in user
+        $stmt = $mysqli->prepare("DELETE FROM Eventually_Event_User_Voting WHERE FK_User = ? AND FK_Event_Dates = ?");
+        $stmt->bind_param("ii", $userId, $dateId);
+    } else if ($username) {
+        // Delete vote for guest user (based on username)
+        $stmt = $mysqli->prepare("DELETE FROM Eventually_Event_User_Voting WHERE FK_User IS NULL AND FK_Event_Dates = ? AND UserName = ?");
+        $stmt->bind_param("is", $dateId, $username);
+    }
 
     if ($stmt->execute() && $stmt->affected_rows > 0) {
         http_response_code(200);
@@ -47,7 +55,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $stmt->close();
-} else {
-    http_response_code(405);
-    echo json_encode(["status" => "error", "message" => "Invalid request method."], JSON_PRETTY_PRINT);
 }

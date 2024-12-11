@@ -5,6 +5,9 @@ import { useEffect, useState } from "react";
 import EventDetail from "@/components/event-detail";
 import EventDateDetailCard from "@/components/event-date-detail-card";
 import { useNotif } from "@/components/notif-context";
+import Button from "@/components/ui/button";
+import Input from "@/components/ui/input";
+import FormLabel from "@/components/ui/formlabel";
 
 export default function JoinEventPage() {
   const { joincode } = useParams(); // Extract joincode from the URL
@@ -172,10 +175,10 @@ export default function JoinEventPage() {
         />
         {!loggedInUser.userId && (
           <div className="mb-4">
-            <label htmlFor="username" className="block text-gray-700 font-bold">
+            <FormLabel htmlFor="username" variant="lg">
               Enter Your Name:
-            </label>
-            <input
+            </FormLabel>
+            <Input
               id="username"
               type="text"
               value={usernameInput}
@@ -186,12 +189,12 @@ export default function JoinEventPage() {
           </div>
         )}
         <div className="mt-8 flex justify-center">
-          <button
+          <Button
             onClick={confirmSelections}
             className="bg-primary text-white p-4 rounded-full shadow-lg hover:bg-primary-dark active:bg-primary-light"
           >
             Confirm Selections
-          </button>
+          </Button>
         </div>
       </section>
     </main>

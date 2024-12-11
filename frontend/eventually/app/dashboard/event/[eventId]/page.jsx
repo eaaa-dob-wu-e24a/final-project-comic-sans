@@ -172,7 +172,7 @@ export default function EventPage() {
             />
           </div>
         )}
-        <div className="mt-8 flex justify-end">
+        <div className="mt-8 flex justify-center">
           <button
             onClick={confirmSelections}
             className="bg-primary text-white p-4 rounded-full shadow-lg hover:bg-primary-dark active:bg-primary-light"

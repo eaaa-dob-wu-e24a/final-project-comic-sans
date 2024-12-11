@@ -16,7 +16,6 @@ export default function JoinEventPage() {
     userId: null,
     username: "",
   });
-  const [showConfirmation, setShowConfirmation] = useState(false);
   const notif = useNotif();
 
   const [pendingSelections, setPendingSelections] = useState([]); // New pending state
@@ -138,23 +137,22 @@ export default function JoinEventPage() {
               UserImagePath: loggedInUser.imagePath || null,
             });
           } else {
+            // Remove vote for non-logged-in user by username
             date.UserVotes = date.UserVotes.filter(
               (vote) =>
+                !(vote.FK_User === null && vote.UserName === usernameInput) &&
                 parseInt(vote.FK_User, 10) !== parseInt(loggedInUser.userId, 10)
             );
           }
-          notif.send("Votes registered!");
+
           updatedEventDates[i] = { ...date, selected: isSelected };
         }
       }
 
       setEvent({ ...event, EventDates: updatedEventDates });
+      setPendingSelections(updatedEventDates.map((date) => date.selected));
 
-      // Show confirmation message
-      setShowConfirmation(true);
-
-      // Hide the confirmation message after 3 seconds
-      setTimeout(() => setShowConfirmation(false), 3000);
+      notif.send("Votes updated successfully!");
     } catch (err) {
       console.error("Failed to confirm selections:", err);
     }
@@ -187,7 +185,7 @@ export default function JoinEventPage() {
             />
           </div>
         )}
-        <div className="mt-8 flex justify-end">
+        <div className="mt-8 flex justify-center">
           <button
             onClick={confirmSelections}
             className="bg-primary text-white p-4 rounded-full shadow-lg hover:bg-primary-dark active:bg-primary-light"

@@ -276,7 +276,7 @@ export default function Profile() {
           // Change Password Section
           <div className="bg-background shadow-md rounded-lg p-6 mb-6 mx-auto w-4/5">
             <h2 className="text-xl font-bold mb-4">Change Password</h2>
-            <div className="mb-6">
+            <div className="mb-6 pr-2 w-1/2 ">
               <FormLabel>Current Password</FormLabel>
               <Input
                 type="password"
@@ -284,8 +284,8 @@ export default function Profile() {
                 onChange={(e) => setCurrentPassword(e.target.value)}
               />
             </div>
-            <div className="flex mb-6">
-              <div className="w-1/2 pr-2">
+            <div className="flex gap-4 mb-6">
+              <div className="w-1/2">
                 <FormLabel>New Password</FormLabel>
                 <Input
                   type="password"
@@ -366,7 +366,7 @@ export default function Profile() {
               />
             </label>
           </div>
-          <div className="flex flex-col">
+          <div className="flex flex-col w-1/2">
             <label className="text-sm font-medium mb-2">Time Zone</label>
             <select
               value={timeZone}

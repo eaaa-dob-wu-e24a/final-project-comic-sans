@@ -7,7 +7,7 @@ import Arrow from "./ui/arrow";
 import Loading from "./ui/loading-spinner";
 
 export default function VotedEventList({ maxEvents }) {
-  const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/votes";
+  const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/votes/";
   const urlSingle = process.env.NEXT_PUBLIC_API_URL + "/api/event/";
 
   const [events, setEvents] = useState([]); // Store events fetched from the API

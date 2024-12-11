@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-session_start();
+session_start(['cookie_secure' => true, 'cookie_samesite' => 'None']);;
 
 // Decode JSON input
 $data = json_decode(file_get_contents("php://input"), true);

@@ -11,7 +11,7 @@ header('Content-Type: application/json');
 
 require_once __DIR__ . "/../../../database/dbconn.php";
 
-session_start();
+session_start(['cookie_secure' => true, 'cookie_samesite' => 'None']);;
 
 // // Handle preflight OPTIONS request
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {

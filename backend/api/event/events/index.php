@@ -23,7 +23,7 @@ function showError($msgString)
     echo json_encode($msg, JSON_PRETTY_PRINT);
 }
 
-session_start();
+session_start(['cookie_secure' => true, 'cookie_samesite' => 'None']);;
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {

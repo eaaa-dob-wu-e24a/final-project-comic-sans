@@ -190,9 +190,7 @@ export default function JoinEventPage() {
         )}
         <div className="mt-8 flex justify-center">
           <Button
-            onClick={confirmSelections}
-            className="bg-primary text-white p-4 rounded-full shadow-lg hover:bg-primary-dark active:bg-primary-light"
-          >
+            onClick={confirmSelections}>
             Confirm Selections
           </Button>
         </div>

@@ -189,10 +189,7 @@ export default function JoinEventPage() {
           </div>
         )}
         <div className="mt-8 flex justify-center">
-          <Button
-            onClick={confirmSelections}>
-            Confirm Selections
-          </Button>
+          <Button onClick={confirmSelections}>Confirm Selections</Button>
         </div>
       </section>
     </main>

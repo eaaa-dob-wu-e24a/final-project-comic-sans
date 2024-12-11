@@ -20,7 +20,7 @@ export default function CreateEvent() {
   const [userName, setUserName] = useState("");
   const [selectedDates, setSelectedDates] = useState([]); // Array of { date: Date, timeSlots: [{ startTime: string, duration: number }] }
   const [responseMessage, setResponseMessage] = useState(null);
-  
+
   // API endpoints
   const apiUrl = process.env.NEXT_PUBLIC_API_URL + "/api/event/create";
   const joinCodeEndpoint =
@@ -54,6 +54,29 @@ export default function CreateEvent() {
     const today = new Date();
     return date.toDateString() === today.toDateString();
   };
+
+  const generateTimeOptions = () => {
+    const times = [];
+    for (let hour = 0; hour < 24; hour++) {
+      for (let minute = 0; minute < 60; minute += 15) {
+        const time = `${String(hour).padStart(2, "0")}:${String(
+          minute
+        ).padStart(2, "0")}`;
+        times.push(time);
+      }
+    }
+    return times;
+  };
+
+  const isPastTime = (time, date) => {
+    const [hour, minute] = time.split(":").map(Number);
+    const now = new Date();
+    const selectedDate = new Date(date);
+    selectedDate.setHours(hour, minute, 0, 0);
+    return selectedDate < now;
+  };
+
+  const allTimes = generateTimeOptions(); // All times for the entire day
 
   // Calculate the next available time slot
   const getNextAvailableTime = () => {
@@ -99,26 +122,55 @@ export default function CreateEvent() {
     setSelectedDates(updatedDates);
   };
 
-  const addTimeSlot = (dateIndex) => {
-    const updatedDates = selectedDates.map((dateItem, idx) => {
-      if (idx === dateIndex) {
-        const defaultStartTime = isToday(dateItem.date)
-          ? getNextAvailableTime()
-          : "12:00"; // Next slot for today, 12:00 otherwise
+const addTimeSlot = (dateIndex) => {
+  const updatedDates = selectedDates.map((dateItem, idx) => {
+    if (idx === dateIndex) {
+      let defaultStartTime = isToday(dateItem.date)
+        ? getNextAvailableTime()
+        : "12:00";
 
-        return {
-          ...dateItem,
-          timeSlots: [
-            ...dateItem.timeSlots,
-            { startTime: defaultStartTime, duration: 1 }, // Set default startTime
-          ],
-        };
+      const disabledTimes = getDisabledTimes(dateIndex);
+
+      // Find index of defaultStartTime in allTimes
+      let startIndex = allTimes.findIndex((t) => t === defaultStartTime);
+      if (startIndex === -1) {
+        // If somehow not found, fallback to noon as start
+        startIndex = allTimes.findIndex((t) => t === "12:00");
       }
-      return dateItem;
-    });
 
-    setSelectedDates(updatedDates);
-  };
+      // Iterate forward from startIndex to find the next available time slot
+      let foundTime = null;
+      for (let i = startIndex; i < allTimes.length; i++) {
+        const candidate = allTimes[i];
+        if (
+          !isPastTime(candidate, dateItem.date) &&
+          !disabledTimes.includes(candidate)
+        ) {
+          foundTime = candidate;
+          break;
+        }
+      }
+
+      // If we found a suitable time, use it; otherwise defaultStartTime remains what it was
+      if (foundTime) {
+        defaultStartTime = foundTime;
+      } else {
+        // If no future time is available, for now, leave defaultStartTime as is (even if it's not allowed),
+      }
+
+      return {
+        ...dateItem,
+        timeSlots: [
+          ...dateItem.timeSlots,
+          { startTime: defaultStartTime, duration: 1 },
+        ],
+      };
+    }
+    return dateItem;
+  });
+
+  setSelectedDates(updatedDates);
+};
 
   const removeTimeSlot = (dateIndex, timeIndex) => {
     const updatedDates = selectedDates.map((dateItem, idx) => {
@@ -180,7 +232,7 @@ export default function CreateEvent() {
 
         const endDateTime = new Date(startDateTime);
         endDateTime.setHours(endDateTime.getHours() + parseInt(duration, 10));
-        
+
         // Format to save in local time format
         const startLocalTime = `${startDateTime.toLocaleDateString(
           "en-CA"
@@ -374,6 +426,8 @@ export default function CreateEvent() {
                     removeTimeSlot={removeTimeSlot}
                     handleTimeSlotChange={handleTimeSlotChange}
                     getDisabledTimes={() => getDisabledTimes(dateIndex)}
+                    allTimes={allTimes}
+                    isPastTime={(time) => isPastTime(time, item.date)}
                   />
                 ))}
               </div>

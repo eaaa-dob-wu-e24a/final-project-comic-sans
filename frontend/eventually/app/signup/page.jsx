@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from "react";
-// import { useRouter } from "next/navigation";
 import GradientCurve from "@/components/gradientcurve";
 import Input from "@/components/ui/input";
 import FormLabel from "@/components/ui/formlabel";
@@ -14,10 +13,7 @@ const Register = () => {
   });
   const [errorMessage, setErrorMessage] = useState(""); // State variable for error message
 
-
-  const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/signup/";
-  const router = useRouter();
-
+  const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/signup";
 
   console.log(url);
   /**
@@ -49,13 +45,14 @@ const Register = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
+        credentials: "include",
       });
 
       const result = await response.json();
 
       if (result.status === "success") {
         console.log("Registration successful:", result);
-        window.location.href = data.redirect; // Redirect to dashboard
+        window.location.href = result.redirect; // Redirect to dashboard
       } else {
         console.log("Registration failed:", result.message);
         setErrorMessage(result.message); // Display the error message from backend

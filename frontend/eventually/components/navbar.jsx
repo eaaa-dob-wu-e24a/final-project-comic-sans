@@ -35,7 +35,7 @@ export default function Navbar() {
           // Render this if the user is logged in
           <>
             <ProfileAvatar />
-            <Link href="/createEvent">
+            <Link href="/create">
               <Button variant="secondary">Create event</Button>
             </Link>
           </>
@@ -59,7 +59,7 @@ export default function Navbar() {
               SIGN UP
             </Link>
 
-            <Link href="/createEvent">
+            <Link href="/create">
               <Button
                 label="CREATE EVENT"
                 className="bg-secondary hover:bg-secondary-hover transition-all duration-200"

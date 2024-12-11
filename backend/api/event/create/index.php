@@ -3,7 +3,7 @@
 require_once __DIR__ . "/../../../database/dbconn.php";
 
 // Start the session to check if the user is logged in
-session_start();
+session_start(['cookie_secure' => true, 'cookie_samesite' => 'None']);;
 
 $allowedOrigins = ["https://final-project-comic-sans-fork.vercel.app", "http://localhost:3001", "http://localhost:3000"];
 if (isset($_SERVER['HTTP_ORIGIN']) && in_array($_SERVER['HTTP_ORIGIN'], $allowedOrigins)) {

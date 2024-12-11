@@ -1,5 +1,5 @@
 <?php
-session_start(); // Start the session for login functionality
+session_start(['cookie_secure' => true, 'cookie_samesite' => 'None']);; // Start the session for login functionality
 
 require_once __DIR__ . "/../../../database/dbconn.php";
 

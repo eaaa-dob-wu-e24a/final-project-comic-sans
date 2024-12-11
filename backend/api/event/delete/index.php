@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-session_start();
+session_start(['cookie_secure' => true, 'cookie_samesite' => 'None']);;
 $user = $_SESSION['user'] ?? null;
 
 function showError($msgString)

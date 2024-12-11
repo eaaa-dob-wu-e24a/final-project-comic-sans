@@ -28,7 +28,8 @@ export default function EventDateDetailCard({
           const selected = pendingSelections[index];
           const selectedClasses =
             "bg-gradient-to-r from-gradientstart to-gradientend text-white border-none shadow-md";
-          const unselectedClasses = "bg-background text-foreground border-gradientstart";
+          const unselectedClasses =
+            "bg-background text-foreground border-gradientstart";
 
           const startDate = formatDate(date.DateTimeStart);
           const endDate = formatDate(date.DateTimeEnd);
@@ -37,7 +38,7 @@ export default function EventDateDetailCard({
             <div key={index} className="w-64 mb-4">
               <li
                 className={`flex flex-col items-center h-48 w-64 border p-4 rounded-xl cursor-pointer ${
-                  date.selected ? selectedClasses : unselectedClasses
+                  selected ? selectedClasses : unselectedClasses
                 }`}
                 onClick={() => onPendingSelection(index)}
               >
@@ -51,14 +52,14 @@ export default function EventDateDetailCard({
                   </p>
                   <p
                     className={`font-bold ${
-                      selected ? "text-white" : "text-gray-600"
+                      selected ? "text-white" : "text-foreground"
                     }`}
                   >
                     {startDate.month}
                   </p>
                   <p
                     className={`font-bold mb-3 ${
-                      selected ? "text-white" : "text-gray-600"
+                      selected ? "text-white" : "text-foreground"
                     }`}
                   >
                     {startDate.year}

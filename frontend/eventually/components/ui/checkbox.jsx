@@ -13,7 +13,7 @@ export default function Checkbox({ id, checked, onChange }) {
         disabled
       />
       <div
-        className={`bg-transparent h-8 w-8 rounded-full border-2 border-grey/75 hover:cursor-pointer 
+        className={`bg-transparent h-8 w-8 rounded-full border-2 border-gray-500/50  hover:cursor-pointer 
         ${checked ? "peer-checked:border-white peer-checked:border-4" : ""}
       flex place-content-center`}
       >

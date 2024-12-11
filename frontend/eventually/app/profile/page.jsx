@@ -21,7 +21,7 @@ export default function Profile() {
 
   const [isDarkTheme, setIsDarkTheme] = useState(false);
   const [notifications, setNotifications] = useState(true);
-  const [timeZone, setTimeZone] = useState("Central Time - US & Canada");
+  const [timeZone, setTimeZone] = useState("Central European Standard Time");
 
   useEffect(() => {
     if (user) {
@@ -185,7 +185,7 @@ export default function Profile() {
         "Are you sure you want to delete your account? This action cannot be undone."
       )
     ) {
-      const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/delete";
+      const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/delete/";
       try {
         const response = await fetch(url, {
           method: "DELETE",
@@ -323,8 +323,8 @@ export default function Profile() {
                 <ProfileAvatar variant="large" />
               </div>
               <div className="ml-6">
-                <p className="text-lg font-medium">{user.name}</p>
-                <p className="text-sm text-gray-500">{user.email}</p>
+                <p className="text-xl font-medium">{user.name}</p>
+                <p className="text-sm text-foreground">{user.email}</p>
               </div>
             </div>
             <div className="flex justify-end space-x-4">
@@ -371,7 +371,7 @@ export default function Profile() {
             <select
               value={timeZone}
               onChange={(e) => setTimeZone(e.target.value)}
-              className="p-2 border rounded-lg bg-white"
+              className="p-2 border rounded-lg bg-white text-dark"
             >
               <option>Central European Standard Time</option>
               <option>Eastern Time - US & Canada</option>

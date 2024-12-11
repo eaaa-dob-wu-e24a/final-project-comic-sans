@@ -22,9 +22,9 @@ export default function CreateEvent() {
   const [responseMessage, setResponseMessage] = useState(null);
 
   // API endpoints
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL + "/api/event/create";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL + "/api/event/create/";
   const joinCodeEndpoint =
-    process.env.NEXT_PUBLIC_API_URL + "/api/code/generate";
+    process.env.NEXT_PUBLIC_API_URL + "/api/code/generate/";
 
   useEffect(() => {
     if (user) {

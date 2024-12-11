@@ -8,7 +8,7 @@ header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Methods: PATCH, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
-session_start();
+session_start(['cookie_secure' => true, 'cookie_samesite' => 'None']);;
 $user = $_SESSION['user'];
 
 function showError($msgString)

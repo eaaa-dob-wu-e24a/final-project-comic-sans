@@ -10,36 +10,15 @@ export default function SelectedDate({
   removeTimeSlot,
   handleTimeSlotChange,
   getDisabledTimes,
+
+  /** (Change #4) Receive allTimes and isPastTime as props **/
+  allTimes,
+  isPastTime,
 }) {
   const [dropdownOpen, setDropdownOpen] = useState(null); // Tracks the open dropdown
   const dropdownRef = useRef(null); // Ref for dropdown positioning
 
   const disabledTimes = getDisabledTimes();
-
-const generateTimeOptions = () => {
-  const times = [];
-  for (let hour = 0; hour < 24; hour++) {
-    for (let minute = 0; minute < 60; minute += 15) {
-      const time = `${String(hour).padStart(2, "0")}:${String(minute).padStart(
-        2,
-        "0"
-      )}`;
-      times.push(time);
-    }
-  }
-  return times;
-};
-
-  const isPastTime = (time) => {
-    const [hour, minute] = time.split(":").map(Number);
-    const now = new Date();
-    const selectedDate = new Date(date); // `date` is passed as a prop
-    selectedDate.setHours(hour, minute, 0, 0);
-
-    return selectedDate < now;
-  };
-
-  const allTimes = generateTimeOptions();
 
   const handleTimeClick = (time, timeIndex) => {
     handleTimeSlotChange(dateIndex, timeIndex, "startTime", time);
@@ -60,25 +39,25 @@ const generateTimeOptions = () => {
     };
   }, []);
 
-const handleDropdownOpen = (timeIndex) => {
-  setDropdownOpen(dropdownOpen === timeIndex ? null : timeIndex);
+  const handleDropdownOpen = (timeIndex) => {
+    setDropdownOpen(dropdownOpen === timeIndex ? null : timeIndex);
 
-  if (dropdownOpen !== timeIndex) {
-    setTimeout(() => {
-      if (dropdownRef.current) {
-        const noonIndex = allTimes.findIndex((time) => time === "12:00");
-        const noonElement = dropdownRef.current.children[noonIndex];
-        if (noonElement) {
-          // Adjust scrollTop to bring "12:00" into view
-          const dropdownHeight = dropdownRef.current.clientHeight;
-          const noonOffset = noonElement.offsetTop;
-          dropdownRef.current.scrollTop =
-            noonOffset - dropdownHeight / 7 + noonElement.offsetHeight / 2;
+    if (dropdownOpen !== timeIndex) {
+      setTimeout(() => {
+        if (dropdownRef.current) {
+          const noonIndex = allTimes.findIndex((time) => time === "12:00");
+          const noonElement = dropdownRef.current.children[noonIndex];
+          if (noonElement) {
+            // Adjust scrollTop to bring "12:00" into view
+            const dropdownHeight = dropdownRef.current.clientHeight;
+            const noonOffset = noonElement.offsetTop;
+            dropdownRef.current.scrollTop =
+              noonOffset - dropdownHeight / 7 + noonElement.offsetHeight / 2;
+          }
         }
-      }
-    }, 0);
-  }
-};
+      }, 0);
+    }
+  };
 
   return (
     <div className="flex flex-col overflow-visible py-2 px-4 rounded-lg shadow-sm bg-secondary-100 border border-secondary-10">
@@ -131,7 +110,9 @@ const handleDropdownOpen = (timeIndex) => {
                       key={time}
                       data-time={time}
                       onClick={() =>
-                        !isPastTime(time) && handleTimeClick(time, timeIndex)
+                        !isPastTime(time) &&
+                        !disabledTimes.includes(time) &&
+                        handleTimeClick(time, timeIndex)
                       }
                       className={`px-4 py-2 text-sm cursor-pointer ${
                         disabledTimes.includes(time) || isPastTime(time)

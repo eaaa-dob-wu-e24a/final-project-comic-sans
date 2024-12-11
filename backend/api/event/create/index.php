@@ -1,8 +1,9 @@
 <?php
+
 require_once __DIR__ . "/../../../database/dbconn.php";
 
 // Start the session to check if the user is logged in
-session_start();
+session_start(['cookie_secure' => true, 'cookie_samesite' => 'None']);;
 
 $allowedOrigins = [
     "https://final-project-comic-sans-fork.vercel.app",
@@ -13,25 +14,17 @@ $allowedOrigins = [
 // Check if the origin of the request is allowed
 if (isset($_SERVER['HTTP_ORIGIN']) && in_array($_SERVER['HTTP_ORIGIN'], $allowedOrigins)) {
     header("Access-Control-Allow-Origin: " . $_SERVER['HTTP_ORIGIN']);
-    header("Access-Control-Allow-Credentials: true"); // Allow credentials
-    header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
-    header("Access-Control-Allow-Headers: Content-Type, Authorization");
-    header("Content-Type: application/json");
 }
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
+header('Content-Type: application/json');
+header("Access-Control-Allow-Credentials: true");
 
-// Handle OPTIONS request (preflight)
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-    // Send CORS headers only if the origin is allowed
-    if (isset($_SERVER['HTTP_ORIGIN']) && in_array($_SERVER['HTTP_ORIGIN'], $allowedOrigins)) {
-        header("Access-Control-Allow-Origin: " . $_SERVER['HTTP_ORIGIN']);
-        header("Access-Control-Allow-Credentials: true");
-        header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
-        header("Access-Control-Allow-Headers: Content-Type, Authorization");
-    }
+// Handle preflight OPTIONS request
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
 }
- 
 
 // Check if user is logged in (check if user data is in session)
 if (isset($_SESSION['user'])) {

@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import EventDetail from "@/components/event-detail";
 import EventDateDetailCard from "@/components/event-date-detail-card";
+import { useNotif } from "@/components/notif-context";
 
 export default function JoinEventPage() {
   const { joincode } = useParams(); // Extract joincode from the URL
@@ -16,6 +17,7 @@ export default function JoinEventPage() {
     username: "",
   });
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const notif = useNotif();
 
   const [pendingSelections, setPendingSelections] = useState([]); // New pending state
 
@@ -141,7 +143,7 @@ export default function JoinEventPage() {
                 parseInt(vote.FK_User, 10) !== parseInt(loggedInUser.userId, 10)
             );
           }
-
+          notif.send("Votes registered!");
           updatedEventDates[i] = { ...date, selected: isSelected };
         }
       }
@@ -194,21 +196,6 @@ export default function JoinEventPage() {
           </button>
         </div>
       </section>
-      {showConfirmation && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <p className="text-green-600 font-semibold">
-              Selections successfully confirmed!
-            </p>
-            <button
-              onClick={() => setShowConfirmation(false)}
-              className="mt-4 bg-primary text-white p-2 rounded-full shadow-lg hover:bg-primary-dark active:bg-primary-light"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
     </main>
   );
 }

@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import EventDetail from "@/components/event-detail";
 import EventDateDetailCard from "@/components/event-date-detail-card";
+import { useNotif } from "@/components/notif-context";
 
 export default function EventPage() {
   const { eventId } = useParams();
@@ -17,6 +18,7 @@ export default function EventPage() {
   });
 
   const [pendingSelections, setPendingSelections] = useState([]);
+  const notif = useNotif();
 
   // Fetch user data
   useEffect(() => {
@@ -132,7 +134,7 @@ export default function EventPage() {
                 parseInt(vote.FK_User, 10) !== parseInt(loggedInUser.userId, 10)
             );
           }
-
+          notif.send("Votes registered!");
           updatedEventDates[i] = { ...date, selected: isSelected };
         }
       }

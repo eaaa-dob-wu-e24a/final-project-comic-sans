@@ -8,7 +8,7 @@ header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Methods: PATCH, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
-session_start();
+session_start(['cookie_secure' => true, 'cookie_samesite' => 'None']);;
 $user = $_SESSION['user'];
 
 function showError($msgString)
@@ -65,7 +65,8 @@ if (!$currentUser) {
 // If no Name/Email is provided, set them to be the old ones
 $newName = isset($input['Name']) ? $input['Name'] : $currentUser['Name'];
 $newEmail = isset($input['Email']) ? $input['Email'] : $currentUser['Email'];
-$newImagePath = isset($input['ImagePath']) ? $input['ImagePath'] : $currentUser['ImagePath'];
+$imagePath = isset($input['imagePath']) ? $input['imagePath'] : $currentUser['ImagePath']; // Retain current imagePath if not provided
+
 
 // Validate inputs
 if (!filter_var($newEmail, FILTER_VALIDATE_EMAIL)) {
@@ -110,13 +111,36 @@ if (isset($input['currentPassword']) && isset($input['newPassword'])) {
 }
 
 // Prepare the update query with placeholders
-$updateSql = "UPDATE Eventually_User SET Name = ?, Email = ?, Password = ?, ImagePath = ? WHERE PK_ID = ?";
+$updateSql = "UPDATE Eventually_User SET Name = ?, Email = ?, Password = ?, imagePath = ? WHERE PK_ID = ?";
 $updateStmt = $mysqli->prepare($updateSql);
-$updateStmt->bind_param("ssssi", $newName, $newEmail, $hashedPassword, $newImagePath, $userID);
+$updateStmt->bind_param("ssssi", $newName, $newEmail, $hashedPassword, $imagePath, $userID);
 
+// Execute the update statement
 if ($updateStmt->execute()) {
-    http_response_code(200);
-    echo json_encode(["message" => "User details updated successfully."]);
+    // Fetch the updated user data
+    $sql = "SELECT PK_ID, Name, Email FROM Eventually_User WHERE PK_ID = ?";
+    $stmt = $mysqli->prepare($sql);
+    $stmt->bind_param("i", $userID);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $updatedUser = $result->fetch_assoc();
+
+    if ($updatedUser) {
+        // Update the session's user data
+        $_SESSION['user'] = [
+            'id' => $updatedUser['PK_ID'],
+            'name' => $updatedUser['Name'],
+            'email' => $updatedUser['Email'],
+            'imagePath' => $currentUser['ImagePath']
+        ];
+
+        http_response_code(200);
+        echo json_encode(["message" => "User details updated successfully."]);
+    } else {
+        // If fetching updated user fails
+        http_response_code(500);
+        showError("Failed to retrieve updated user details.");
+    }
 } else {
     http_response_code(500);
     showError("Failed to update user details.");

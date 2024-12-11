@@ -13,8 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-
-session_start();
+session_start(['cookie_secure' => true, 'cookie_samesite' => 'None']);
 
 if (isset($_SESSION['user'])) {
     echo json_encode(["status" => "success", "user" => $_SESSION['user']]);

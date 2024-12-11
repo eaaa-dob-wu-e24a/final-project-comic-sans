@@ -11,7 +11,7 @@ header('Content-Type: application/json');
 
 require_once __DIR__ . "/../../../database/dbconn.php";
 
-session_start();
+session_start(['cookie_secure' => true, 'cookie_samesite' => 'None']);;
 
 // // Handle preflight OPTIONS request
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -20,25 +20,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Access user data correctly from session
-    $userId = $_SESSION['user']['id'] ?? null;
-    $username = $_SESSION['user']['name'] ?? null;
-
     // Decode incoming JSON data
     $postData = json_decode(file_get_contents('php://input'), true);
 
-    // Validate incoming data
-    if (!$userId || !$username || !isset($postData['dateId']) || !isset($postData['eventId'])) {
+    // Extract data
+    $userId = $_SESSION['user']['id'] ?? null; // Logged-in user
+    $username = $postData['username'] ?? null; // Provided username
+    $dateId = $postData['dateId'] ?? null;
+    $eventId = $postData['eventId'] ?? null;
+
+    // Validate input
+    if ((!$userId && !$username) || !$dateId || !$eventId) {
         http_response_code(400);
         echo json_encode(["status" => "error", "message" => "Invalid input."], JSON_PRETTY_PRINT);
         exit();
     }
 
-    $dateId = $postData['dateId'];
+    // Check for duplicate usernames for the same event date
+    $checkStmt = $mysqli->prepare("
+    SELECT COUNT(*) 
+    FROM Eventually_Event_User_Voting 
+    WHERE FK_Event_Dates = ? AND UserName = ?
+");
+    $checkStmt->bind_param("is", $dateId, $username);
+    $checkStmt->execute();
+    $checkStmt->bind_result($count);
+    $checkStmt->fetch();
+    $checkStmt->close();
 
-    // Insert vote into the database
-    $stmt = $mysqli->prepare("INSERT INTO Eventually_Event_User_Voting (FK_User, FK_Event_Dates, UserName) VALUES (?, ?, ?)");
-    $stmt->bind_param("iis", $userId, $dateId, $username);
+    if ($count > 0) {
+        http_response_code(409); // Conflict status code
+        echo json_encode(["status" => "error", "message" => "Username already exists for this event date."], JSON_PRETTY_PRINT);
+        exit();
+    }
+
+    // Proceed to insert vote
+    $stmt = $mysqli->prepare("
+    INSERT INTO Eventually_Event_User_Voting (FK_User, FK_Event_Dates, UserName) 
+    VALUES (?, ?, ?)
+");
+    $userIdValue = $userId ?: null;
+    $stmt->bind_param("iis", $userIdValue, $dateId, $username);
 
     if ($stmt->execute()) {
         http_response_code(200);
@@ -49,7 +71,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $stmt->close();
-} else {
-    http_response_code(405);
-    echo json_encode(["status" => "error", "message" => "Invalid request method."], JSON_PRETTY_PRINT);
 }

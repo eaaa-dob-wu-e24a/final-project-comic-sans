@@ -33,7 +33,7 @@ export default function Home() {
           Schedule an event with your friends, family, co-workers, or anyone
           else. For free.
         </p>
-        <Link href="/createEvent">
+        <Link href="/create">
           <Button label="CREATE" className="mb-12">
             CREATE
           </Button>

@@ -3,12 +3,11 @@ import EventAvatar from "./event-detail-avatar";
 
 export default function EventDateDetailCard({
   eventDates,
-  onDateClick,
-  loggedInUser, //userID and username
+  pendingSelections,
+  onPendingSelection,
+  loggedInUser,
 }) {
   const formatDate = (dateString) => {
-    console.log(eventDates);
-
     const date = new Date(dateString);
     return {
       day: new Intl.DateTimeFormat("en-GB", { day: "2-digit" }).format(date),
@@ -23,12 +22,14 @@ export default function EventDateDetailCard({
 
   return (
     <div>
-      <p className="text-primary font-bold mb-4">Select Your Times:</p>
+      <p className="text-primary font-bold mb-4 text-lg">Select Your Times:</p>
       <ul className="flex flex-row flex-wrap w-full gap-4">
         {eventDates.map((date, index) => {
+          const selected = pendingSelections[index];
           const selectedClasses =
             "bg-gradient-to-r from-gradientstart to-gradientend text-white border-none shadow-md";
-          const unselectedClasses = "bg-white text-black border-gradientstart";
+          const unselectedClasses =
+            "bg-background text-foreground border-gradientstart";
 
           const startDate = formatDate(date.DateTimeStart);
           const endDate = formatDate(date.DateTimeEnd);
@@ -36,46 +37,48 @@ export default function EventDateDetailCard({
           return (
             <div key={index} className="w-64 mb-4">
               <li
-                className={`flex flex-col items-center h-48 w-64 border p-4 rounded-lg cursor-pointer ${
-                  date.selected ? selectedClasses : unselectedClasses
+                className={`flex flex-col items-center h-48 w-64 border p-4 rounded-xl cursor-pointer ${
+                  selected ? selectedClasses : unselectedClasses
                 }`}
-                onClick={() => onDateClick(index)}
+                onClick={() => onPendingSelection(index)}
               >
                 <div className="flex flex-col items-center">
                   <p
                     className={`text-4xl font-bold ${
-                      date.selected ? "text-white" : "text-primary"
+                      selected ? "text-white" : "text-primary"
                     }`}
                   >
                     {startDate.day}
                   </p>
                   <p
                     className={`font-bold ${
-                      date.selected ? "text-white" : "text-gray-600"
+                      selected ? "text-white" : "text-foreground"
                     }`}
                   >
                     {startDate.month}
                   </p>
                   <p
                     className={`font-bold mb-3 ${
-                      date.selected ? "text-white" : "text-gray-600"
+                      selected ? "text-white" : "text-foreground"
                     }`}
                   >
                     {startDate.year}
                   </p>
-                  <p
-                    className={`font-bold ${date.selected ? "text-white" : ""}`}
-                  >
+                  <p className={`font-bold ${selected ? "text-white" : ""}`}>
                     {startDate.time} - {endDate.time}
                   </p>
-                  {/* Checkbox is disabled in ui-component to avoid double creation*/}
-                  <Checkbox id={`checkbox-${index}`} checked={date.selected} />
+                  <Checkbox id={`checkbox-${index}`} checked={selected} />
                 </div>
               </li>
-              <div className="mt-4 ml-2 text-sm relative group">
-                <h3>Currently {date.UserVotes.length} participants... </h3>
 
-                <div className="absolute left-0 mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg p-2 hidden group-hover:block">
+              {/* Participants List */}
+              <div className="mt-4 ml-2 text-sm relative group">
+                <h3>
+                  Currently {date.UserVotes.length} participant
+                  {date.UserVotes.length !== 1 && "s"}...
+                </h3>
+
+                <div className="absolute left-0 mt-2 w-48 bg-background border border-gray-300 rounded-xl shadow-lg p-2 hidden group-hover:block z-50">
                   <ul className="space-y-2">
                     {date.UserVotes.map((vote, i) => (
                       <li key={i} className="flex items-center">
@@ -88,8 +91,9 @@ export default function EventDateDetailCard({
                           }}
                         />
                         <span className="ml-2 truncate text-sm">
-                          {vote.FK_User == loggedInUser.userId
-                            ? vote.UserName + " (you)"
+                          {vote.FK_User !== null &&
+                          vote.FK_User === loggedInUser.userId
+                            ? `${vote.UserName} (you)`
                             : vote.UserName}
                         </span>
                       </li>

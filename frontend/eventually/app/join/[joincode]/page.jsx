@@ -4,18 +4,24 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import EventDetail from "@/components/event-detail";
 import EventDateDetailCard from "@/components/event-date-detail-card";
+import { useNotif } from "@/components/notif-context";
+import Button from "@/components/ui/button";
+import Input from "@/components/ui/input";
+import FormLabel from "@/components/ui/formlabel";
 
 export default function JoinEventPage() {
   const { joincode } = useParams(); // Extract joincode from the URL
-  console.log("Join code from URL:", joincode); // Debug joincode value
-
   const [event, setEvent] = useState(null);
   const [eventId, setEventId] = useState(null); // Store eventId separately
+  const [usernameInput, setUsernameInput] = useState("");
   const [loading, setLoading] = useState(true);
   const [loggedInUser, setLoggedInUser] = useState({
     userId: null,
     username: "",
   });
+  const notif = useNotif();
+
+  const [pendingSelections, setPendingSelections] = useState([]); // New pending state
 
   // Fetch the logged-in user's data
   useEffect(() => {
@@ -25,16 +31,17 @@ export default function JoinEventPage() {
           `${process.env.NEXT_PUBLIC_API_URL}/api/user/check_session/`,
           {
             method: "GET",
-            credentials: "include", // Ensure cookies are sent
+            credentials: "include",
           }
         );
         const userData = await res.json();
 
-        setLoggedInUser({
-          userId: userData.user.id,
-          username: userData.user.name,
-        });
-        console.log("Logged-in user:", userData);
+        if (userData.user) {
+          setLoggedInUser({
+            userId: userData.user.id,
+            username: userData.user.name,
+          });
+        }
       } catch (err) {
         console.error("Failed to fetch user data:", err);
       }
@@ -48,13 +55,8 @@ export default function JoinEventPage() {
     const fetchEventData = async () => {
       if (joincode) {
         try {
-          console.log(
-            "Fetching event data from:",
-            `${process.env.NEXT_PUBLIC_API_URL}/api/event/code/?joincode=${joincode}`
-          );
-
           const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/event/code/?joincode=${joincode}`, // Path-based URL
+            `${process.env.NEXT_PUBLIC_API_URL}/api/event/code/?joincode=${joincode}`,
             {
               method: "GET",
               headers: { "Content-Type": "application/json" },
@@ -63,23 +65,12 @@ export default function JoinEventPage() {
           );
 
           if (!res.ok) {
-            const error = await res.json();
-            console.error("Error from backend:", error);
-            throw new Error(error.Error || "Failed to fetch event data.");
+            throw new Error("Failed to fetch event data.");
           }
 
           const data = await res.json();
-          console.log("Event data fetched:", data);
 
-          if (!data || !data.EventDates) {
-            console.error("Invalid event data received:", data);
-            throw new Error("Event data is invalid.");
-          }
-
-          // Store eventId from response
-          setEventId(data.PK_ID);
-
-          // Recalculate selected state
+          // Map votes and calculate selection state
           const eventDatesWithVotes = data.EventDates.map((date) => {
             const userVoted = date.UserVotes.some(
               (vote) =>
@@ -89,6 +80,10 @@ export default function JoinEventPage() {
           });
 
           setEvent({ ...data, EventDates: eventDatesWithVotes });
+          setPendingSelections(
+            eventDatesWithVotes.map((date) => date.selected)
+          );
+          setEventId(data.PK_ID);
           setLoading(false);
         } catch (err) {
           console.error("Error fetching event data:", err);
@@ -99,57 +94,70 @@ export default function JoinEventPage() {
     fetchEventData();
   }, [joincode, loggedInUser.userId]);
 
-  // Handle date click logic
-  const handleEventClick = async (index) => {
-    const selectedDate = event.EventDates[index];
-    const isCurrentlySelected = selectedDate.selected;
+  // Handle pending selection changes
+  const handlePendingSelection = (index) => {
+    setPendingSelections((prev) =>
+      prev.map((selected, i) => (i === index ? !selected : selected))
+    );
+  };
 
+  // Confirm selections and update the backend
+  const confirmSelections = async () => {
     try {
-      const url = isCurrentlySelected
-        ? `${process.env.NEXT_PUBLIC_API_URL}/api/vote/delete/`
-        : `${process.env.NEXT_PUBLIC_API_URL}/api/vote/create/`;
+      const updatedEventDates = [...event.EventDates];
 
-      console.log("Submitting vote with eventId:", eventId);
+      for (let i = 0; i < updatedEventDates.length; i++) {
+        const date = updatedEventDates[i];
+        const wasSelected = date.selected;
+        const isSelected = pendingSelections[i];
 
-      const res = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include", // Send credentials to server
-        body: JSON.stringify({
-          eventId, // Use eventId retrieved from join endpoint
-          dateId: selectedDate.PK_ID,
-          userId: loggedInUser.userId,
-        }),
-      });
+        if (wasSelected !== isSelected) {
+          const url = isSelected
+            ? `${process.env.NEXT_PUBLIC_API_URL}/api/vote/create/`
+            : `${process.env.NEXT_PUBLIC_API_URL}/api/vote/delete/`;
 
-      if (!res.ok) {
-        throw new Error("Failed to update vote");
+          const res = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+              eventId,
+              dateId: date.PK_ID,
+              userId: loggedInUser.userId, // Null for non-logged-in users
+              username: loggedInUser.userId
+                ? loggedInUser.username
+                : usernameInput,
+            }),
+          });
+
+          if (!res.ok) throw new Error("Failed to update vote");
+
+          // Update UserVotes locally
+          if (isSelected) {
+            date.UserVotes.push({
+              FK_User: loggedInUser.userId || null,
+              UserName: loggedInUser.username || usernameInput,
+              UserImagePath: loggedInUser.imagePath || null,
+            });
+          } else {
+            // Remove vote for non-logged-in user by username
+            date.UserVotes = date.UserVotes.filter(
+              (vote) =>
+                !(vote.FK_User === null && vote.UserName === usernameInput) &&
+                parseInt(vote.FK_User, 10) !== parseInt(loggedInUser.userId, 10)
+            );
+          }
+
+          updatedEventDates[i] = { ...date, selected: isSelected };
+        }
       }
 
-      // Update the UserVotes array and selected state
-      const updatedUserVotes = isCurrentlySelected
-        ? selectedDate.UserVotes.filter(
-            (vote) =>
-              parseInt(vote.FK_User, 10) !== parseInt(loggedInUser.userId, 10)
-          )
-        : [
-            ...selectedDate.UserVotes,
-            { UserName: loggedInUser.username, FK_User: loggedInUser.userId },
-          ];
+      setEvent({ ...event, EventDates: updatedEventDates });
+      setPendingSelections(updatedEventDates.map((date) => date.selected));
 
-      const updatedDates = event.EventDates.map((date, i) =>
-        i === index
-          ? {
-              ...date,
-              UserVotes: updatedUserVotes,
-              selected: !isCurrentlySelected,
-            }
-          : date
-      );
-
-      setEvent({ ...event, EventDates: updatedDates });
+      notif.send("Votes updated successfully!");
     } catch (err) {
-      console.error("Error updating vote:", err);
+      console.error("Failed to confirm selections:", err);
     }
   };
 
@@ -159,12 +167,32 @@ export default function JoinEventPage() {
     <main>
       <section className="max-w-6xl mx-auto flex flex-col gap-4 bg-background p-6 my-12 rounded-2xl shadow-md">
         <EventDetail event={event} />
-        <div>
-          <EventDateDetailCard
-            eventDates={event.EventDates}
-            onDateClick={handleEventClick}
-            loggedInUser={loggedInUser}
-          />
+        <EventDateDetailCard
+          eventDates={event.EventDates}
+          pendingSelections={pendingSelections}
+          onPendingSelection={handlePendingSelection}
+          loggedInUser={loggedInUser}
+        />
+        {!loggedInUser.userId && (
+          <div className="mb-4">
+            <FormLabel htmlFor="username" variant="lg">
+              Enter Your Name:
+            </FormLabel>
+            <Input
+              id="username"
+              type="text"
+              value={usernameInput}
+              onChange={(e) => setUsernameInput(e.target.value)}
+              className="p-2 border border-gray-300 rounded w-full mt-2"
+              placeholder="Your name"
+            />
+          </div>
+        )}
+        <div className="mt-8 flex justify-center">
+          <Button
+            onClick={confirmSelections}>
+            Confirm Selections
+          </Button>
         </div>
       </section>
     </main>

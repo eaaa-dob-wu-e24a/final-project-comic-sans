@@ -4,8 +4,9 @@ import Navbar from "../components/navbar";
 import Footer from "../components/footer";
 import { AuthProvider } from "../contexts/authcontext";
 import { NotifProvider } from "@/components/ui/notif";
-import 'react-datepicker/dist/react-datepicker.css'; // Import react-datepicker styles
-
+import MobileHeader from "@/components/mobileHeader";
+import MobileNav from "@/components/mobileNav";
+import "react-datepicker/dist/react-datepicker.css"; // Import react-datepicker styles
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -43,9 +44,21 @@ export default function RootLayout({ children }) {
       >
         <NotifProvider>
           <AuthProvider>
-            <Navbar />
-            {children}
-            <Footer />
+            {/* Desktop Navbar & Footer (hidden on mobile) */}
+            <div className="hidden md:block lg:block">
+              <Navbar />
+            </div>
+
+            {/* Mobile Header & Bottom Nav (hidden on desktop) */}
+            <div className="pt-0 md:hidden lg:hidden">
+              <MobileHeader />
+            </div>
+
+            <div>{children}</div>
+              <Footer />
+            <div className="block md:hidden lg:hidden">
+              <MobileNav />
+            </div>
           </AuthProvider>
         </NotifProvider>
       </body>

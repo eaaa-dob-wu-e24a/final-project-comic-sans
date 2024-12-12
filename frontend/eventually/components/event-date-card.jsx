@@ -2,7 +2,7 @@ import Link from "next/link";
 import { useCallback } from "react";
 import { useNotif } from "@/components/notif-context";
 
-export default function DateCard({ time, title, id, joinCode}) {
+export default function DateCard({ time, title, id, joincode}) {
     const notif = useNotif();
   // convert time to date class to use methods on it
   const cardTime = time ? new Date(time) : null;
@@ -41,7 +41,7 @@ export default function DateCard({ time, title, id, joinCode}) {
 
   // Copy link functionality
   const copyLink = useCallback(() => {
-    const shareURL = `https://final-project-comic-sans-fork.vercel.app/join/${joinCode}`;
+    const shareURL = `https://final-project-comic-sans-fork.vercel.app/join/${joincode}`;
     navigator.clipboard.writeText(shareURL).then(() => {
       notif?.send("Event link copied to clipboard!");
     });
@@ -50,7 +50,7 @@ export default function DateCard({ time, title, id, joinCode}) {
   if (showDate) {
     // If final date/time is set, show date variant
     return (
-      <Link href={`/join/${joinCode}`} className={`${classes}`}>
+      <Link href={`/join/${joincode}`} className={`${classes}`}>
         <li className={`${classes} ${beforeClasses}`}>
           <div className="flex flex-col absolute top-4 w-full z-10 group-hover:text-white">
             <p className="text-sm font-bold opacity-60">{time ? day : ""}</p>
@@ -71,7 +71,7 @@ export default function DateCard({ time, title, id, joinCode}) {
   } else {
     // No final date set - show no-date variant with share link button
     return (
-      <Link href={`/join/${joinCode}`} className={`${classes}`}>
+      <Link href={`/join/${joincode}`} className={`${classes}`}>
         <li className={`${classes} ${beforeClasses}`}>
           {" "}
           <p className="mx-auto font-bold text-xl z-10 break-words group-hover:text-white">

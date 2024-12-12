@@ -68,7 +68,7 @@ export default function UserEventList({ maxEvents }) {
                 title={event.Title}
                 key={event.PK_ID}
                 id={event.PK_ID}
-                joinCode={event.JoinCode}
+                joincode={event.JoinCode}
               />
             );
           })}

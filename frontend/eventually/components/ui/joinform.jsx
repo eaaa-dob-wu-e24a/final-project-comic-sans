@@ -60,7 +60,7 @@ export default function JoinForm() {
           type="text"
           placeholder="JX6S7Y"
           maxLength={6}
-          className="rounded-full h-14 w-full text-background uppercase font-semibold text-4xl py-2 px-8"
+          className="rounded-full h-14 w-full text-[#171717] uppercase font-semibold text-4xl py-2 px-8"
           name="joincode"
           id="joincode"
           value={joinCode}

@@ -71,11 +71,12 @@ export default function DateCard({ time, title, id, joinCode}) {
   } else {
     // No final date set - show no-date variant with share link button
     return (
-      <Link href={`/dashboard/event/${id}`} className={`${classes}`}>
-        <li className={`${classes} ${beforeClasses}`}>          <p className="mx-auto font-bold text-xl z-10 break-words group-hover:text-white">
+      <Link href={`/join/${joinCode}`} className={`${classes}`}>
+        <li className={`${classes} ${beforeClasses}`}>
+          {" "}
+          <p className="mx-auto font-bold text-xl z-10 break-words group-hover:text-white">
             {newTitle}
           </p>
-
           {/* Replace old share link text with a clickable button that copies the link */}
           <div
             className="mx-2 my-2 bottom-0 z-10 flex flex-row justify-center group-hover:text-white"

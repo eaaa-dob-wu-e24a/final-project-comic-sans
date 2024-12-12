@@ -39,21 +39,38 @@ else if ($_SERVER['REQUEST_METHOD'] !== 'PATCH') {
     http_response_code(405);
     showError("Invalid request method.");
     exit;
-} else {
-    // get the request body
-    $request = file_get_contents('php://input');
-    $input = json_decode($request, TRUE); //convert JSON into array
-    $eventID = $input['ID'];
+}
 
+// get the request body
+$request = file_get_contents('php://input');
+$input = json_decode($request, TRUE); //convert JSON into array
+$eventID = $input['ID'];
+
+if (!isset($input)) {
+    http_response_code(400);
+    showError("No or invalid user input");
+    exit;
+}
+
+//echo json_encode($eventID);
+
+if (isset($eventID) && is_numeric($eventID)) {
     // get the event info
     $sql = "SELECT * FROM Eventually_Event WHERE PK_ID = $eventID;";
     $result = $mysqli->query($sql);
     $event = $result->fetch_assoc();
 
+    if (empty($event)) {
+        showError("Event with ID $eventID does not exist");
+        exit;
+    }
+
     // if no title/desc/location is provided, set them to be the old one
     $newTitle = isset($input['Title']) ? $input['Title'] : $event['Title'];
     $newDesc = isset($input['Description']) ? $input['Description'] : $event['Description'];
     $newLoc = isset($input['Location']) ? $input['Location'] : $event['Location'];
+    $newDatePreprocess = isset($input['FinalDate']) ? DateTime::createFromFormat('Y-m-d H:i:s', $input['FinalDate']) : DateTime::createFromFormat('Y-m-d H:i:s', $event['FinalDate']);
+    $newDate = $newDatePreprocess->format('Y-m-d H:i:s');
 
     // check if the owner matches the user
     if ($event['FK_Owner_UserID'] != $user['id']) {
@@ -62,9 +79,9 @@ else if ($_SERVER['REQUEST_METHOD'] !== 'PATCH') {
         exit;
     } else {
         // prepare the update query with placeholders
-        $sql = "UPDATE Eventually_Event SET Title = ?, Description = ?, Location = ? WHERE PK_ID = ?";
+        $sql = "UPDATE Eventually_Event SET Title = ?, Description = ?, Location = ?, FinalDate = ? WHERE PK_ID = ?";
         $stmt = $mysqli->prepare($sql);
-        $stmt->bind_param("sssi", $newTitle, $newDesc, $newLoc, $eventID);
+        $stmt->bind_param("ssssi", $newTitle, $newDesc, $newLoc, $newDate, $eventID);
 
         if ($stmt->execute()) {
             http_response_code(200);
@@ -75,4 +92,6 @@ else if ($_SERVER['REQUEST_METHOD'] !== 'PATCH') {
             exit;
         }
     }
+} else {
+    showError("EventID $eventID is invalid");
 }

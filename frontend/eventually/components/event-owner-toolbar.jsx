@@ -10,7 +10,28 @@ export default function EditEvent({ id, dates }) {
         DateTimeStart: obj.DateTimeStart
     }));
 
-    
+    const url = process.env.NEXT_PUBLIC_API_URL + "/api/event/update/";
+
+    const selector = document.getElementById("selection");
+
+    const handleSubmit = async () => {
+        const data = {
+            ID: eventID,
+            FinalDate: selector.value
+        }
+        console.log("attempted to send")
+        try {
+            const response = await fetch(url, {
+                method: "PATCH",
+                credentials: "include", // Include cookies for session handling
+                body: JSON.stringify(data),
+              })
+              console.log("attempted to send")
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
   return (
     <section className="max-w-6xl mx-auto flex flex-col gap-4 bg-background p-6 my-12 rounded-2xl shadow-md">
       <div className="flex flex-row place-content-between w-full flex-wrap-reverse gap-4 place-items-center">
@@ -18,12 +39,12 @@ export default function EditEvent({ id, dates }) {
         <Button>Edit Event</Button>
       </div>
       <div className="flex flex-row sm:flex-wrap md:flex-nowrap w-full gap-4 max-w-xl">
-        <select className="min-w-28 sm:min-w-96 md:w-full text-black rounded-full px-2">
+        <select id="selection" className="min-w-28 sm:min-w-96 md:w-full text-black rounded-full px-2">
             {datesArray.map((date) => 
                 (<option key={date.PK_ID} value={date.DateTimeStart}>{date.DateTimeStart}</option>)
             )}
         </select>
-        <Button>Confirm</Button>
+        <Button onClick={handleSubmit}>Confirm</Button>
       </div>
     </section>
   );

@@ -1,23 +1,25 @@
 import Button from "./ui/button";
+import { useNotif } from "./notif-context";
 
 export default function EventDetail({ event }) {
+  const notif = useNotif();
   const handleShare = () => {
     const link = `https://final-project-comic-sans-fork.vercel.app/join/${event?.JoinCode}`;
     navigator.clipboard
       .writeText(link)
       .then(() => {
-        alert("Link copied to clipboard!");
+        notif?.send("Link copied to clipboard!")
       })
       .catch((err) => {
         console.error("Failed to copy the link: ", err);
-        alert("Failed to copy the link. Please try again.");
+        notif?.send("Failed to copy the link. Please try again.");
       });
   };
 
   return (
     <div>
       <div className="flex place-content-between">
-        <h1 className="text-xl font-bold">Title: {event?.Title}</h1>
+        <h1 className="text-xl font-bold">{event?.Title}</h1>
         <div className="flex flex-row gap-2">
           <p className="place-self-center text-2xl font-bold">
             Join code: {event?.JoinCode}{" "}

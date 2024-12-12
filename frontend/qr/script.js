@@ -6,7 +6,7 @@ function getCode() {
 const code = getCode();
 
 const baseURL = "https://final-project-comic-sans-fork.vercel.app/";
-const apiURL = "http://localhost:4000/api";
+const apiURL = "https://eventually-api.nikolajhoeegjensen.com/api";
 
 const title = document.getElementById("title");
 const time = document.getElementById("time");

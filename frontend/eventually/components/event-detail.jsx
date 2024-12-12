@@ -11,7 +11,7 @@ export default function EventDetail({ event }) {
   return (
     <div>
       <div className="flex place-content-between">
-        <h1 className="text-xl font-bold">{event?.Title}</h1>
+        <h1 className="text-2xl font-bold">{event?.Title}</h1>
         <div className="flex flex-row gap-2">
           <p className="place-self-center text-2xl font-bold">
             Join code: {event?.JoinCode}{" "}

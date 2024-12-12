@@ -22,7 +22,7 @@ export default function EventDateDetailCard({
 
   return (
     <div>
-      <p className="text-primary font-bold mb-4">Select Your Times:</p>
+      <p className="text-primary font-bold mb-4 text-lg">Select Your Times:</p>
       <ul className="flex flex-row flex-wrap w-full gap-4">
         {eventDates.map((date, index) => {
           const selected = pendingSelections[index];
@@ -91,7 +91,8 @@ export default function EventDateDetailCard({
                           }}
                         />
                         <span className="ml-2 truncate text-sm">
-                          {vote.FK_User == loggedInUser.userId
+                          {vote.FK_User !== null &&
+                          vote.FK_User === loggedInUser.userId
                             ? `${vote.UserName} (you)`
                             : vote.UserName}
                         </span>

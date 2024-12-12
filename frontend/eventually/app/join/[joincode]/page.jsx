@@ -4,6 +4,10 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import EventDetail from "@/components/event-detail";
 import EventDateDetailCard from "@/components/event-date-detail-card";
+import { useNotif } from "@/components/notif-context";
+import Button from "@/components/ui/button";
+import Input from "@/components/ui/input";
+import FormLabel from "@/components/ui/formlabel";
 
 export default function JoinEventPage() {
   const { joincode } = useParams(); // Extract joincode from the URL
@@ -15,6 +19,7 @@ export default function JoinEventPage() {
     userId: null,
     username: "",
   });
+  const notif = useNotif();
 
   const [pendingSelections, setPendingSelections] = useState([]); // New pending state
 
@@ -127,18 +132,18 @@ export default function JoinEventPage() {
 
           if (!res.ok) throw new Error("Failed to update vote");
 
-          // Update UserVotes based on server response
-          // Update UserVotes based on server response
+          // Update UserVotes locally
           if (isSelected) {
             date.UserVotes.push({
               FK_User: loggedInUser.userId || null,
-              UserName: loggedInUser.userId
-                ? loggedInUser.username
-                : usernameInput,
+              UserName: loggedInUser.username || usernameInput,
+              UserImagePath: loggedInUser.imagePath || null,
             });
           } else {
+            // Remove vote for non-logged-in user by username
             date.UserVotes = date.UserVotes.filter(
               (vote) =>
+                !(vote.FK_User === null && vote.UserName === usernameInput) &&
                 parseInt(vote.FK_User, 10) !== parseInt(loggedInUser.userId, 10)
             );
           }
@@ -148,6 +153,9 @@ export default function JoinEventPage() {
       }
 
       setEvent({ ...event, EventDates: updatedEventDates });
+      setPendingSelections(updatedEventDates.map((date) => date.selected));
+
+      notif.send("Votes updated successfully!");
     } catch (err) {
       console.error("Failed to confirm selections:", err);
     }
@@ -165,26 +173,26 @@ export default function JoinEventPage() {
           onPendingSelection={handlePendingSelection}
           loggedInUser={loggedInUser}
         />
-        <div className="mb-4">
-          <label htmlFor="username" className="block text-gray-700 font-bold">
-            Enter Your Name:
-          </label>
-          <input
-            id="username"
-            type="text"
-            value={usernameInput}
-            onChange={(e) => setUsernameInput(e.target.value)}
-            className="p-2 border border-gray-300 rounded w-full mt-2"
-            placeholder="Your name"
-          />
-        </div>
-        <div className="mt-8 flex justify-end">
-          <button
-            onClick={confirmSelections}
-            className="bg-primary text-white p-4 rounded-full shadow-lg hover:bg-primary-dark active:bg-primary-light"
-          >
+        {!loggedInUser.userId && (
+          <div className="mb-4">
+            <FormLabel htmlFor="username" variant="lg">
+              Enter Your Name:
+            </FormLabel>
+            <Input
+              id="username"
+              type="text"
+              value={usernameInput}
+              onChange={(e) => setUsernameInput(e.target.value)}
+              className="p-2 border border-gray-300 rounded w-full mt-2"
+              placeholder="Your name"
+            />
+          </div>
+        )}
+        <div className="mt-8 flex justify-center">
+          <Button
+            onClick={confirmSelections}>
             Confirm Selections
-          </button>
+          </Button>
         </div>
       </section>
     </main>

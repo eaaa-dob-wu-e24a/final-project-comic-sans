@@ -21,7 +21,7 @@ export default function Profile() {
 
   const [isDarkTheme, setIsDarkTheme] = useState(false);
   const [notifications, setNotifications] = useState(true);
-  const [timeZone, setTimeZone] = useState("Central Time - US & Canada");
+  const [timeZone, setTimeZone] = useState("Central European Standard Time");
 
   useEffect(() => {
     if (user) {
@@ -130,7 +130,7 @@ export default function Profile() {
     }
 
     // Send data to the backend
-    const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/update/";
+    const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/update-details/";
 
     try {
       const response = await fetch(url, {
@@ -179,13 +179,34 @@ export default function Profile() {
   };
 
   // Delete account
-  const handleDeleteAccount = () => {
+  const handleDeleteAccount = async () => {
     if (
       confirm(
         "Are you sure you want to delete your account? This action cannot be undone."
       )
     ) {
-      alert("Account deleted successfully.");
+      const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/delete/";
+      try {
+        const response = await fetch(url, {
+          method: "DELETE",
+          credentials: "include",
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          alert("Account deleted successfully.");
+          // Clear user context and redirect to home or login
+          if (setUser) {
+            setUser(null);
+          }
+          window.location.href = "/"; // or router.push("/login") if using Next.js router
+        } else {
+          alert(`Error: ${data.error || "Failed to delete account."}`);
+        }
+      } catch (error) {
+        console.error("Error deleting account:", error);
+        alert("An error occurred while deleting account.");
+      }
     }
   };
 
@@ -255,7 +276,7 @@ export default function Profile() {
           // Change Password Section
           <div className="bg-background shadow-md rounded-lg p-6 mb-6 mx-auto w-4/5">
             <h2 className="text-xl font-bold mb-4">Change Password</h2>
-            <div className="mb-6">
+            <div className="mb-6 pr-2 w-1/2 ">
               <FormLabel>Current Password</FormLabel>
               <Input
                 type="password"
@@ -263,8 +284,8 @@ export default function Profile() {
                 onChange={(e) => setCurrentPassword(e.target.value)}
               />
             </div>
-            <div className="flex mb-6">
-              <div className="w-1/2 pr-2">
+            <div className="flex gap-4 mb-6">
+              <div className="w-1/2">
                 <FormLabel>New Password</FormLabel>
                 <Input
                   type="password"
@@ -302,8 +323,8 @@ export default function Profile() {
                 <ProfileAvatar variant="large" />
               </div>
               <div className="ml-6">
-                <p className="text-lg font-medium">{user.name}</p>
-                <p className="text-sm text-gray-500">{user.email}</p>
+                <p className="text-xl font-medium">{user.name}</p>
+                <p className="text-sm text-foreground">{user.email}</p>
               </div>
             </div>
             <div className="flex justify-end space-x-4">
@@ -345,18 +366,18 @@ export default function Profile() {
               />
             </label>
           </div>
-          <div className="flex flex-col">
+          <div className="flex flex-col w-1/2">
             <label className="text-sm font-medium mb-2">Time Zone</label>
             <select
               value={timeZone}
               onChange={(e) => setTimeZone(e.target.value)}
-              className="p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-500"
+              className="p-2 border rounded-lg bg-white text-dark"
             >
-              <option>Central Time - US & Canada</option>
+              <option>Central European Standard Time</option>
               <option>Eastern Time - US & Canada</option>
               <option>Pacific Time - US & Canada</option>
             </select>
-            <p className="text-xs text-gray-500 mt-2">Current Time: 10:02pm</p>
+            <p className="text-xs text-secondary mt-2">Current Time:</p>
           </div>
         </div>
 

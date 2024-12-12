@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export default function DateCard({ time, title, id }) {
+export default function DateCard({ time, title, id, joincode }) {
   // convert time to date class to use methods on it
   const cardTime = new Date(time);
 
@@ -39,7 +39,7 @@ export default function DateCard({ time, title, id }) {
 
   if (showDate == true) {
     return (
-      <Link href={`/dashboard/event/${id}`} className={`${classes}`}>
+      <Link href={`/join/${joincode}`} className={`${classes}`}>
         <li className={`${classes} ${beforeClasses}`}>
           <div className="flex flex-col absolute top-4 w-full z-10 group-hover:text-white">
             <p className="text-sm font-bold opacity-60">{time ? day : ""}</p>

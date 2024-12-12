@@ -16,32 +16,6 @@ export default function VotedEventList({ maxEvents }) {
 
   const router = useRouter();
 
-  // Handle navigation to individual event pages
-  const handleEventClick = async (eventId) => {
-    try {
-      const response = await fetch(`${urlSingle}/id/${eventId}`, {
-        method: "GET",
-        credentials: "include", // Include cookies for authentication
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await response.json();
-      if (data && data.EventDates) {
-        console.log(
-          data.EventDates.length + " dates found for event " + eventId
-        );
-        router.push(`/dashboard/event/${eventId}`, {
-          state: { dates: data.EventDates },
-        });
-      } else {
-        console.log("No dates found for event " + eventId);
-      }
-    } catch (error) {
-      console.error("Error fetching event details:", error);
-    }
-  };
-
   useEffect(() => {
     fetch(url, {
       method: "GET",
@@ -111,6 +85,7 @@ export default function VotedEventList({ maxEvents }) {
             title={event.Title}
             key={event.EventID}
             id={event.EventID}
+            joincode={event.JoinCode}
           />
         ))}
       </ul>

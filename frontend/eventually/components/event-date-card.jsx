@@ -2,9 +2,8 @@ import Link from "next/link";
 import { useCallback } from "react";
 import { useNotif } from "@/components/notif-context";
 
-export default function DateCard({ time, title, id, joinCode }) {
-  const notif = useNotif();
-
+export default function DateCard({ time, title, id, joinCode}) {
+    const notif = useNotif();
   // convert time to date class to use methods on it
   const cardTime = time ? new Date(time) : null;
 
@@ -51,7 +50,7 @@ export default function DateCard({ time, title, id, joinCode }) {
   if (showDate) {
     // If final date/time is set, show date variant
     return (
-      <Link href={`/dashboard/event/${id}`} className={`${classes}`}>
+      <Link href={`/join/${joincode}`} className={`${classes}`}>
         <li className={`${classes} ${beforeClasses}`}>
           <div className="flex flex-col absolute top-4 w-full z-10 group-hover:text-white">
             <p className="text-sm font-bold opacity-60">{time ? day : ""}</p>

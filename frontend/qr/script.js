@@ -4,10 +4,9 @@ function getCode() {
 }
 
 const code = getCode();
-console.log(code);
 
 const baseURL = "https://final-project-comic-sans-fork.vercel.app/";
-const apiURL = "http://localhost:4000/api";
+const apiURL = "https://eventually-api.nikolajhoeegjensen.com/api";
 
 const title = document.getElementById("title");
 const time = document.getElementById("time");
@@ -54,7 +53,6 @@ async function getEventInfo(joincode) {
       time.innerText = "Awaiting votes for final date...";
     }
 
-    console.log(data);
   } catch (error) {
     console.error(error);
   }
@@ -67,7 +65,6 @@ async function copyText() {
     await navigator.clipboard.writeText(code);
     const icon = document.getElementById("copyicon");
     icon.src = "assets/check.svg";
-    console.log('copied "' + code + '" to clipboard');
   } catch (error) {
     console.error("failed to copy text: " + error);
   }

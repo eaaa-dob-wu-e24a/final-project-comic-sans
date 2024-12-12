@@ -54,10 +54,6 @@ export default function VotedEventList({ maxEvents }) {
     return <p className="text-red-500">{error}</p>;
   }
 
-  if (events.length === 0) {
-    return <p>No events found.</p>;
-  }
-
   return (
     <section className="mx-auto flex flex-col gap-4 bg-background p-6 my-12 rounded-2xl shadow-md">
       <div className="flex place-content-between align-center flex-row">

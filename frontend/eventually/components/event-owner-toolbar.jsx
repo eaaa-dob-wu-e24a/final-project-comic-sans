@@ -1,8 +1,10 @@
 import Button from "./ui/button";
 import FormLabel from "./ui/formlabel";
+import { useNotif } from "./notif-context";
 
 export default function EditEvent({ id, dates }) {
     const eventID = id;
+    const notif = useNotif();
 
     // extract only the list of dates
     const datesArray = dates.map((obj, index) => ({
@@ -12,23 +14,21 @@ export default function EditEvent({ id, dates }) {
 
     const url = process.env.NEXT_PUBLIC_API_URL + "/api/event/update/";
 
-    const selector = document.getElementById("selection");
-
     const handleSubmit = async () => {
+        const selector = document.getElementById("selection");
         const data = {
             ID: eventID,
             FinalDate: selector.value
         }
-        console.log("attempted to send")
         try {
             const response = await fetch(url, {
                 method: "PATCH",
                 credentials: "include", // Include cookies for session handling
                 body: JSON.stringify(data),
               })
-              console.log("attempted to send")
+              notif?.send("Final date updated!")
         } catch (error) {
-            console.log(error)
+            notif?.send("Failed to update final date")
         }
     }
 

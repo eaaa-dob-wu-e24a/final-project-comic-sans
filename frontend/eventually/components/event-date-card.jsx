@@ -45,12 +45,12 @@ export default function DateCard({ time, title, id, joinCode}) {
     navigator.clipboard.writeText(shareURL).then(() => {
       notif?.send("Event link copied to clipboard!");
     });
-  }, [joinCode, notif]);
+  }, []);
 
   if (showDate) {
     // If final date/time is set, show date variant
     return (
-      <Link href={`/join/${joincode}`} className={`${classes}`}>
+      <Link href={`/join/${joinCode}`} className={`${classes}`}>
         <li className={`${classes} ${beforeClasses}`}>
           <div className="flex flex-col absolute top-4 w-full z-10 group-hover:text-white">
             <p className="text-sm font-bold opacity-60">{time ? day : ""}</p>

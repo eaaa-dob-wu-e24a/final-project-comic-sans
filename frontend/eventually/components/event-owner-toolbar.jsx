@@ -40,9 +40,11 @@ export default function EditEvent({ id, dates }) {
       </div>
       <div className="flex flex-row sm:flex-wrap md:flex-nowrap w-full gap-4 max-w-xl">
         <select id="selection" className="min-w-28 sm:min-w-96 md:w-full text-black rounded-full px-2">
+            <option value="0">none</option>
             {datesArray.map((date) => 
                 (<option key={date.PK_ID} value={date.DateTimeStart}>{date.DateTimeStart}</option>)
             )}
+            
         </select>
         <Button onClick={handleSubmit}>Confirm</Button>
       </div>

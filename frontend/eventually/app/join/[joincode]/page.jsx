@@ -10,6 +10,7 @@ import Input from "@/components/ui/input";
 import FormLabel from "@/components/ui/formlabel";
 import EditEvent from "@/components/event-owner-toolbar";
 import { setDate } from "date-fns";
+import FinalDate from "@/components/ui/finaldate";
 
 export default function JoinEventPage() {
   const { joincode } = useParams(); // Extract joincode from the URL
@@ -191,6 +192,8 @@ export default function JoinEventPage() {
       ) : (
         ""
       )}
+
+      {event.FinalDate ? <FinalDate date={event.FinalDate}></FinalDate> : ""}
 
       <section className="max-w-6xl mx-auto flex flex-col gap-4 bg-background p-6 my-12 rounded-2xl shadow-md">
         <EventDetail event={event} />

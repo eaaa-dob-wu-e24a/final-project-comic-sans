@@ -69,8 +69,14 @@ if (isset($eventID) && is_numeric($eventID)) {
     $newTitle = isset($input['Title']) ? $input['Title'] : $event['Title'];
     $newDesc = isset($input['Description']) ? $input['Description'] : $event['Description'];
     $newLoc = isset($input['Location']) ? $input['Location'] : $event['Location'];
-    $newDatePreprocess = isset($input['FinalDate']) ? DateTime::createFromFormat('Y-m-d H:i:s', $input['FinalDate']) : DateTime::createFromFormat('Y-m-d H:i:s', $event['FinalDate']);
-    $newDate = $newDatePreprocess->format('Y-m-d H:i:s');
+
+
+    if ($input['FinalDate'] == 0) {
+        $newDate = NULL;
+    } else {
+        $newDatePreprocess = isset($input['FinalDate']) ? DateTime::createFromFormat('Y-m-d H:i:s', $input['FinalDate']) : DateTime::createFromFormat('Y-m-d H:i:s', $event['FinalDate']);
+        $newDate = $newDatePreprocess->format('Y-m-d H:i:s');
+    }
 
     // check if the owner matches the user
     if ($event['FK_Owner_UserID'] != $user['id']) {

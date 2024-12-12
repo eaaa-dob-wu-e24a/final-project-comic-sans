@@ -1,10 +1,12 @@
 import Button from "./ui/button";
 import FormLabel from "./ui/formlabel";
 import { useNotif } from "./notif-context";
+import { useRouter } from "next/navigation";
 
 export default function EditEvent({ id, dates }) {
     const eventID = id;
     const notif = useNotif();
+    const router = useRouter();
 
     // extract only the list of dates
     const datesArray = dates.map((obj, index) => ({
@@ -26,9 +28,9 @@ export default function EditEvent({ id, dates }) {
                 credentials: "include", // Include cookies for session handling
                 body: JSON.stringify(data),
               })
-              notif?.send("Final date updated!")
+              notif?.send("Final date updated!");
         } catch (error) {
-            notif?.send("Failed to update final date")
+            notif?.send("Failed to update final date: " + error);
         }
     }
 

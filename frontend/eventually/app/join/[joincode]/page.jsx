@@ -104,6 +104,12 @@ export default function JoinEventPage() {
 
   // Confirm selections and update the backend
   const confirmSelections = async () => {
+    console.log("clicked");
+    if (!loggedInUser.userId && !usernameInput.trim()) {
+      notif.send("Please enter your name before confirming selections.");
+      return;
+    }
+
     try {
       const updatedEventDates = [...event.EventDates];
 
@@ -131,7 +137,11 @@ export default function JoinEventPage() {
             }),
           });
 
-          if (!res.ok) throw new Error("Failed to update vote");
+          if (!res.ok) {
+            const errorData = await res.json();
+            notif.send(`Failed to update vote: ${errorData.message}`);
+            return;
+          }
 
           // Update UserVotes locally
           if (isSelected) {
@@ -140,6 +150,7 @@ export default function JoinEventPage() {
               UserName: loggedInUser.username || usernameInput,
               UserImagePath: loggedInUser.imagePath || null,
             });
+            notif.send("Votes updated successfully!");
           } else {
             // Remove vote for non-logged-in user by username
             date.UserVotes = date.UserVotes.filter(
@@ -147,6 +158,7 @@ export default function JoinEventPage() {
                 !(vote.FK_User === null && vote.UserName === usernameInput) &&
                 parseInt(vote.FK_User, 10) !== parseInt(loggedInUser.userId, 10)
             );
+            notif.send("Votes updated successfully!");
           }
 
           updatedEventDates[i] = { ...date, selected: isSelected };
@@ -155,8 +167,6 @@ export default function JoinEventPage() {
 
       setEvent({ ...event, EventDates: updatedEventDates });
       setPendingSelections(updatedEventDates.map((date) => date.selected));
-
-      notif.send("Votes updated successfully!");
     } catch (err) {
       console.error("Failed to confirm selections:", err);
     }
@@ -166,7 +176,7 @@ export default function JoinEventPage() {
 
   return (
     <main>
-        <EditEvent></EditEvent>
+      <EditEvent></EditEvent>
 
       <section className="max-w-6xl mx-auto flex flex-col gap-4 bg-background p-6 my-12 rounded-2xl shadow-md">
         <EventDetail event={event} />

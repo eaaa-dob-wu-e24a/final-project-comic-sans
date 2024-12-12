@@ -307,7 +307,7 @@ const addTimeSlot = (dateIndex) => {
       {/* Header with GradientCurve */}
       <GradientCurve className={"max-h-24"}>
         <div className="max-w-6xl mx-auto flex">
-          <h1 className="font-bold text-2xl mx-auto max-w-6xl pb-12 text-white">
+          <h1 className=" md:font-bold text-2xl mx-auto max-w-6xl pb-12 text-white">
             Create Event
           </h1>
         </div>
@@ -385,7 +385,7 @@ const addTimeSlot = (dateIndex) => {
               <textarea
                 id="description"
                 name="description"
-                className="leading-6 rounded-xl w-full mt-1 px-4 py-2 text-black border border-secondary-10 focus:outline-none focus:ring-1 focus:ring-secondary focus:border-secondary"
+                className="rounded-full shadow-cardshadow text-dark py-2 px-4 w-full focus:border-secondary focus:ring-1 focus:ring-secondary focus:bg-white/80 focus:outline-none"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Description"
@@ -400,7 +400,7 @@ const addTimeSlot = (dateIndex) => {
           <h2 className="font-bold text-2xl mb-4">Add Times</h2>
           <div className="calendar-container flex flex-col lg:flex-row gap-10">
             {/* Calendar */}
-            <div className="w-full lg:w-1/2">
+            <div className="w-full lg:w-1/2 align-center">
               <p className="text-lg font-medium mb-2">Select Dates</p>
               <Calendar
                 selectedDates={selectedDates}

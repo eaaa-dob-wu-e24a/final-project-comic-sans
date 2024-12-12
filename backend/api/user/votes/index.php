@@ -42,6 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $query = "
         SELECT 
             e.PK_ID AS EventID,
+            e.JoinCode,
             e.Title,
             e.Description,
             e.FK_Owner_UserID,
@@ -85,6 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                     "Description" => $row['Description'],
                     "FK_Owner_UserID" => $row['FK_Owner_UserID'],
                     "FinalDate" => $row['FinalDate'],
+                    "JoinCode" => $row['JoinCode'],
                     "Location" => $row['Location'],
                     "EventDates" => []
                 ];

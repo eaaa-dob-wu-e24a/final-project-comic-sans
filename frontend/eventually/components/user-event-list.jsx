@@ -58,15 +58,9 @@ export default function UserEventList({ maxEvents }) {
       ) : (
         <ul className="flex flex-row flex-wrap gap-4">
           {events.map((event) => {
-            let cardTime = null;
-
-            if (event.FinalDate) {
-              // If there's a FinalDate set, use that
-              cardTime = event.FinalDate;
-            } else {
-              // No FinalDate: no date set
-              cardTime = null;
-            }
+            // If FinalDate is present, show the date card variant
+            // If not, show the no-date card variant
+            const cardTime = event.FinalDate || null; // If null, DateCard shows no-date variant
 
             return (
               <DateCard

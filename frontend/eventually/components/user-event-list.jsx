@@ -1,5 +1,4 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import DateCard from "./event-date-card";
 import Link from "next/link";
 import Arrow from "./ui/arrow";
@@ -40,7 +39,7 @@ export default function UserEventList({ maxEvents }) {
 
   return (
     <section className="mx-auto flex flex-col gap-4 bg-background p-6 my-12 rounded-2xl shadow-md">
-      <div className="flex place-content-between align-center flex-row">
+      <div className="flex place-content-between items-center flex-row">
         <h2 className="text-xl font-bold">Your Events</h2>
         {maxEvents && maxEvents > 0 ? (
           <Link
@@ -48,7 +47,7 @@ export default function UserEventList({ maxEvents }) {
             className="flex flex-row gap-2 font-bold"
           >
             All
-            <Arrow className="-rotate-90 mt-1"></Arrow>
+            <Arrow className="-rotate-90 mt-1" />
           </Link>
         ) : (
           <div></div>
@@ -58,18 +57,26 @@ export default function UserEventList({ maxEvents }) {
         <Loading />
       ) : (
         <ul className="flex flex-row flex-wrap gap-4">
-          {events.map((event) => (
-            <DateCard
-              time={
-                event.FinalDate
-                  ? event.FinalDate
-                  : event.EventDates[0]?.DateTimeStart
-              }
-              title={event.Title}
-              key={event.PK_ID}
-              id={event.PK_ID}
-            />
-          ))}
+          {events.map((event) => {
+            let cardTime = null;
+
+            if (event.FinalDate) {
+              // If there's a FinalDate set, use that
+              cardTime = event.FinalDate;
+            } else {
+              // No FinalDate: no date set
+              cardTime = null;
+            }
+
+            return (
+              <DateCard
+                time={cardTime}
+                title={event.Title}
+                key={event.PK_ID}
+                id={event.PK_ID}
+              />
+            );
+          })}
         </ul>
       )}
     </section>

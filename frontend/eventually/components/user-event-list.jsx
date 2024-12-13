@@ -3,6 +3,7 @@ import DateCard from "./event-date-card";
 import Link from "next/link";
 import Arrow from "./ui/arrow";
 import Loading from "./ui/loading-spinner";
+import Button from "./ui/button"; // Import the Button component
 
 export default function UserEventList({ maxEvents }) {
   const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/events/";
@@ -10,32 +11,32 @@ export default function UserEventList({ maxEvents }) {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetch(url, {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data) {
-          // if a max events variable is passed, only show that amount
-          console.log(data.events.length + " events found.");
-          if (maxEvents && data.events.length > maxEvents) {
-            const limitedEvents = data.events.slice(-maxEvents);
-            setEvents(limitedEvents);
-          } else {
-            setEvents(data.events);
-          }
-        } else {
-          console.log("no data yet.");
-        }
+    useEffect(() => {
+      fetch(url, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
       })
-      .catch((error) => console.log(error))
-      .finally(() => setLoading(false));
-  }, []);
+        .then((response) => response.json())
+        .then((data) => {
+          if (data) {
+            // if a max events variable is passed, only show that amount
+            console.log(data.events.length + " events found.");
+            if (maxEvents && data.events.length > maxEvents) {
+              const limitedEvents = data.events.slice(-maxEvents);
+              setEvents(limitedEvents);
+            } else {
+              setEvents(data.events);
+            }
+          } else {
+            console.log("no data yet.");
+          }
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setLoading(false));
+    }, []);
 
   return (
     <section className="mx-auto flex flex-col gap-4 bg-background p-6 my-12 rounded-2xl shadow-md">
@@ -55,7 +56,7 @@ export default function UserEventList({ maxEvents }) {
       </div>
       {loading ? (
         <Loading />
-      ) : (
+      ) : events.length > 0 ? (
         <ul className="flex flex-row flex-wrap gap-4">
           {events.map((event) => {
             // If FinalDate is present, show the date card variant
@@ -73,6 +74,14 @@ export default function UserEventList({ maxEvents }) {
             );
           })}
         </ul>
+      ) : (
+        // When there are no events
+        <div className="flex flex-col items-center justify-center gap-4 p-4">
+          <p className="text-lg text-foreground">No events yet, create one!</p>
+          <Link href="/create">
+            <Button variant="primary">Create</Button>
+          </Link>
+        </div>
       )}
     </section>
   );

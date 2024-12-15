@@ -296,26 +296,26 @@ export default function Profile() {
         ) : isEditingPassword ? (
           // Change Password Section
           <div className="bg-background shadow-md rounded-lg p-6 mb-6">
-            <h2 className="text-xl font-bold mb-4">Change Password</h2>
-            <div className="mb-6 pr-2 w-1/2 ">
-              <FormLabel>Current Password</FormLabel>
+            <h2 className="text-xl font-bold mb-4">Change password</h2>
+            <div className="mb-6 md:pr-2 lg:pr-2 w-1/2 ">
+              <FormLabel>Current password</FormLabel>
               <Input
                 type="password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
               />
             </div>
-            <div className="flex gap-4 mb-6">
+            <div className="flex gap-2 md:gap-4 lg:gap-4 mb-6">
               <div className="w-1/2">
-                <FormLabel>New Password</FormLabel>
+                <FormLabel>New password</FormLabel>
                 <Input
                   type="password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                 />
               </div>
-              <div className="w-1/2 pl-2">
-                <FormLabel>Confirm New Password</FormLabel>
+              <div className="w-1/2 md:pl-2 lg:pl-2">
+                <FormLabel>Confirm password</FormLabel>
                 <Input
                   type="password"
                   value={confirmPassword}

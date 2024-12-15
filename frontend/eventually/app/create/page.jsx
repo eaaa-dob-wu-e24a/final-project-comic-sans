@@ -297,7 +297,7 @@ export default function CreateEvent() {
       {/* Header with GradientCurve */}
       <GradientCurve className={"max-h-24"}>
         <div className="max-w-6xl mx-auto flex">
-          <h1 className=" md:font-bold text-2xl mx-auto max-w-6xl pb-12 text-white">
+          <h1 className=" font-bold text-2xl mx-auto max-w-6xl pb-12 text-white">
             Create Event
           </h1>
         </div>

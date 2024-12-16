@@ -80,7 +80,7 @@ export default function ProfileDropdown() {
           <div className="p-4 bg-primaryred text-foreground bg-secondary rounded-t-lg">
             <p className="font-bold">{user.name}</p>
           </div>
-          <ul className="divide-y divide-gray-200">
+          <ul className="divide-y divide-secondary">
             <li>
               <a
                 href="/dashboard"

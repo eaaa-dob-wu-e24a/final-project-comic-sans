@@ -371,7 +371,7 @@ export default function Profile() {
             <select
               value={timeZone}
               onChange={(e) => setTimeZone(e.target.value)}
-              className="p-2 border rounded-lg bg-white text-dark"
+              className="rounded-full shadow-cardshadow text-dark py-2 px-4 w-full focus:border-secondary focus:ring-1 focus:ring-secondary focus:bg-white/80 focus:outline-none"
             >
               <option>Central European Standard Time</option>
               <option>Eastern Time - US & Canada</option>

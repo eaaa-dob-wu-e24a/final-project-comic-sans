@@ -1,5 +1,6 @@
 import Checkbox from "./ui/checkbox";
 import EventAvatar from "./event-detail-avatar";
+import Image from "next/image";
 
 export default function EventDateDetailCard({
   eventDates,
@@ -22,7 +23,15 @@ export default function EventDateDetailCard({
 
   return (
     <div>
-      <p className="text-primary font-bold mb-4 text-lg">Select Your Times:</p>
+      <p className="text-primary font-bold mb-4 text-lg flex flex-nowrap gap-2">
+        <Image
+          src={"/calendar.svg"}
+          height={28}
+          width={28}
+          alt="Map pin icon"
+        ></Image>
+        Select Your Times:
+      </p>
       <ul className="flex flex-row flex-wrap w-full gap-4 justify-center md:justify-start">
         {eventDates.map((date, index) => {
           const selected = pendingSelections[index];

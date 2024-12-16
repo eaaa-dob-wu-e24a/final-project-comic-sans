@@ -188,7 +188,7 @@ export default function JoinEventPage() {
   return (
     <main>
       {owned ? (
-        <EditEvent id={event.PK_ID} dates={event.EventDates}></EditEvent>
+        <EditEvent id={event.PK_ID} dates={event.EventDates} joincode={joincode}></EditEvent>
       ) : (
         ""
       )}

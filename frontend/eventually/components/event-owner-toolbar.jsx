@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 
-export default function EditEvent({ id, dates }) {
+export default function EditEvent({ id, dates, joincode }) {
   const eventID = id;
   const notif = useNotif();
   const router = useRouter();
@@ -40,7 +40,8 @@ export default function EditEvent({ id, dates }) {
     <section className="max-w-6xl mx-auto flex flex-col gap-4 bg-background p-6 my-12 rounded-2xl shadow-md">
       <div className="flex flex-row place-content-between w-full flex-wrap-reverse gap-4 place-items-center">
         <FormLabel variant="lg">Select Final Date</FormLabel>
-        <Link href={`/dashboard/edit/${joincode}"}`}>
+
+        <Link href={`/dashboard/edit/${joincode}`}>
           <Button>Edit Event</Button>
         </Link>
       </div>

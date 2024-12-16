@@ -4,78 +4,57 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useNotif } from "@/components/notif-context";
 import EventUpdateForm from "@/components/event-update-form";
+import GradientCurve from "@/components/gradientcurve";
 
 export default function UpdateEventPage() {
-  const { joincode } = useParams(); // Extract joincode from the URL
+  const { joincode } = useParams();
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const notif = useNotif();
 
-  // Fetch event data
   useEffect(() => {
     const fetchEventData = async () => {
-      if (joincode) {
-        try {
-          const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/event/code/?joincode=${joincode}`,
-            {
-              method: "GET",
-              headers: { "Content-Type": "application/json" },
-              credentials: "include",
-            }
-          );
-
-          if (!res.ok) {
-            throw new Error("Failed to fetch event data.");
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/event/code/?joincode=${joincode}`,
+          {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
           }
+        );
 
-          const data = await res.json();
-          setEvent(data);
-          setLoading(false);
-        } catch (err) {
-          console.error("Error fetching event data:", err);
-          notif.send("Failed to load event details.");
-        }
+        if (!res.ok) throw new Error("Failed to fetch event data.");
+
+        const data = await res.json();
+        setEvent(data);
+      } catch (err) {
+        console.error("Error fetching event data:", err);
+        notif.send("Failed to load event details.");
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchEventData();
   }, [joincode, notif]);
 
-  // Handle event updates
-  const handleUpdate = async (updatedEvent) => {
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/event/update/`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify(updatedEvent),
-        }
-      );
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        notif.send(`Failed to update event: ${errorData.message}`);
-        return;
-      }
-
-      notif.send("Event updated successfully!");
-    } catch (err) {
-      console.error("Error updating event:", err);
-      notif.send("An error occurred while updating the event.");
-    }
-  };
-
   if (loading) return <p>Loading...</p>;
 
   return (
-    <main>
+    <main className="flex flex-col min-h-screen bg-sitebackground">
+      {/* Header with GradientCurve */}
+      <GradientCurve className={"max-h-24"}>
+        <div className="max-w-6xl mx-auto flex">
+          <h1 className="font-bold text-2xl mx-auto max-w-6xl pb-12 text-white">
+            Update Event
+          </h1>
+        </div>
+      </GradientCurve>
       {event ? (
-        <EventUpdateForm event={event} onUpdate={handleUpdate} />
+        <EventUpdateForm event={event} />
       ) : (
-        <p>Event not found.</p>
+        <p>Event not found. Please check the joincode.</p>
       )}
     </main>
   );

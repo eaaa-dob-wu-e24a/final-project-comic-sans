@@ -22,23 +22,24 @@ export default function EditEvent({ id, dates, joincode }) {
     const selector = document.getElementById("selection");
     const data = {
       ID: eventID,
-      FinalDate: selector.value
-    }
+      FinalDate: selector.value,
+    };
     try {
       const response = await fetch(url, {
         method: "PATCH",
         credentials: "include", // Include cookies for session handling
         body: JSON.stringify(data),
-      })
+      });
       notif?.send("Final date updated!");
+      window.location.reload();
     } catch (error) {
       notif?.send("Failed to update final date: " + error);
     }
-  }
+  };
 
   return (
-    <section className="max-w-6xl mx-auto flex flex-col gap-4 bg-background p-6 my-12 rounded-2xl shadow-md">
-      <div className="flex flex-row place-content-between w-full flex-wrap-reverse gap-4 place-items-center">
+    <section className="max-w-6xl mx-auto flex flex-col gap-4 bg-background p-6 mt-6 rounded-2xl shadow-md">
+      <div className="flex flex-row place-content-around sm:place-content-between w-full flex-wrap-reverse gap-4 place-items-center ">
         <FormLabel variant="lg">Select Final Date</FormLabel>
 
         <Link href={`/dashboard/edit/${joincode}`}>

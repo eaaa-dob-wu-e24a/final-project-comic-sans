@@ -55,6 +55,31 @@ export default function SelectedDate({
     }
   };
 
+  const handleDurationChange = (e, timeIndex) => {
+    const value = e.target.value; // Always a string
+    console.log(`Duration changed to: ${value}`); // Debugging log
+    handleTimeSlotChange(dateIndex, timeIndex, "duration", value);
+  };
+
+  const computeEndTime = (startTime, duration) => {
+    if (duration === "all-day") {
+      return "00:00";
+    }
+
+    const [startHour, startMinute] = startTime.split(":").map(Number);
+    let endHour = startHour + parseInt(duration, 10);
+    let endMinute = startMinute;
+
+    if (endHour >= 24) {
+      endHour = 24 % 24; // Wrap around to 00:00
+    }
+
+    const formattedEndTime = `${String(endHour).padStart(2, "0")}:${String(
+      endMinute
+    ).padStart(2, "0")}`;
+    return formattedEndTime;
+  };
+
   return (
     <div className="flex flex-col overflow-visible py-2 px-4 rounded-lg shadow-sm border border-secondary w-full">
       {timeSlots.map((timeSlot, timeIndex) => (
@@ -76,7 +101,7 @@ export default function SelectedDate({
             </div>
           )}
 
-          <div className="flex items-center gap-4 mb-1 relative md:ml-auto lg:ml-auto">
+          <div className="flex items-center gap-2 md:gap-4 lg:gap-4 mb-1 md:mb-2 lg:mb-2 relative ml-auto md:ml-auto lg:ml-auto">
             <div className="flex flex-col items-start">
               {timeIndex === 0 && (
                 <label
@@ -89,7 +114,7 @@ export default function SelectedDate({
               <input
                 id={`startTime-${dateIndex}-${timeIndex}`}
                 type="time"
-                className="rounded-full min-w-24 border px-2 py-1 text-sm text-dark focus:outline-none focus:border-primary cursor-pointer"
+                className="rounded-full w-15 md:w-28 lg:w-28 border px-2 py-1 text-sm text-dark focus:outline-none focus:border-primary cursor-pointer"
                 value={timeSlot.startTime}
                 readOnly
                 onClick={() => handleDropdownOpen(timeIndex)}
@@ -99,7 +124,7 @@ export default function SelectedDate({
                   ref={dropdownRef}
                   className={`absolute z-10 ${
                     timeIndex === 0 ? "mt-3.5" : "mt-3.75"
-                  } max-h-40 w-28 overflow-y-scroll border rounded-lg bg-white text-dark shadow-lg`}
+                  } max-h-40 w-20 dm:w-28 lg:w-28 overflow-y-scroll border rounded-lg bg-white text-dark shadow-lg`}
                 >
                   {allTimes.map((time) => (
                     <li
@@ -134,32 +159,25 @@ export default function SelectedDate({
               )}
               <select
                 id={`duration-${dateIndex}-${timeIndex}`}
-                className="block min-w-20 rounded-full border px-2 py-1 text-sm text-dark leading-5 focus:outline-none focus:border-primary"
+                className="block w-15 md:w-20 lg:w-20 rounded-full border px-2 py-1.5 text-sm text-dark leading-5 focus:outline-none focus:border-primary"
                 value={timeSlot.duration}
-                onChange={(e) => {
-                  const numericValue = parseInt(e.target.value, 10);
-                  if (!isNaN(numericValue)) {
-                    handleTimeSlotChange(
-                      dateIndex,
-                      timeIndex,
-                      "duration",
-                      numericValue
-                    );
-                  }
-                }}
+                onChange={(e) => handleDurationChange(e, timeIndex)}
                 required
               >
                 {[...Array(5)].map((_, i) => (
-                  <option key={i + 1} value={i + 1}>
+                  <option key={i + 1} value={(i + 1).toString()}>
                     {i + 1}h
                   </option>
                 ))}
+                <option value="all-day">All Day</option>{" "}
               </select>
             </div>
 
             <button
               type="button"
-              className="flex items-center justify-center text-white rounded-full w-6 h-6"
+              className={`flex-shrink-0 flex items-center justify-center rounded-full w-6 h-6 ml-2 ${
+                timeIndex === 0 ? "pt-2" : ""
+              }`}
               onClick={() => removeTimeSlot(dateIndex, timeIndex)}
             >
               <svg

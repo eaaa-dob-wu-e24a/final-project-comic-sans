@@ -65,7 +65,7 @@ const LoginSite = () => {
   }
 
   return (
-    <main>
+    <main className="min-h-screen">
       <section className="bg-gradient-to-r from-gradientstart to-gradientend"></section>
       <GradientCurve className={"max-h-24"}>
         <div className="max-w-6xl mx-auto flex">
@@ -78,6 +78,8 @@ const LoginSite = () => {
         <UserEventList maxEvents={6}/>
         <VotedEventList maxEvents={6}/>
       </section>
+      {/* Dynamic Section Below the Gradient Curve */}
+      <section className="flex-grow bg-page-background" />
     </main>
   );
 };

@@ -79,7 +79,7 @@ export default function DateCard({ time, title, id, joincode}) {
           </p>
           {/* Replace old share link text with a clickable button that copies the link */}
           <div
-            className="mx-2 my-2 bottom-0 z-10 flex flex-row justify-center group-hover:text-white"
+            className="mx-2 my-2 bottom-0 z-10 flex flex-row justify-center group-hover:text-foreground"
             href="/dashboard/"
           >
             <div className="absolute bottom-0 w-full z-10">
@@ -88,7 +88,7 @@ export default function DateCard({ time, title, id, joincode}) {
                   e.preventDefault(); // Prevent navigation on button click
                   copyLink();
                 }}
-                className="flex items-center gap-2 justify-center bg-secondary-10 text-white py-2 w-full rounded-b-2xl hover:bg-secondary"
+                className="flex items-center gap-2 justify-center text-foreground py-2 w-full rounded-b-2xl hover:bg-secondary-10"
               >
                 {/* Icon from new code */}
                 <svg
@@ -96,7 +96,7 @@ export default function DateCard({ time, title, id, joincode}) {
                   height="24px"
                   viewBox="0 -960 960 960"
                   width="24px"
-                  fill="white"
+                  fill="currentColor"
                 >
                   <path d="M672.22-100q-44.91 0-76.26-31.41-31.34-31.41-31.34-76.28 0-6 4.15-29.16L284.31-404.31q-14.46 15-34.36 23.5t-42.64 8.5q-44.71 0-76.01-31.54Q100-435.39 100-480q0-44.61 31.3-76.15 31.3-31.54 76.01-31.54 22.74 0 42.64 8.5 19.9 8.5 34.36 23.5l284.46-167.08q-2.38-7.38-3.27-14.46-.88-7.08-.88-15.08 0-44.87 31.43-76.28Q627.49-860 672.4-860t76.25 31.44Q780-797.13 780-752.22q0 44.91-31.41 76.26-31.41 31.34-76.28 31.34-22.85 0-42.5-8.69Q610.15-662 595.69-677L311.23-509.54q2.38 7.39 3.27 14.46.88 7.08.88 15.08t-.88 15.08q-.89 7.07-3.27 14.46L595.69-283q14.46-15 34.12-23.69 19.65-8.69 42.5-8.69 44.87 0 76.28 31.43Q780-252.51 780-207.6t-31.44 76.25Q717.13-100 672.22-100Z" />
                 </svg>

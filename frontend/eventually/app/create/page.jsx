@@ -412,7 +412,7 @@ export default function CreateEvent() {
               {selectedDates.length === 0 && (
                 <p className="text-gray-500">No dates selected.</p>
               )}
-              <div className="flex flex-col h-full w-full space-y-2.5 overflow-y-auto max-h-96 my-1 mx-1">
+              <div className="flex flex-col w-full space-y-2.5 my-1 mx-1">
                 {selectedDates.map((item, dateIndex) => (
                   <SelectedDate
                     key={dateIndex}

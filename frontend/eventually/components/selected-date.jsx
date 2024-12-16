@@ -55,6 +55,31 @@ export default function SelectedDate({
     }
   };
 
+  const handleDurationChange = (e, timeIndex) => {
+    const value = e.target.value; // Always a string
+    console.log(`Duration changed to: ${value}`); // Debugging log
+    handleTimeSlotChange(dateIndex, timeIndex, "duration", value);
+  };
+
+  const computeEndTime = (startTime, duration) => {
+    if (duration === "all-day") {
+      return "00:00";
+    }
+
+    const [startHour, startMinute] = startTime.split(":").map(Number);
+    let endHour = startHour + parseInt(duration, 10);
+    let endMinute = startMinute;
+
+    if (endHour >= 24) {
+      endHour = 24 % 24; // Wrap around to 00:00
+    }
+
+    const formattedEndTime = `${String(endHour).padStart(2, "0")}:${String(
+      endMinute
+    ).padStart(2, "0")}`;
+    return formattedEndTime;
+  };
+
   return (
     <div className="flex flex-col overflow-visible py-2 px-4 rounded-lg shadow-sm border border-secondary w-full">
       {timeSlots.map((timeSlot, timeIndex) => (
@@ -136,24 +161,15 @@ export default function SelectedDate({
                 id={`duration-${dateIndex}-${timeIndex}`}
                 className="block min-w-20 rounded-full border px-2 py-1 text-sm text-dark leading-5 focus:outline-none focus:border-primary"
                 value={timeSlot.duration}
-                onChange={(e) => {
-                  const numericValue = parseInt(e.target.value, 10);
-                  if (!isNaN(numericValue)) {
-                    handleTimeSlotChange(
-                      dateIndex,
-                      timeIndex,
-                      "duration",
-                      numericValue
-                    );
-                  }
-                }}
+                onChange={(e) => handleDurationChange(e, timeIndex)}
                 required
               >
                 {[...Array(5)].map((_, i) => (
-                  <option key={i + 1} value={i + 1}>
+                  <option key={i + 1} value={(i + 1).toString()}>
                     {i + 1}h
                   </option>
                 ))}
+                <option value="all-day">All Day</option>{" "}
               </select>
             </div>
 

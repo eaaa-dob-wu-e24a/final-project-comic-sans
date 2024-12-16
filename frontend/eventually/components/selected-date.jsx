@@ -10,22 +10,19 @@ export default function SelectedDate({
   removeTimeSlot,
   handleTimeSlotChange,
   getDisabledTimes,
-
-  /** (Change #4) Receive allTimes and isPastTime as props **/
   allTimes,
   isPastTime,
 }) {
-  const [dropdownOpen, setDropdownOpen] = useState(null); // Tracks the open dropdown
-  const dropdownRef = useRef(null); // Ref for dropdown positioning
+  const [dropdownOpen, setDropdownOpen] = useState(null);
+  const dropdownRef = useRef(null);
 
   const disabledTimes = getDisabledTimes();
 
   const handleTimeClick = (time, timeIndex) => {
     handleTimeSlotChange(dateIndex, timeIndex, "startTime", time);
-    setDropdownOpen(null); // Close the dropdown after selection
+    setDropdownOpen(null);
   };
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleOutsideClick = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -48,7 +45,6 @@ export default function SelectedDate({
           const noonIndex = allTimes.findIndex((time) => time === "12:00");
           const noonElement = dropdownRef.current.children[noonIndex];
           if (noonElement) {
-            // Adjust scrollTop to bring "12:00" into view
             const dropdownHeight = dropdownRef.current.clientHeight;
             const noonOffset = noonElement.offsetTop;
             dropdownRef.current.scrollTop =
@@ -59,22 +55,19 @@ export default function SelectedDate({
     }
   };
 
-  // split the classes for the main card so its easier to read
-  const classes =
-    "flex flex-col overflow-visible py-2 px-4 rounded-lg shadow-sm text-center group bg-gradient-to-r from-gradientstart to-gradientend text-foreground relative";
-  const beforeClasses =
-    "before:bg-background before:content-[''] before:inset-[1px] before:absolute before:rounded-lg"; // remember to set z-index on content, otherwise it goes behind the pseudo-element
-
   return (
-    <div className={`${classes} ${beforeClasses}`}>
+    <div className="flex flex-col overflow-visible py-2 px-4 rounded-lg shadow-sm border border-secondary w-full">
       {timeSlots.map((timeSlot, timeIndex) => (
-        <div key={timeIndex} className="flex items-start justify-between gap-4 w-full">
+        <div
+          key={timeIndex}
+          className="flex flex-col sm:flex-row items-start md:items-center justify-between gap-2 md:gap-4 lg:gap-4 w-full"
+        >
           {timeIndex === 0 && (
-            <div className="flex flex-col items-start justify-start z-10">
-              <span className="text-sm font-semibold text-foreground">
+            <div className="flex flex-row lg:flex-col items-start justify-start">
+              <span className="text-base mr-2 md:text-sm font-semibold text-foreground">
                 {date.toLocaleDateString("en-GB", { weekday: "short" })}
               </span>
-              <span className="text-primary font-bold text-lg">
+              <span className="text-primary font-bold text-base md:text-lg">
                 {date.toLocaleDateString("en-GB", {
                   day: "2-digit",
                   month: "short",
@@ -83,8 +76,8 @@ export default function SelectedDate({
             </div>
           )}
 
-          <div className="flex items-center gap-4 ml-auto mb-1 relative z-10">
-            <div className="flex flex-col items-start w-32">
+          <div className="flex items-center gap-4 mb-1 relative md:ml-auto lg:ml-auto">
+            <div className="flex flex-col items-start">
               {timeIndex === 0 && (
                 <label
                   htmlFor={`startTime-${dateIndex}-${timeIndex}`}
@@ -96,7 +89,7 @@ export default function SelectedDate({
               <input
                 id={`startTime-${dateIndex}-${timeIndex}`}
                 type="time"
-                className="rounded-full border px-2 py-1 text-sm text-dark focus:outline-none focus:none focus:border-primary cursor-pointer"
+                className="rounded-full min-w-24 border px-2 py-1 text-sm text-dark focus:outline-none focus:border-primary cursor-pointer"
                 value={timeSlot.startTime}
                 readOnly
                 onClick={() => handleDropdownOpen(timeIndex)}
@@ -141,7 +134,7 @@ export default function SelectedDate({
               )}
               <select
                 id={`duration-${dateIndex}-${timeIndex}`}
-                className="block w-24 rounded-full border px-2 py-1 text-sm text-dark leading-5 focus:outline-none focus:none focus:border-primary "
+                className="block min-w-20 rounded-full border px-2 py-1 text-sm text-dark leading-5 focus:outline-none focus:border-primary"
                 value={timeSlot.duration}
                 onChange={(e) => {
                   const numericValue = parseInt(e.target.value, 10);
@@ -184,7 +177,7 @@ export default function SelectedDate({
       ))}
 
       <span
-        className="mt-0 self-end text-foreground font-bold cursor-pointer hover:underline text-sm z-10"
+        className="mt-0 self-end text-foreground font-bold cursor-pointer hover:underline text-sm"
         onClick={() => addTimeSlot(dateIndex)}
       >
         + Add times

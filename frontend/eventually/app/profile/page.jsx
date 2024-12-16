@@ -8,6 +8,8 @@ import Image from "next/image";
 import ProfileAvatar from "../../components/profile-avatar";
 import Input from "../../components/ui/input";
 import FormLabel from "../../components/ui/formlabel";
+import { useNotif } from "@/components/notif-context";
+import { useRouter } from "next/navigation";
 
 export default function Profile() {
   const { user, setUser, loading } = useContext(AuthContext);
@@ -22,6 +24,9 @@ export default function Profile() {
   const [isDarkTheme, setIsDarkTheme] = useState(false);
   const [notifications, setNotifications] = useState(true);
   const [timeZone, setTimeZone] = useState("Central European Standard Time");
+
+  const notif = useNotif();
+  const router = useRouter();
 
   useEffect(() => {
     if (user) {
@@ -210,8 +215,24 @@ export default function Profile() {
     }
   };
 
+  // Logout
+  const handleLogout = async () => {
+    const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/logout/";
+    await fetch(url, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    setUser(null); // Clear user state
+    notif?.send("Successfully logged out");
+    router.push("/"); // Redirect to login page
+  };
+
   return (
-    <main className="pt-20 min-h-screen">
+    <main className="pt-30 min-h-screen">
       <section className="bg-gradient-to-r from-gradientstart to-gradientend" />
       <GradientCurve className={"max-h-24"}>
         <div className="max-w-6xl mx-auto flex">
@@ -220,17 +241,17 @@ export default function Profile() {
           </h1>
         </div>
       </GradientCurve>
-      <section className="mx-auto flex flex-grow flex-col gap-4 p-6 w-6xl">
+      <section className="mx-auto flex flex-grow flex-col gap-4 p-4 w-full md:w-4/5 lg:w-4/5">
         {isEditing ? (
           // Edit Profile
-          <div className="bg-background shadow-md rounded-lg p-6 mb-6 mx-auto w-4/5">
+          <div className="bg-background shadow-md rounded-lg p-6">
             <h2 className="text-xl font-bold mb-4">Edit details</h2>
-            <div className="flex items-center mb-6">
+            <div className="flex flex-col md:flex-row lg:flex-row items-left mb-4 gap-4">
               <div className="relative">
                 <ProfileAvatar variant="large" />
                 <label
                   htmlFor="profilePhotoInput"
-                  className="absolute bottom-2 right-2 bg-white w-8 h-8 rounded-full flex items-center justify-center cursor-pointer"
+                  className="absolute bottom-4 left-24 md:bottom-2 md:right-2 bg-white w-8 h-8 rounded-full flex items-center justify-center cursor-pointer"
                   title="Change Profile Photo"
                 >
                   <input
@@ -248,7 +269,7 @@ export default function Profile() {
                   />
                 </label>
               </div>
-              <div className="ml-6 w-1/2">
+              <div className="w-full md:w-1/2 lg:w-1/2">
                 <FormLabel>Name</FormLabel>
                 <Input
                   type="text"
@@ -274,27 +295,27 @@ export default function Profile() {
           </div>
         ) : isEditingPassword ? (
           // Change Password Section
-          <div className="bg-background shadow-md rounded-lg p-6 mb-6 mx-auto w-4/5">
-            <h2 className="text-xl font-bold mb-4">Change Password</h2>
-            <div className="mb-6 pr-2 w-1/2 ">
-              <FormLabel>Current Password</FormLabel>
+          <div className="bg-background shadow-md rounded-lg p-6 mb-6">
+            <h2 className="text-xl font-bold mb-4">Change password</h2>
+            <div className="mb-6 md:pr-2 lg:pr-2 w-1/2 ">
+              <FormLabel>Current password</FormLabel>
               <Input
                 type="password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
               />
             </div>
-            <div className="flex gap-4 mb-6">
+            <div className="flex gap-2 md:gap-4 lg:gap-4 mb-6">
               <div className="w-1/2">
-                <FormLabel>New Password</FormLabel>
+                <FormLabel>New password</FormLabel>
                 <Input
                   type="password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                 />
               </div>
-              <div className="w-1/2 pl-2">
-                <FormLabel>Confirm New Password</FormLabel>
+              <div className="w-1/2 md:pl-2 lg:pl-2">
+                <FormLabel>Confirm password</FormLabel>
                 <Input
                   type="password"
                   value={confirmPassword}
@@ -316,9 +337,9 @@ export default function Profile() {
           </div>
         ) : (
           // Profile Details
-          <div className="bg-background shadow-md rounded-lg p-6 mb-6 mx-auto w-4/5">
+          <div className="bg-background shadow-md rounded-lg p-6">
             <h2 className="text-xl font-bold mb-4">Profile details</h2>
-            <div className="flex items-center mb-4">
+            <div className="flex flex-col md:flex-row lg:flex-row items-left mb-4 gap-4">
               <div className="relative">
                 <ProfileAvatar variant="large" />
               </div>
@@ -327,7 +348,7 @@ export default function Profile() {
                 <p className="text-sm text-foreground">{user.email}</p>
               </div>
             </div>
-            <div className="flex justify-end space-x-4">
+            <div className="flex justify-end flex-col w-full gap-4 md:flex-row lg:flex-row md:space-x-4">
               <Button variant="primary" onClick={() => setIsEditing(true)}>
                 Edit Details
               </Button>
@@ -342,7 +363,7 @@ export default function Profile() {
         )}
 
         {/* App Settings */}
-        <div className="bg-background shadow-md rounded-lg p-6 mb-6 mx-auto w-4/5">
+        <div className="bg-background shadow-md rounded-lg p-6 mb-6 w-full">
           <h2 className="text-xl font-bold mb-4">App settings</h2>
           <div className="mb-4 flex items-center justify-between">
             <span className="text-sm font-medium">Notifications</span>
@@ -351,7 +372,7 @@ export default function Profile() {
                 type="checkbox"
                 checked={notifications}
                 onChange={() => setNotifications(!notifications)}
-                className="form-checkbox text-blue-500"
+                className="form-checkbox"
               />
             </label>
           </div>
@@ -371,7 +392,7 @@ export default function Profile() {
             <select
               value={timeZone}
               onChange={(e) => setTimeZone(e.target.value)}
-              className="p-2 border rounded-lg bg-white text-dark"
+              className="rounded-full shadow-cardshadow text-dark py-2 px-4 w-full focus:border-secondary focus:ring-1 focus:ring-secondary focus:bg-white/80 focus:outline-none"
             >
               <option>Central European Standard Time</option>
               <option>Eastern Time - US & Canada</option>
@@ -380,14 +401,17 @@ export default function Profile() {
             <p className="text-xs text-secondary mt-2">Current Time:</p>
           </div>
         </div>
-
-        {/* Delete Account */}
-        <div className="text-center mt-6">
-          <Button onClick={handleDeleteAccount} variant="secondaryoutline">
-            Delete Account
-          </Button>
-        </div>
       </section>
+
+      {/* Log out and Delete Account */}
+      <div className=" pb-6 mx-4 flex gap-4 justify-center flex-col md:flex-row lg:flex-row">
+        <Button onClick={handleLogout} className="variant-primary">
+          Log out
+        </Button>
+        <Button onClick={handleDeleteAccount} variant="secondaryoutline">
+          Delete Account
+        </Button>
+      </div>
     </main>
   );
 }

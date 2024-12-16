@@ -8,9 +8,13 @@ import Input from "@/components/ui/input";
 import FormLabel from "@/components/ui/formlabel";
 import SelectedDate from "@/components/selected-date";
 import { AuthContext } from "@/contexts/authcontext";
+import { useNotif } from "@/components/notif-context";
+import { useRouter } from "next/navigation";
 
 export default function CreateEvent() {
+  const notif = useNotif();
   const { user } = useContext(AuthContext);
+  const router = useRouter();
 
   // State variables
   const [title, setTitle] = useState("");
@@ -19,7 +23,6 @@ export default function CreateEvent() {
   const [joinCode, setJoinCode] = useState("");
   const [userName, setUserName] = useState("");
   const [selectedDates, setSelectedDates] = useState([]); // Array of { date: Date, timeSlots: [{ startTime: string, duration: number }] }
-  const [responseMessage, setResponseMessage] = useState(null);
 
   // API endpoints
   const apiUrl = process.env.NEXT_PUBLIC_API_URL + "/api/event/create/";
@@ -122,55 +125,53 @@ export default function CreateEvent() {
     setSelectedDates(updatedDates);
   };
 
-const addTimeSlot = (dateIndex) => {
-  const updatedDates = selectedDates.map((dateItem, idx) => {
-    if (idx === dateIndex) {
-      let defaultStartTime = isToday(dateItem.date)
-        ? getNextAvailableTime()
-        : "12:00";
+  const addTimeSlot = (dateIndex) => {
+    const updatedDates = selectedDates.map((dateItem, idx) => {
+      if (idx === dateIndex) {
+        let defaultStartTime = isToday(dateItem.date)
+          ? getNextAvailableTime()
+          : "12:00";
 
-      const disabledTimes = getDisabledTimes(dateIndex);
+        const disabledTimes = getDisabledTimes(dateIndex);
 
-      // Find index of defaultStartTime in allTimes
-      let startIndex = allTimes.findIndex((t) => t === defaultStartTime);
-      if (startIndex === -1) {
-        // If somehow not found, fallback to noon as start
-        startIndex = allTimes.findIndex((t) => t === "12:00");
-      }
-
-      // Iterate forward from startIndex to find the next available time slot
-      let foundTime = null;
-      for (let i = startIndex; i < allTimes.length; i++) {
-        const candidate = allTimes[i];
-        if (
-          !isPastTime(candidate, dateItem.date) &&
-          !disabledTimes.includes(candidate)
-        ) {
-          foundTime = candidate;
-          break;
+        // Find index of defaultStartTime in allTimes
+        let startIndex = allTimes.findIndex((t) => t === defaultStartTime);
+        if (startIndex === -1) {
+          // If somehow not found, fallback to noon as start
+          startIndex = allTimes.findIndex((t) => t === "12:00");
         }
+
+        // Iterate forward from startIndex to find the next available time slot
+        let foundTime = null;
+        for (let i = startIndex; i < allTimes.length; i++) {
+          const candidate = allTimes[i];
+          if (
+            !isPastTime(candidate, dateItem.date) &&
+            !disabledTimes.includes(candidate)
+          ) {
+            foundTime = candidate;
+            break;
+          }
+        }
+
+        // If we found a suitable time, use it; otherwise defaultStartTime remains what it was
+        if (foundTime) {
+          defaultStartTime = foundTime;
+        }
+
+        return {
+          ...dateItem,
+          timeSlots: [
+            ...dateItem.timeSlots,
+            { startTime: defaultStartTime, duration: 1 },
+          ],
+        };
       }
+      return dateItem;
+    });
 
-      // If we found a suitable time, use it; otherwise defaultStartTime remains what it was
-      if (foundTime) {
-        defaultStartTime = foundTime;
-      } else {
-        // If no future time is available, for now, leave defaultStartTime as is (even if it's not allowed),
-      }
-
-      return {
-        ...dateItem,
-        timeSlots: [
-          ...dateItem.timeSlots,
-          { startTime: defaultStartTime, duration: 1 },
-        ],
-      };
-    }
-    return dateItem;
-  });
-
-  setSelectedDates(updatedDates);
-};
+    setSelectedDates(updatedDates);
+  };
 
   const removeTimeSlot = (dateIndex, timeIndex) => {
     const updatedDates = selectedDates.map((dateItem, idx) => {
@@ -195,12 +196,9 @@ const addTimeSlot = (dateIndex) => {
   const handleTimeSlotChange = (dateIndex, timeIndex, field, value) => {
     const updatedDates = selectedDates.map((dateItem, idx) => {
       if (idx === dateIndex) {
-        const updatedTimeSlots = dateItem.timeSlots.map((timeItem, tIdx) => {
-          if (tIdx === timeIndex) {
-            return { ...timeItem, [field]: value };
-          }
-          return timeItem;
-        });
+        const updatedTimeSlots = dateItem.timeSlots.map((timeItem, tIdx) =>
+          tIdx === timeIndex ? { ...timeItem, [field]: value } : timeItem
+        );
         return { ...dateItem, timeSlots: updatedTimeSlots };
       }
       return dateItem;
@@ -247,8 +245,8 @@ const addTimeSlot = (dateIndex) => {
           minute: "2-digit",
         })}`;
 
-        return {
-          start: startLocalTime,
+        return { 
+          start: startLocalTime, 
           end: endLocalTime,
         };
       });
@@ -258,9 +256,9 @@ const addTimeSlot = (dateIndex) => {
       title,
       description,
       location,
-      joinCode, // Include the fetched join code
+      joinCode,
       userName,
-      proposedDates: formattedProposedDates, // Now includes all time slots
+      proposedDates: formattedProposedDates,
     };
     console.log("Event Data to be Submitted:", eventData);
     try {
@@ -275,29 +273,21 @@ const addTimeSlot = (dateIndex) => {
       const data = await response.json();
       console.log("API Response Data:", data);
       if (response.ok) {
-        setResponseMessage({
-          success: true,
-          message: "Event created successfully!",
-        });
-        fetchJoinCode(); // Fetch a new join code after creating the event
-        setSelectedDates([]); // Reset selected dates after successful submission
-        // Optionally, reset other form fields
-        setTitle("");
-        setDescription("");
-        setLocation("");
-        setUserName("");
+        if (user && user.name) {
+          // User is logged in
+          notif?.send("Event created successfully");
+          router.push("/dashboard");
+        } else {
+          // User is not logged in
+          notif?.send(
+            "Event created! Remember to copy your event code to share it with others"
+          );
+        }
       } else {
-        setResponseMessage({
-          success: false,
-          message: data.error || "Failed to create event.",
-        });
-        console.error("Error creating event:", data.error);
+        notif?.send("Failed to create the event");
       }
     } catch (error) {
-      setResponseMessage({
-        success: false,
-        message: "Network error: " + error.message,
-      });
+      notif?.send("Network error: " + error.message);
       console.error("Network error:", error);
     }
   };
@@ -307,7 +297,7 @@ const addTimeSlot = (dateIndex) => {
       {/* Header with GradientCurve */}
       <GradientCurve className={"max-h-24"}>
         <div className="max-w-6xl mx-auto flex">
-          <h1 className="font-bold text-2xl mx-auto max-w-6xl pb-12 text-white">
+          <h1 className=" font-bold text-2xl mx-auto max-w-6xl pb-12 text-white">
             Create Event
           </h1>
         </div>
@@ -385,7 +375,7 @@ const addTimeSlot = (dateIndex) => {
               <textarea
                 id="description"
                 name="description"
-                className="leading-6 rounded-xl w-full mt-1 px-4 py-2 text-black border border-secondary-10 focus:outline-none focus:ring-1 focus:ring-secondary focus:border-secondary"
+                className="rounded-full shadow-cardshadow text-dark py-2 px-4 w-full focus:border-secondary focus:ring-1 focus:ring-secondary focus:bg-white/80 focus:outline-none"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Description"
@@ -400,7 +390,7 @@ const addTimeSlot = (dateIndex) => {
           <h2 className="font-bold text-2xl mb-4">Add Times</h2>
           <div className="calendar-container flex flex-col lg:flex-row gap-10">
             {/* Calendar */}
-            <div className="w-full lg:w-1/2">
+            <div className="w-full lg:w-1/2 align-center">
               <p className="text-lg font-medium mb-2">Select Dates</p>
               <Calendar
                 selectedDates={selectedDates}
@@ -409,12 +399,10 @@ const addTimeSlot = (dateIndex) => {
             </div>
             {/* -------------------------------------------------Selected Dates--------------------------------------------------------- */}
             <section className="w-full">
-              <div>
-                <FormLabel variant="lg">Selected Dates</FormLabel>
-                {selectedDates.length === 0 && (
-                  <p className="text-gray-500">No dates selected.</p>
-                )}
-              </div>
+              <FormLabel variant="lg">Selected Dates</FormLabel>
+              {selectedDates.length === 0 && (
+                <p className="text-gray-500">No dates selected.</p>
+              )}
               <div className="flex flex-col h-full w-full space-y-2.5 overflow-y-auto max-h-96 my-1 mx-1">
                 {selectedDates.map((item, dateIndex) => (
                   <SelectedDate
@@ -434,17 +422,6 @@ const addTimeSlot = (dateIndex) => {
             </section>
           </div>
         </div>
-        {/* Response Message */}
-        {responseMessage && (
-          <div
-            className={`mt-4 ${
-              responseMessage.success ? "text-green-500" : "text-red-500"
-            }`}
-          >
-            {responseMessage.message}
-          </div>
-        )}
-        {/* Create Event Button - Positioned Outside Both Containers */}
         <div className="flex justify-center">
           <Button variant="secondary" type="submit" className="w-48">
             Create Event

@@ -6,16 +6,16 @@ export default function Button({
   variant = "primary",
 }) {
   const baseStyles =
-    "text-m font-bold py-2 px-8 uppercase rounded-full shadow-buttonshadow hover:cursor-pointer";
+    "text-sm font-bold py-2 px-6 md:px-8 lg:px-8 uppercase rounded-full shadow-buttonshadow hover:cursor-pointer md:text-md lg:text-md";
   const variants = {
     primary:
       "bg-primary hover:bg-primary-hover text-white transition-all duration-200",
     secondary:
       "bg-secondary hover:bg-secondary-hover transition-all duration-200 text-white",
     primaryoutline:
-      "bg-transparent border border-primary text-foreground hover:border-white",
+      "bg-transparent border border-primary text-foreground hover:border-foreground",
     secondaryoutline:
-      "bg-transparent border border-secondary text-foreground hover:border-white",
+      "bg-transparent border border-secondary text-foreground hover:border-foreground",
   };
 
   return (

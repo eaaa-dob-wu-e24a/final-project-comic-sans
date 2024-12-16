@@ -23,7 +23,7 @@ export default function EventDateDetailCard({
   return (
     <div>
       <p className="text-primary font-bold mb-4 text-lg">Select Your Times:</p>
-      <ul className="flex flex-row flex-wrap w-full gap-4">
+      <ul className="flex flex-row flex-wrap w-full gap-4 justify-center md:justify-start">
         {eventDates.map((date, index) => {
           const selected = pendingSelections[index];
           const selectedClasses =

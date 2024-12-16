@@ -11,21 +11,18 @@
 ## Stack
 ![Frame 632668](https://github.com/user-attachments/assets/388c8e89-d2cd-4a82-8b20-980295e41eb2)
 
-1. Backend:
+Backend:
+- PHP
 
-PHP
+Database
+- SQL
 
-2. Database
+Frontend 1:
+- React & NextJS
 
-SQL
-
-3. Frontend 1:
-
-React & NextJS
-
-4. Frontend 2:
-
-HTML / CSS / JS
+Frontend 2:
+- HTML / CSS / JS
+- 
 ### Backend:
 
 PHP & SQL

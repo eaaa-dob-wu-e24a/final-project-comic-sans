@@ -287,10 +287,10 @@ export default function Profile() {
               </div>
             </div>
             <div className="flex justify-end space-x-4">
-              <Button variant="secondaryoutline" onClick={handleCancel}>
+              <Button variant="primaryoutline" onClick={handleCancel}>
                 Cancel
               </Button>
-              <Button variant="secondary" onClick={handleSaveDetails}>
+              <Button variant="primary" onClick={handleSaveDetails}>
                 Save
               </Button>
             </div>
@@ -327,12 +327,12 @@ export default function Profile() {
             </div>
             <div className="flex justify-end space-x-4">
               <Button
-                variant="secondaryoutline"
+                variant="primaryoutline"
                 onClick={handleCancelPasswordChange}
               >
                 Cancel
               </Button>
-              <Button variant="secondary" onClick={handleSavePassword}>
+              <Button variant="primary" onClick={handleSavePassword}>
                 Save
               </Button>
             </div>
@@ -404,7 +404,6 @@ export default function Profile() {
               <option>Eastern Time - US & Canada</option>
               <option>Pacific Time - US & Canada</option>
             </select>
-            <p className="text-xs text-secondary mt-2">Current Time:</p>
           </div>
         </div>
       </section>

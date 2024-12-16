@@ -65,17 +65,19 @@ export default function Profile() {
       const data = await response.json();
 
       if (response.ok) {
-        alert("Profile photo updated successfully!");
+        notif?.send("Profile photo updated successfully!");
         // Update the user context with the new imagePath
         if (setUser) {
           setUser({ ...user, imagePath: data.imagePath });
         }
       } else {
-        alert(`Error: ${data.Error || "Failed to upload profile photo."}`);
+        notif?.send(
+          `Error: ${data.Error || "Failed to upload profile photo."}`
+        );
       }
     } catch (error) {
       console.error("Error uploading profile photo:", error);
-      alert("An error occurred while uploading the profile photo.");
+      notif?.send("An error occurred while uploading the profile photo.");
     }
   };
 
@@ -99,7 +101,7 @@ export default function Profile() {
       const data = await response.json();
 
       if (response.ok) {
-        alert("Details saved successfully!");
+        notif?.send("Details saved successfully!");
         setIsEditing(false);
 
         // Update the user context
@@ -108,11 +110,11 @@ export default function Profile() {
         }
       } else {
         // Handle errors returned from the server
-        alert(`Error: ${data.Error || "Failed to update details."}`);
+        notif?.send(`Error: ${data.Error || "Failed to update details."}`);
       }
     } catch (error) {
       console.error("Error updating user details:", error);
-      alert("An error occurred while updating details.");
+      notif?.send("An error occurred while updating details.");
     }
   };
 
@@ -125,12 +127,12 @@ export default function Profile() {
   const handleSavePassword = async () => {
     // Validate input
     if (!currentPassword || !newPassword || !confirmPassword) {
-      alert("Please fill in all the fields.");
+      notif?.send("Please fill in all the fields.");
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      alert("New passwords do not match.");
+      notif?.send("New passwords do not match.");
       return;
     }
 
@@ -153,7 +155,7 @@ export default function Profile() {
       const data = await response.json();
 
       if (response.ok) {
-        alert("Password changed successfully!");
+        notif?.send("Password changed successfully!");
         setIsEditingPassword(false);
         // Clear the input fields
         setCurrentPassword("");
@@ -161,11 +163,11 @@ export default function Profile() {
         setConfirmPassword("");
       } else {
         // Handle errors returned from the server
-        alert(`Error: ${data.Error || "Failed to change password."}`);
+        notif?.send(`Error: ${data.Error || "Failed to change password."}`);
       }
     } catch (error) {
       console.error("Error changing password:", error);
-      alert("An error occurred while changing password.");
+      notif?.send("An error occurred while changing password.");
     }
   };
 
@@ -199,18 +201,18 @@ export default function Profile() {
 
         const data = await response.json();
         if (response.ok) {
-          alert("Account deleted successfully.");
+          notif?.send("Account deleted successfully.");
           // Clear user context and redirect to home or login
           if (setUser) {
             setUser(null);
           }
           window.location.href = "/"; // or router.push("/login") if using Next.js router
         } else {
-          alert(`Error: ${data.error || "Failed to delete account."}`);
+          notif?.send(`Error: ${data.error || "Failed to delete account."}`);
         }
       } catch (error) {
         console.error("Error deleting account:", error);
-        alert("An error occurred while deleting account.");
+        notif?.send("An error occurred while deleting account.");
       }
     }
   };
@@ -339,13 +341,17 @@ export default function Profile() {
           // Profile Details
           <div className="bg-background shadow-md rounded-lg p-6">
             <h2 className="text-xl font-bold mb-4">Profile details</h2>
-            <div className="flex flex-col md:flex-row lg:flex-row items-left mb-4 gap-4">
+            <div className="flex flex-col md:flex-row lg:flex-row items-center mb-4 gap-4">
               <div className="relative">
                 <ProfileAvatar variant="large" />
               </div>
-              <div className="ml-6">
-                <p className="text-xl font-medium">{user.name}</p>
-                <p className="text-sm text-foreground">{user.email}</p>
+              <div className="md:ml-6 lg:ml-6">
+                <p className="text-xl text-center md:text-left lg:text-left font-medium">
+                  {user.name}
+                </p>
+                <p className="text-sm text-center md:text-left lg:text-left text-foreground">
+                  {user.email}
+                </p>
               </div>
             </div>
             <div className="flex justify-end flex-col w-full gap-4 md:flex-row lg:flex-row md:space-x-4">

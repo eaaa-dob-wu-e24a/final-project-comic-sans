@@ -22,7 +22,6 @@ Frontend 1:
 
 Frontend 2:
 - HTML / CSS / JS
-- 
 ### Backend:
 
 PHP & SQL

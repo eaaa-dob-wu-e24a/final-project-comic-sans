@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import UserEventList from "@/components/user-event-list";
-import Button from "@/components/ui/button";
 import GradientCurve from "@/components/gradientcurve";
 import VotedEventList from "@/components/event-participation";
 
@@ -60,26 +59,13 @@ const LoginSite = () => {
     checkSession();
   }, []);
 
-  const handleLogout = async () => {
-    const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/logout/";
-    await fetch(url, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    setUser(null); // Clear user state
-    router.push("/login"); // Redirect to login page
-  };
 
   if (!user) {
     return null; // Render nothing if user is not logged in
   }
 
   return (
-    <main className="pt-20 min-h-screen">
+    <main className="min-h-screen">
       <section className="bg-gradient-to-r from-gradientstart to-gradientend"></section>
       <GradientCurve className={"max-h-24"}>
         <div className="max-w-6xl mx-auto flex">
@@ -89,8 +75,8 @@ const LoginSite = () => {
         </div>
       </GradientCurve>
       <section className="max-w-6xl mx-auto">
-        <UserEventList maxEvents={6}></UserEventList>
-        <VotedEventList maxEvents={6}></VotedEventList>
+        <UserEventList maxEvents={6}/>
+        <VotedEventList maxEvents={6}/>
       </section>
       {/* Dynamic Section Below the Gradient Curve */}
       <section className="flex-grow bg-page-background" />

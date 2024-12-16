@@ -195,7 +195,7 @@ export default function JoinEventPage() {
 
       {event.FinalDate ? <FinalDate date={event.FinalDate}></FinalDate> : ""}
 
-      <section className="max-w-6xl mx-auto flex flex-col gap-4 bg-background p-6 my-12 rounded-2xl shadow-md">
+      <section className="max-w-6xl mx-auto flex flex-col gap-4 bg-background p-6 my-6 rounded-2xl shadow-md">
         <EventDetail event={event} />
         <EventDateDetailCard
           eventDates={event.EventDates}

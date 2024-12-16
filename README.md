@@ -1,10 +1,31 @@
 # Eventually: Planlægningsapp
 
 ## Features
+- Opret et event
+- Del event gennem links & QR koder
+- Stem på et event
+- Se overblik af dine events, og deltagende events på Dashboard
+- Sæt endelige startstidspunkt for et event du ejer
+- Opdater brugerprofil inkl. profilbillede.
 
 ## Stack
 ![Frame 632668](https://github.com/user-attachments/assets/388c8e89-d2cd-4a82-8b20-980295e41eb2)
 
+1. Backend:
+
+PHP
+
+2. Database
+
+SQL
+
+3. Frontend 1:
+
+React & NextJS
+
+4. Frontend 2:
+
+HTML / CSS / JS
 ### Backend:
 
 PHP & SQL

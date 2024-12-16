@@ -23,7 +23,7 @@ export default function EventDateDetailCard({
   return (
     <div>
       <p className="text-primary font-bold mb-4 text-lg">Select Your Times:</p>
-      <ul className="flex flex-row flex-wrap w-full gap-4">
+      <ul className="flex flex-row flex-wrap w-full gap-4 justify-center md:justify-start">
         {eventDates.map((date, index) => {
           const selected = pendingSelections[index];
           const selectedClasses =
@@ -72,34 +72,40 @@ export default function EventDateDetailCard({
               </li>
 
               {/* Participants List */}
-              <div className="mt-4 ml-2 text-sm relative group">
+              <div
+                className={`mt-4 ml-2 text-sm relative ${
+                  date.UserVotes.length > 0 ? "group" : ""
+                }`}
+              >
                 <h3>
                   Currently {date.UserVotes.length} participant
                   {date.UserVotes.length !== 1 && "s"}...
                 </h3>
 
-                <div className="absolute left-0 mt-2 w-48 bg-background border border-gray-300 rounded-xl shadow-lg p-2 hidden group-hover:block z-50">
-                  <ul className="space-y-2">
-                    {date.UserVotes.map((vote, i) => (
-                      <li key={i} className="flex items-center">
-                        <EventAvatar
-                          className="w-8 h-8"
-                          variant="small"
-                          user={{
-                            name: vote.UserName,
-                            imagePath: vote.UserImagePath,
-                          }}
-                        />
-                        <span className="ml-2 truncate text-sm">
-                          {vote.FK_User !== null &&
-                          vote.FK_User === loggedInUser.userId
-                            ? `${vote.UserName} (you)`
-                            : vote.UserName}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                {date.UserVotes.length > 0 && (
+                  <div className="absolute left-0 mt-2 w-48 bg-background border border-gray-300 rounded-xl shadow-lg p-2 hidden group-hover:block z-50">
+                    <ul className="space-y-2">
+                      {date.UserVotes.map((vote, i) => (
+                        <li key={i} className="flex items-center">
+                          <EventAvatar
+                            className="w-8 h-8"
+                            variant="small"
+                            user={{
+                              name: vote.UserName,
+                              imagePath: vote.UserImagePath,
+                            }}
+                          />
+                          <span className="ml-2 truncate text-sm">
+                            {vote.FK_User !== null &&
+                            vote.FK_User === loggedInUser.userId
+                              ? `${vote.UserName} (you)`
+                              : vote.UserName}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             </div>
           );

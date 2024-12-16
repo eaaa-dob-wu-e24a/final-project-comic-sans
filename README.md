@@ -3,6 +3,7 @@
 ## Features
 
 ## Stack
+![image](https://github.com/user-attachments/assets/40afd60e-5db0-44c3-ac81-70460fcd819b)
 
 ### Backend:
 

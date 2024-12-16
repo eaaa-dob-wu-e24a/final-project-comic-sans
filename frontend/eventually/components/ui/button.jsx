@@ -13,9 +13,9 @@ export default function Button({
     secondary:
       "bg-secondary hover:bg-secondary-hover transition-all duration-200 text-white",
     primaryoutline:
-      "bg-transparent border border-primary text-foreground hover:border-white",
+      "bg-transparent border border-primary text-foreground hover:border-foreground",
     secondaryoutline:
-      "bg-transparent border border-secondary text-foreground hover:border-white",
+      "bg-transparent border border-secondary text-foreground hover:border-foreground",
   };
 
   return (

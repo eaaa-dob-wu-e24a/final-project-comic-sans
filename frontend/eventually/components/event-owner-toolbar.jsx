@@ -37,14 +37,14 @@ export default function EditEvent({ id, dates }) {
 
   return (
     <section className="max-w-6xl mx-auto flex flex-col gap-4 bg-background p-6 mt-6 rounded-2xl shadow-md">
-      <div className="flex flex-row place-content-between w-full flex-wrap-reverse gap-4 place-items-center">
+      <div className="flex flex-row place-content-around sm:place-content-between w-full flex-wrap-reverse gap-4 place-items-center ">
         <FormLabel variant="lg">Select Final Date</FormLabel>
         <Button variant="primaryoutline">Edit Event</Button>
       </div>
-      <div className="flex flex-row sm:flex-wrap md:flex-nowrap w-full gap-4 max-w-xl mx-auto">
+      <div className="flex flex-row flex-nowrap w-full gap-4 max-w-xl mx-auto">
         <select
           id="selection"
-          className="min-w-28 sm:min-w-96 md:w-full text-black rounded-full px-2"
+          className="min-w-28 sm:min-w-96 w-full text-black rounded-full px-2"
         >
           <option value="0">none</option>
           {datesArray.map((date) => (

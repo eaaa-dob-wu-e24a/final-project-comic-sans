@@ -1,7 +1,9 @@
 "use client";
 import React, { useState } from "react";
+import { useNotif } from "./notif-context";
 
 export default function EventUpdateForm({ id }) {
+  const notif = useNotif();
   const [data, setData] = useState(null); // State to store response data or errors
   const eventID = id;
 
@@ -40,7 +42,7 @@ export default function EventUpdateForm({ id }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col mx-auto max-w-96">
+    <form onSubmit={handleSubmit} className="flex place-content-between">
       <label htmlFor="newtitle">Title</label>
       <input
         id="newtitle"
@@ -55,6 +57,7 @@ export default function EventUpdateForm({ id }) {
         name="newdesc"
         type="text"
         placeholder="Update your description..."
+        className="text-primary font-bold text-lg"
       />
 
       <label htmlFor="newloc">Location</label>
@@ -63,6 +66,7 @@ export default function EventUpdateForm({ id }) {
         name="newloc"
         type="text"
         placeholder="Enter a new location..."
+        className="text-primary font-bold text-lg"
       />
 
       <button

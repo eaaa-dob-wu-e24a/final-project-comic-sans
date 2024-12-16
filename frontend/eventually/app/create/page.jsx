@@ -275,8 +275,8 @@ export default function CreateEvent() {
       if (response.ok) {
         if (user && user.name) {
           // User is logged in
-          notif?.send("Event created successfully");
-          router.push("/dashboard");
+          const joinCode = data.joinCode;
+          router.push(`/join/${joinCode}`); // Redirect to the event page
         } else {
           // User is not logged in
           notif?.send(

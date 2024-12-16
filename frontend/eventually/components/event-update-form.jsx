@@ -3,13 +3,31 @@ import React, { useState } from "react";
 import { useNotif } from "./notif-context";
 import Button from "./ui/button";
 import SelectedDate from "@/components/selected-date";
-import Calendar from "@/components/calendar";
-
 import FormLabel from "@/components/ui/formlabel";
 import Input from "@/components/ui/input";
+import DateAndTimeSelector from "@/components/date-time-selector";
 
 export default function EventUpdateForm({ event }) {
+
+  console.log(event); // Debug each item
+
   const notif = useNotif();
+  const initialDates = (event?.EventDates || []).map((item) => {
+    return {
+      date: new Date(item.DateTimeStart), // Convert to Date object
+      timeSlots: [
+        {
+          startTime: new Date(item.DateTimeStart)
+            .toISOString()
+            .substring(11, 16), // Extract only "HH:mm" from ISO string
+          duration: "1", // Placeholder duration
+        },
+      ],
+    };
+  });
+
+  const [selectedDates, setSelectedDates] = useState(initialDates);
+
   const [formValues, setFormValues] = useState({
     Title: event?.Title || "",
     Description: event?.Description || "",
@@ -28,9 +46,18 @@ export default function EventUpdateForm({ event }) {
 
     const url = process.env.NEXT_PUBLIC_API_URL + "/api/event/update/";
     const payload = {
-      ID: event.ID, // Ensure the correct event ID is sent
+      ID: event.PK_ID, // Explicitly set ID to match server expectation
       ...formValues,
+      ProposedDates: selectedDates.map((dateItem) => ({
+        date: dateItem.date.toISOString(),
+        timeSlots: dateItem.timeSlots.map((slot) => ({
+          startTime: slot.startTime,
+          duration: slot.duration,
+        })),
+      })),
     };
+
+    console.log("Payload being sent:", payload);
 
     try {
       const response = await fetch(url, {
@@ -125,28 +152,10 @@ export default function EventUpdateForm({ event }) {
             </div>
 
             {/* -------------------------------------------------Selected Dates--------------------------------------------------------- */}
-            <section className="w-full">
-              <FormLabel variant="lg">Selected Dates</FormLabel>
-              {selectedDates.length === 0 && (
-                <p className="text-gray-500">No dates selected.</p>
-              )}
-              <div className="flex flex-col h-full w-full space-y-2.5 overflow-y-auto max-h-96 my-1 mx-1">
-                {selectedDates.map((item, dateIndex) => (
-                  <SelectedDate
-                    key={dateIndex}
-                    date={item.date}
-                    timeSlots={item.timeSlots}
-                    dateIndex={dateIndex}
-                    addTimeSlot={addTimeSlot}
-                    removeTimeSlot={removeTimeSlot}
-                    handleTimeSlotChange={handleTimeSlotChange}
-                    getDisabledTimes={() => getDisabledTimes(dateIndex)}
-                    allTimes={allTimes}
-                    isPastTime={(time) => isPastTime(time, item.date)}
-                  />
-                ))}
-              </div>
-            </section>
+            <DateAndTimeSelector
+              selectedDates={selectedDates}
+              setSelectedDates={setSelectedDates}
+            />
           </div>
         </div>
         <div className="flex justify-center">

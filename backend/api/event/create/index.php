@@ -114,7 +114,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Respond with success message after all operations
         http_response_code(201);
-        echo json_encode(["message" => "Event and dates created successfully"]);
+        echo json_encode([
+            "message" => "Event and dates created successfully",
+            "joinCode" => $joinCode // Include the joinCode in the response
+        ]);
     } catch (mysqli_sql_exception $e) {
         http_response_code(500); // Internal Server Error
         echo json_encode(["error" => "Database error: " . $e->getMessage()]);

@@ -2,8 +2,8 @@ import Link from "next/link";
 import { useCallback } from "react";
 import { useNotif } from "@/components/notif-context";
 
-export default function DateCard({ time, title, id, joincode}) {
-    const notif = useNotif();
+export default function DateCard({ time, title, id, joincode }) {
+  const notif = useNotif();
   // convert time to date class to use methods on it
   const cardTime = time ? new Date(time) : null;
 

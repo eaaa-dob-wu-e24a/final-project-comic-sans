@@ -46,6 +46,7 @@ export default function JoinEventPage() {
           setLoggedInUser({
             userId: userData.user.id,
             username: userData.user.name,
+            imagePath: userData.user.imagePath,
           });
         }
       } catch (err) {
@@ -115,7 +116,6 @@ export default function JoinEventPage() {
 
   // Confirm selections and update the backend
   const confirmSelections = async () => {
-    console.log("clicked");
     if (!loggedInUser.userId && !usernameInput.trim()) {
       notif.send("Please enter your name before confirming selections.");
       return;
@@ -145,6 +145,7 @@ export default function JoinEventPage() {
               username: loggedInUser.userId
                 ? loggedInUser.username
                 : usernameInput,
+              UserImagePath: loggedInUser.imagePath || null, // Include the image path
             }),
           });
 
@@ -153,7 +154,6 @@ export default function JoinEventPage() {
             notif.send(`Failed to update vote: ${errorData.message}`);
             return;
           }
-
           // Update UserVotes locally
           if (isSelected) {
             date.UserVotes.push({

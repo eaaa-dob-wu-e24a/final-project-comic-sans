@@ -1,8 +1,8 @@
 :root {
   /*Light theme colors*/
-  --background: #ffffff;
-  --page-background: #fbf9fa;
-  --foreground: #171717;
+  --background: #23203b;
+  --page-background: #1a192c;
+  --foreground: #ffffff;
   --gradient-start: hsl(244 38% 42%);
   --gradient-end: hsl(353 62% 55%);
   --secondary: hsl(244 38% 42%);
@@ -17,14 +17,6 @@
 
 * {
   margin: 0;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #23203b;
-    --page-background: #1a192c;
-    --foreground: #ffffff;
-  }
 }
 
 @font-face {

@@ -13,7 +13,7 @@ const Register = () => {
   });
   const [errorMessage, setErrorMessage] = useState(""); // State variable for error message
 
-  const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/signup";
+  const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/signup/";
 
   console.log(url);
   /**

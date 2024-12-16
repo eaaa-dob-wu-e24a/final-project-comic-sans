@@ -68,6 +68,12 @@ main {
   padding-top: 5rem;
 }
 
+@media (max-width: 768px) {
+  main {
+    padding-top: 4rem;
+  }
+}
+
 .notification {
   animation-name: slide-in;
   animation-duration: 500ms;
@@ -207,4 +213,22 @@ main {
   color: lightgrey !important;
   background-color: none !important;
   pointer-events: none; /* Disable clicking */
+}
+
+@media (max-width: 768px) {
+  /* Slightly smaller calendar on mobile */
+  .react-datepicker__month-container {
+    width: 18rem !important;
+    height: 23rem !important;
+    font-size: 0.85rem; /* slightly decrease font size if desired */
+  }
+
+  .react-datepicker__day-name {
+  margin-left: 0.5rem !important;
+  margin-right: 0.5rem !important;
+}
+
+.react-datepicker__day {
+  margin: 0.35rem !important;
+}
 }

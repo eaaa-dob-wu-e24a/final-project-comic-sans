@@ -4,6 +4,13 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import EventDetail from "@/components/event-detail";
 import EventDateDetailCard from "@/components/event-date-detail-card";
+import { useNotif } from "@/components/notif-context";
+import Button from "@/components/ui/button";
+import Input from "@/components/ui/input";
+import FormLabel from "@/components/ui/formlabel";
+import EditEvent from "@/components/event-owner-toolbar";
+import { setDate } from "date-fns";
+import FinalDate from "@/components/ui/finaldate";
 
 export default function JoinEventPage() {
   const { joincode } = useParams(); // Extract joincode from the URL
@@ -15,6 +22,10 @@ export default function JoinEventPage() {
     userId: null,
     username: "",
   });
+
+  const [owned, setOwned] = useState(false);
+
+  const notif = useNotif();
 
   const [pendingSelections, setPendingSelections] = useState([]); // New pending state
 
@@ -80,6 +91,12 @@ export default function JoinEventPage() {
           );
           setEventId(data.PK_ID);
           setLoading(false);
+
+          if (data.FK_Owner_UserID === loggedInUser.userId) {
+            setOwned(true);
+          }
+          console.log(data.FK_Owner_UserID);
+          console.log(loggedInUser.userId);
         } catch (err) {
           console.error("Error fetching event data:", err);
         }
@@ -98,6 +115,12 @@ export default function JoinEventPage() {
 
   // Confirm selections and update the backend
   const confirmSelections = async () => {
+    console.log("clicked");
+    if (!loggedInUser.userId && !usernameInput.trim()) {
+      notif.send("Please enter your name before confirming selections.");
+      return;
+    }
+
     try {
       const updatedEventDates = [...event.EventDates];
 
@@ -125,22 +148,28 @@ export default function JoinEventPage() {
             }),
           });
 
-          if (!res.ok) throw new Error("Failed to update vote");
+          if (!res.ok) {
+            const errorData = await res.json();
+            notif.send(`Failed to update vote: ${errorData.message}`);
+            return;
+          }
 
-          // Update UserVotes based on server response
-          // Update UserVotes based on server response
+          // Update UserVotes locally
           if (isSelected) {
             date.UserVotes.push({
               FK_User: loggedInUser.userId || null,
-              UserName: loggedInUser.userId
-                ? loggedInUser.username
-                : usernameInput,
+              UserName: loggedInUser.username || usernameInput,
+              UserImagePath: loggedInUser.imagePath || null,
             });
+            notif.send("Votes updated successfully!");
           } else {
+            // Remove vote for non-logged-in user by username
             date.UserVotes = date.UserVotes.filter(
               (vote) =>
+                !(vote.FK_User === null && vote.UserName === usernameInput) &&
                 parseInt(vote.FK_User, 10) !== parseInt(loggedInUser.userId, 10)
             );
+            notif.send("Votes updated successfully!");
           }
 
           updatedEventDates[i] = { ...date, selected: isSelected };
@@ -148,6 +177,7 @@ export default function JoinEventPage() {
       }
 
       setEvent({ ...event, EventDates: updatedEventDates });
+      setPendingSelections(updatedEventDates.map((date) => date.selected));
     } catch (err) {
       console.error("Failed to confirm selections:", err);
     }
@@ -157,6 +187,14 @@ export default function JoinEventPage() {
 
   return (
     <main>
+      {owned ? (
+        <EditEvent id={event.PK_ID} dates={event.EventDates}></EditEvent>
+      ) : (
+        ""
+      )}
+
+      {event.FinalDate ? <FinalDate date={event.FinalDate}></FinalDate> : ""}
+
       <section className="max-w-6xl mx-auto flex flex-col gap-4 bg-background p-6 my-12 rounded-2xl shadow-md">
         <EventDetail event={event} />
         <EventDateDetailCard
@@ -165,26 +203,23 @@ export default function JoinEventPage() {
           onPendingSelection={handlePendingSelection}
           loggedInUser={loggedInUser}
         />
-        <div className="mb-4">
-          <label htmlFor="username" className="block text-gray-700 font-bold">
-            Enter Your Name:
-          </label>
-          <input
-            id="username"
-            type="text"
-            value={usernameInput}
-            onChange={(e) => setUsernameInput(e.target.value)}
-            className="p-2 border border-gray-300 rounded w-full mt-2"
-            placeholder="Your name"
-          />
-        </div>
-        <div className="mt-8 flex justify-end">
-          <button
-            onClick={confirmSelections}
-            className="bg-primary text-white p-4 rounded-full shadow-lg hover:bg-primary-dark active:bg-primary-light"
-          >
-            Confirm Selections
-          </button>
+        {!loggedInUser.userId && (
+          <div className="mb-4">
+            <FormLabel htmlFor="username" variant="lg">
+              Enter Your Name:
+            </FormLabel>
+            <Input
+              id="username"
+              type="text"
+              value={usernameInput}
+              onChange={(e) => setUsernameInput(e.target.value)}
+              className="p-2 border border-gray-300 rounded w-full mt-2"
+              placeholder="Your name"
+            />
+          </div>
+        )}
+        <div className="mt-8 flex justify-center">
+          <Button onClick={confirmSelections}>Confirm Selections</Button>
         </div>
       </section>
     </main>

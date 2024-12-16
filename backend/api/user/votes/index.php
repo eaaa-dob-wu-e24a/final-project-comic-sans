@@ -1,15 +1,16 @@
 <?php
-// Include necessary headers for CORS
-$allowedOrigins = ["http://final-project-comic-sans-fork.vercel.app", "http://localhost:3001", "http://localhost:3000"];
+$allowedOrigins = ["https://final-project-comic-sans-fork.vercel.app", "http://localhost:3001", "http://localhost:3000"];
 if (isset($_SERVER['HTTP_ORIGIN']) && in_array($_SERVER['HTTP_ORIGIN'], $allowedOrigins)) {
     header("Access-Control-Allow-Origin: " . $_SERVER['HTTP_ORIGIN']);
 }
 header("Access-Control-Allow-Credentials: true"); // Allow credentials
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 header('Content-Type: application/json');
 
 require_once __DIR__ . "/../../../database/dbconn.php";
+
+session_start(['cookie_secure' => true, 'cookie_samesite' => 'None']);
 
 
 function showError($msgString)
@@ -26,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    session_start();
+
 
     // Check if the user is authenticated
     if (!isset($_SESSION['user']) || !isset($_SESSION['user']['id'])) {
@@ -41,6 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $query = "
         SELECT 
             e.PK_ID AS EventID,
+            e.JoinCode,
             e.Title,
             e.Description,
             e.FK_Owner_UserID,
@@ -84,6 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                     "Description" => $row['Description'],
                     "FK_Owner_UserID" => $row['FK_Owner_UserID'],
                     "FinalDate" => $row['FinalDate'],
+                    "JoinCode" => $row['JoinCode'],
                     "Location" => $row['Location'],
                     "EventDates" => []
                 ];
@@ -125,5 +128,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     http_response_code(405);
     showError("Invalid request method.");
 }
-
-?>

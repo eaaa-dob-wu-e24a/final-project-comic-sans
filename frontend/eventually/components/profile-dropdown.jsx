@@ -76,16 +76,15 @@ export default function ProfileDropdown() {
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg overflow-hidden shadow-lg z-50">
-          <div className="px-4 py-2 bg-primaryred text-white bg-secondary rounded-t-lg">
+        <div className="absolute right-0 mt-2 w-56 bg-background rounded-lg overflow-hidden shadow-lg z-50">
+          <div className="p-4 bg-primaryred text-foreground bg-secondary rounded-t-lg">
             <p className="font-bold">{user.name}</p>
-            <p className="text-sm">{user.email}</p>
           </div>
-          <ul className="divide-y divide-gray-200">
+          <ul className="divide-y divide-secondary">
             <li>
               <a
                 href="/dashboard"
-                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                className="block px-4 py-2 text-foreground hover:bg-secondary-10"
               >
                 Dashboard
               </a>
@@ -93,7 +92,7 @@ export default function ProfileDropdown() {
             <li>
               <a
                 href="/profile"
-                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                className="block px-4 py-2 text-foreground hover:bg-secondary-10"
               >
                 Account Settings
               </a>
@@ -101,7 +100,7 @@ export default function ProfileDropdown() {
             <li>
               <a
                 href="/help-support"
-                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                className="block px-4 py-2 text-foreground hover:bg-secondary-10"
               >
                 Help and Support
               </a>
@@ -109,7 +108,7 @@ export default function ProfileDropdown() {
             <li>
               <button
                 onClick={handleLogout}
-                className="block w-full text-left px-4 py-2 bg- text-secondary font-bold hover:bg-gray-100"
+                className="block w-full text-left px-4 py-2 bg- text-primary font-bold hover:bg-secondary-10"
               >
                 Log out
               </button>

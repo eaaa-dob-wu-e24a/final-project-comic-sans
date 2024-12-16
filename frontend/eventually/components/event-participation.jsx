@@ -7,7 +7,7 @@ import Arrow from "./ui/arrow";
 import Loading from "./ui/loading-spinner";
 
 export default function VotedEventList({ maxEvents }) {
-  const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/votes";
+  const url = process.env.NEXT_PUBLIC_API_URL + "/api/user/votes/";
   const urlSingle = process.env.NEXT_PUBLIC_API_URL + "/api/event/";
 
   const [events, setEvents] = useState([]); // Store events fetched from the API
@@ -15,32 +15,6 @@ export default function VotedEventList({ maxEvents }) {
   const [error, setError] = useState(null); // Track errors
 
   const router = useRouter();
-
-  // Handle navigation to individual event pages
-  const handleEventClick = async (eventId) => {
-    try {
-      const response = await fetch(`${urlSingle}/id/${eventId}`, {
-        method: "GET",
-        credentials: "include", // Include cookies for authentication
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await response.json();
-      if (data && data.EventDates) {
-        console.log(
-          data.EventDates.length + " dates found for event " + eventId
-        );
-        router.push(`/dashboard/event/${eventId}`, {
-          state: { dates: data.EventDates },
-        });
-      } else {
-        console.log("No dates found for event " + eventId);
-      }
-    } catch (error) {
-      console.error("Error fetching event details:", error);
-    }
-  };
 
   useEffect(() => {
     fetch(url, {
@@ -80,10 +54,6 @@ export default function VotedEventList({ maxEvents }) {
     return <p className="text-red-500">{error}</p>;
   }
 
-  if (events.length === 0) {
-    return <p>No events found.</p>;
-  }
-
   return (
     <section className="mx-auto flex flex-col gap-4 bg-background p-6 my-12 rounded-2xl shadow-md">
       <div className="flex place-content-between align-center flex-row">
@@ -111,6 +81,7 @@ export default function VotedEventList({ maxEvents }) {
             title={event.Title}
             key={event.EventID}
             id={event.EventID}
+            joincode={event.JoinCode}
           />
         ))}
       </ul>

@@ -41,7 +41,6 @@ export default function JoinEventPage() {
           }
         );
         const userData = await res.json();
-        console.log(userData.user.imagePath + "!!!");
 
         if (userData.user) {
           setLoggedInUser({

@@ -1,4 +1,4 @@
-"use client"; // Ensure this is the very first line
+"use client";
 
 import React, { useState, useEffect, useContext } from "react";
 import GradientCurve from "@/components/gradientcurve";
@@ -114,7 +114,7 @@ export default function CreateEvent() {
         ...selectedDates,
         {
           date: date,
-          timeSlots: [{ startTime: defaultStartTime, duration: 1 }], // Initial time slot
+          timeSlots: [{ startTime: defaultStartTime, duration: "1" }], // Initial time slot as string
         },
       ];
     }
@@ -137,7 +137,7 @@ export default function CreateEvent() {
         // Find index of defaultStartTime in allTimes
         let startIndex = allTimes.findIndex((t) => t === defaultStartTime);
         if (startIndex === -1) {
-          // If somehow not found, fallback to noon as start
+          // If not found, fallback to noon
           startIndex = allTimes.findIndex((t) => t === "12:00");
         }
 
@@ -163,7 +163,7 @@ export default function CreateEvent() {
           ...dateItem,
           timeSlots: [
             ...dateItem.timeSlots,
-            { startTime: defaultStartTime, duration: 1 },
+            { startTime: defaultStartTime, duration: "1" }, // Set duration as string
           ],
         };
       }
@@ -197,7 +197,9 @@ export default function CreateEvent() {
     const updatedDates = selectedDates.map((dateItem, idx) => {
       if (idx === dateIndex) {
         const updatedTimeSlots = dateItem.timeSlots.map((timeItem, tIdx) =>
-          tIdx === timeIndex ? { ...timeItem, [field]: value } : timeItem
+          tIdx === timeIndex
+            ? { ...timeItem, [field]: value } // Always set as string
+            : timeItem
         );
         return { ...dateItem, timeSlots: updatedTimeSlots };
       }
@@ -227,9 +229,16 @@ export default function CreateEvent() {
         )}T${startTime}:00`; // "YYYY-MM-DD" format
 
         const startDateTime = new Date(localDateTimeString);
+        let endDateTime;
 
-        const endDateTime = new Date(startDateTime);
-        endDateTime.setHours(endDateTime.getHours() + parseInt(duration, 10));
+        if (duration === "all-day") {
+          // Set end time to midnight (00:00) of the same day
+          endDateTime = new Date(startDateTime);
+          endDateTime.setHours(24, 0, 0, 0); // 24:00:00.000 is equivalent to 00:00:00.000 of the next day
+        } else {
+          endDateTime = new Date(startDateTime);
+          endDateTime.setHours(endDateTime.getHours() + parseInt(duration, 10));
+        }
 
         // Format to save in local time format
         const startLocalTime = `${startDateTime.toLocaleDateString(
@@ -245,8 +254,8 @@ export default function CreateEvent() {
           minute: "2-digit",
         })}`;
 
-        return { 
-          start: startLocalTime, 
+        return {
+          start: startLocalTime,
           end: endLocalTime,
         };
       });

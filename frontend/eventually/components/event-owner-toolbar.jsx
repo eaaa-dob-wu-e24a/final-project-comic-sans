@@ -35,7 +35,7 @@ export default function EditEvent({ id, dates }) {
   };
 
   return (
-    <section className="max-w-6xl mx-auto flex flex-col gap-4 bg-background p-6 my-6 rounded-2xl shadow-md">
+    <section className="max-w-6xl mx-auto flex flex-col gap-4 bg-background p-6 mt-6 rounded-2xl shadow-md">
       <div className="flex flex-row place-content-between w-full flex-wrap-reverse gap-4 place-items-center">
         <FormLabel variant="lg">Select Final Date</FormLabel>
         <Button>Edit Event</Button>

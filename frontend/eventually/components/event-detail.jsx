@@ -10,17 +10,23 @@ export default function EventDetail({ event }) {
 
   return (
     <div>
-      <div className="flex place-content-between">
+      <div className="flex flex-col sm:flex-row place-content-between">
         <h1 className="text-2xl font-bold">{event?.Title}</h1>
-        <div className="flex flex-row gap-2">
-          <p className="place-self-center text-2xl font-bold">
+        <div className="flex flex-row gap-2 mt-2 sm:mt-0 sm:w-auto w-full">
+          <p className="place-self-left text-2xl font-bold sm:w-auto w-2/3">
             Join code: {event?.JoinCode}{" "}
           </p>
-          <Button onClick={handleShare}>Share</Button>
+          <Button
+            onClick={handleShare}
+            className="sm:w-auto sm:ml-2 w-auto self-center"
+          >
+            {" "}
+            Share
+          </Button>
         </div>
       </div>
 
-      <div className="flex place-content-between mt-2">
+      <div className="flex flex-col sm:flex-row place-content-between mt-2">
         <p className="text-primary font-bold text-lg">
           Location: {event?.Location || "DummyLocation"}
         </p>

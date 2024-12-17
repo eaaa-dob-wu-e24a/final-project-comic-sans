@@ -94,17 +94,18 @@ export default function ProfileDropdown() {
                 href="/profile"
                 className="block px-4 py-2 text-foreground hover:bg-secondary-10"
               >
-                Account Settings
+                Profile
               </a>
             </li>
-            <li>
+            {/* commented out because page is not created
+             <li>
               <a
                 href="/help-support"
                 className="block px-4 py-2 text-foreground hover:bg-secondary-10"
               >
                 Help and Support
               </a>
-            </li>
+            </li> */}
             <li>
               <button
                 onClick={handleLogout}

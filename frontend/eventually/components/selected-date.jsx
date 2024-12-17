@@ -113,8 +113,8 @@ export default function SelectedDate({
               )}
               <input
                 id={`startTime-${dateIndex}-${timeIndex}`}
-                type="time"
-                className="rounded-full w-15 md:w-28 lg:w-28 border px-2 py-1 text-sm text-dark focus:outline-none focus:border-primary cursor-pointer"
+                type="text"
+                className="rounded-full w-16 md:w-20 lg:w-20 border px-2 py-1 text-sm text-dark focus:outline-none focus:border-primary cursor-pointer"
                 value={timeSlot.startTime}
                 readOnly
                 onClick={() => handleDropdownOpen(timeIndex)}
@@ -124,7 +124,7 @@ export default function SelectedDate({
                   ref={dropdownRef}
                   className={`absolute z-10 ${
                     timeIndex === 0 ? "mt-3.5" : "mt-3.75"
-                  } max-h-40 w-20 dm:w-28 lg:w-28 overflow-y-scroll border rounded-lg bg-white text-dark shadow-lg`}
+                  } max-h-40 w-16 dm:w-20 lg:w-20 overflow-y-scroll border rounded-lg bg-white text-dark shadow-lg`}
                 >
                   {allTimes.map((time) => (
                     <li
@@ -159,7 +159,7 @@ export default function SelectedDate({
               )}
               <select
                 id={`duration-${dateIndex}-${timeIndex}`}
-                className="block w-15 md:w-20 lg:w-20 rounded-full border px-2 py-1.5 text-sm text-dark leading-5 focus:outline-none focus:border-primary"
+                className="block w-16 md:w-20 lg:w-20 rounded-full border px-2 py-1.5 text-sm text-dark leading-5 focus:outline-none focus:border-primary"
                 value={timeSlot.duration}
                 onChange={(e) => handleDurationChange(e, timeIndex)}
                 required

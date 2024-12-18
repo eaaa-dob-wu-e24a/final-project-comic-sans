@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { useNotif } from "./notif-context";
 import Button from "./ui/button";
-import SelectedDate from "@/components/selected-date";
 import FormLabel from "@/components/ui/formlabel";
 import Input from "@/components/ui/input";
 import DateAndTimeSelector from "@/components/date-time-selector";
@@ -15,14 +14,27 @@ export default function EventUpdateForm({ event }) {
 
   const notif = useNotif();
   const initialDates = (event?.EventDates || []).map((item) => {
+    const localDateString = item.DateTimeStart.replace(" ", "T");
+    const localDate = new Date(localDateString);
+
+    // Compute duration
+    const start = new Date(item.DateTimeStart.replace(" ", "T"));
+    const end = new Date(item.DateTimeEnd.replace(" ", "T"));
+    const diffHours = (end - start) / (1000 * 60 * 60);
+
+    let durationValue;
+    if (diffHours > 5) {
+      durationValue = "all-day";
+    } else {
+      durationValue = diffHours.toString(); // "1", "2", etc.
+    }
+
     return {
-      date: new Date(item.DateTimeStart), // Convert to Date object
+      date: localDate,
       timeSlots: [
         {
-          startTime: new Date(item.DateTimeStart)
-            .toISOString()
-            .substring(11, 16), // Extract only "HH:mm" from ISO string
-          duration: "1", // Placeholder duration
+          startTime: localDate.toTimeString().slice(0, 5), // "HH:mm"
+          duration: durationValue,
         },
       ],
     };
@@ -51,22 +63,37 @@ export default function EventUpdateForm({ event }) {
       const { date, timeSlots } = item;
 
       return timeSlots.map(({ startTime, duration }) => {
-        const localDateTimeString = `${date.toISOString().split("T")[0]}T${startTime}:00`; // "YYYY-MM-DDTHH:mm:SS"
+        const localDateTimeString = `${date.toLocaleDateString(
+          "en-CA"
+        )}T${startTime}:00`; // "YYYY-MM-DD" format
 
         const startDateTime = new Date(localDateTimeString);
-        let endDateTime = new Date(startDateTime);
+        let endDateTime = new Date(startDateTime); // Initialize endDateTime here
 
         // Adjust for duration
         if (duration === "all-day") {
-          endDateTime.setHours(24, 0, 0, 0); // End of day
+          endDateTime.setHours(24, 0, 0, 0);
         } else {
           endDateTime.setHours(endDateTime.getHours() + parseInt(duration, 10));
         }
 
-        // Return formatted start and end times
+        // Format to save in local time format
+        const startLocalTime = `${startDateTime.toLocaleDateString(
+          "en-CA"
+        )} ${startDateTime.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}`;
+        const endLocalTime = `${endDateTime.toLocaleDateString(
+          "en-CA"
+        )} ${endDateTime.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}`;
+
         return {
-          start: startDateTime.toISOString().slice(0, 19).replace("T", " "),
-          end: endDateTime.toISOString().slice(0, 19).replace("T", " "),
+          start: startLocalTime,
+          end: endLocalTime,
         };
       });
     });
@@ -78,12 +105,15 @@ export default function EventUpdateForm({ event }) {
     };
 
     try {
-      const response = await fetch(process.env.NEXT_PUBLIC_API_URL + "/api/event/update/", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-        credentials: "include",
-      });
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_API_URL + "/api/event/update/",
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+          credentials: "include",
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -92,7 +122,8 @@ export default function EventUpdateForm({ event }) {
       const responseData = await response.json();
       setData(responseData);
       notif.send("Event updated successfully!");
-      router.push("/dashboard");
+     const joinCode = event.JoinCode;
+     router.push(`/join/${joinCode}`);
     } catch (error) {
       console.error("Error updating event:", error);
       setData({ error: error.message });
@@ -107,7 +138,8 @@ export default function EventUpdateForm({ event }) {
     if (!confirmDelete) return;
 
     try {
-      const response = await fetch(process.env.NEXT_PUBLIC_API_URL + "/api/event/delete/",
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_API_URL + "/api/event/delete/",
         {
           method: "DELETE",
           headers: {
@@ -125,14 +157,13 @@ export default function EventUpdateForm({ event }) {
       const responseData = await response.json();
       console.log("Event deleted successfully:", responseData);
 
-      alert("Event deleted successfully!");
+      notif.send("Event deleted successfully!");
       router.push("/dashboard");
     } catch (error) {
       console.error("Error deleting event:", error);
-      alert("Failed to delete event. Please try again later.");
+      notif.send("Failed to delete event. Please try again later.");
     }
   };
-
 
   return (
     <>
@@ -219,17 +250,6 @@ export default function EventUpdateForm({ event }) {
             Delete Event
           </Button>
         </div>
-        {data && (
-          <div className="mt-4">
-            {data.error ? (
-              <p className="text-red-500">Error: {data.error}</p>
-            ) : (
-              <p className="text-green-500">
-                Success: {data.message || "Event updated successfully!"}
-              </p>
-            )}
-          </div>
-        )}
       </form>
     </>
   );

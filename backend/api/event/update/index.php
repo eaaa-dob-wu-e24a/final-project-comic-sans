@@ -1,7 +1,4 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 $allowedOrigins = ["https://final-project-comic-sans-fork.vercel.app", "http://localhost:3001", "http://localhost:3000"];
 if (isset($_SERVER['HTTP_ORIGIN']) && in_array($_SERVER['HTTP_ORIGIN'], $allowedOrigins)) {
     header("Access-Control-Allow-Origin: " . $_SERVER['HTTP_ORIGIN']);
@@ -124,7 +121,9 @@ if (isset($eventID) && is_numeric($eventID)) {
                     ];
                 }
             
-                // delete old ProposedDates 
+                // delete old ProposedDates and reset FinalDate if needed
+                $finalDateReset = false;
+
                 foreach ($existingDates as $existing) {
                     $existsInNew = false;
                     foreach ($newDates as $new) {
@@ -133,13 +132,28 @@ if (isset($eventID) && is_numeric($eventID)) {
                             break;
                         }
                     }
+
+                    // Check if the FinalDate matches the time being deleted
                     if (!$existsInNew) {
+                        if ($event['FinalDate'] === $existing['DateTimeStart']) {
+                            $finalDateReset = true;
+                        }
+
                         $deleteQuery = "DELETE FROM Eventually_Event_Dates WHERE PK_ID = ?";
                         $stmtDelete = $mysqli->prepare($deleteQuery);
                         $stmtDelete->bind_param("i", $existing['PK_ID']);
                         $stmtDelete->execute();
                     }
                 }
+
+                // If FinalDate was reset, update the event table to set FinalDate to NULL
+                if ($finalDateReset) {
+                    $resetFinalDateSQL = "UPDATE Eventually_Event SET FinalDate = NULL WHERE PK_ID = ?";
+                    $stmtReset = $mysqli->prepare($resetFinalDateSQL);
+                    $stmtReset->bind_param("i", $eventID);
+                    $stmtReset->execute();
+                }
+
             
                 // insert only new ProposedDates that don't already exist
                 $insertDateSQL = "INSERT INTO Eventually_Event_Dates (FK_Event, DateTimeStart, DateTimeEnd) VALUES (?, ?, ?)";

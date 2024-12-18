@@ -2,8 +2,10 @@ import Button from "./ui/button";
 import FormLabel from "./ui/formlabel";
 import { useNotif } from "./notif-context";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
-export default function EditEvent({ id, dates }) {
+
+export default function EditEvent({ id, dates, joincode }) {
   const eventID = id;
   const notif = useNotif();
   const router = useRouter();
@@ -11,7 +13,7 @@ export default function EditEvent({ id, dates }) {
   // extract only the list of dates
   const datesArray = dates.map((obj, index) => ({
     PK_ID: obj.PK_ID,
-    DateTimeStart: obj.DateTimeStart,
+    DateTimeStart: obj.DateTimeStart
   }));
 
   const url = process.env.NEXT_PUBLIC_API_URL + "/api/event/update/";
@@ -39,19 +41,18 @@ export default function EditEvent({ id, dates }) {
     <section className="max-w-6xl mx-auto flex flex-col gap-4 bg-background p-6 mt-6 rounded-2xl shadow-md">
       <div className="flex flex-row place-content-around sm:place-content-between w-full flex-wrap-reverse gap-4 place-items-center ">
         <FormLabel variant="lg">Select Final Date</FormLabel>
-        <Button variant="primaryoutline">Edit Event</Button>
+
+        <Link href={`/dashboard/edit/${joincode}`}>
+          <Button>Edit Event</Button>
+        </Link>
       </div>
-      <div className="flex flex-row flex-nowrap w-full gap-4 max-w-xl mx-auto">
-        <select
-          id="selection"
-          className="min-w-28 sm:min-w-96 w-full text-black rounded-full px-2"
-        >
+      <div className="flex flex-row sm:flex-wrap md:flex-nowrap w-full gap-4 max-w-xl">
+        <select id="selection" className="min-w-28 sm:min-w-96 md:w-full text-black rounded-full px-2">
           <option value="0">none</option>
-          {datesArray.map((date) => (
-            <option key={date.PK_ID} value={date.DateTimeStart}>
-              {date.DateTimeStart}
-            </option>
-          ))}
+          {datesArray.map((date) =>
+            (<option key={date.PK_ID} value={date.DateTimeStart}>{date.DateTimeStart}</option>)
+          )}
+
         </select>
         <Button onClick={handleSubmit}>Confirm</Button>
       </div>

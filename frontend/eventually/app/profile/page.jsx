@@ -246,7 +246,7 @@ export default function Profile() {
       <section className="mx-auto flex flex-grow flex-col gap-4 p-4 w-full md:w-4/5 lg:w-4/5">
         {isEditing ? (
           // Edit Profile
-          <div className="bg-background shadow-md rounded-lg p-6">
+          <div className="bg-background shadow-md rounded-lg p-6 mb-10">
             <h2 className="text-xl font-bold mb-4">Edit details</h2>
             <div className="flex flex-col md:flex-row lg:flex-row items-left mb-4 gap-4">
               <div className="relative">
@@ -339,7 +339,7 @@ export default function Profile() {
           </div>
         ) : (
           // Profile Details
-          <div className="bg-background shadow-md rounded-lg p-6">
+          <div className="bg-background shadow-md rounded-lg p-6 mb-10">
             <h2 className="text-xl font-bold mb-4">Profile details</h2>
             <div className="flex flex-col md:flex-row lg:flex-row items-center mb-4 gap-4">
               <div className="relative">
@@ -367,8 +367,8 @@ export default function Profile() {
             </div>
           </div>
         )}
+        {/* Commented out App Settings because the functionality is not implemented
 
-        {/* App Settings */}
         <div className="bg-background shadow-md rounded-lg p-6 mb-6 w-full">
           <h2 className="text-xl font-bold mb-4">App settings</h2>
           <div className="mb-4 flex items-center justify-between">
@@ -405,7 +405,7 @@ export default function Profile() {
               <option>Pacific Time - US & Canada</option>
             </select>
           </div>
-        </div>
+        </div> */}
       </section>
 
       {/* Log out and Delete Account */}

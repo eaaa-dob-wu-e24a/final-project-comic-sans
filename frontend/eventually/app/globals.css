@@ -68,11 +68,6 @@ main {
   padding-top: 5rem;
 }
 
-select {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-}
 
 @media (max-width: 768px) {
   main {

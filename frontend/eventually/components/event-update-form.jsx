@@ -6,10 +6,11 @@ import SelectedDate from "@/components/selected-date";
 import FormLabel from "@/components/ui/formlabel";
 import Input from "@/components/ui/input";
 import DateAndTimeSelector from "@/components/date-time-selector";
+import { useRouter } from "next/navigation";
 
 export default function EventUpdateForm({ event }) {
 
-  console.log(event); // Debug each item
+  const router = useRouter();
 
   const notif = useNotif();
   const initialDates = (event?.EventDates || []).map((item) => {
@@ -44,27 +45,41 @@ export default function EventUpdateForm({ event }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const url = process.env.NEXT_PUBLIC_API_URL + "/api/event/update/";
+    // Flatten the selectedDates to match the expected payload format
+    const formattedProposedDates = selectedDates.flatMap((item) => {
+      const { date, timeSlots } = item;
+
+      return timeSlots.map(({ startTime, duration }) => {
+        const localDateTimeString = `${date.toISOString().split("T")[0]}T${startTime}:00`; // "YYYY-MM-DDTHH:mm:SS"
+
+        const startDateTime = new Date(localDateTimeString);
+        let endDateTime = new Date(startDateTime);
+
+        // Adjust for duration
+        if (duration === "all-day") {
+          endDateTime.setHours(24, 0, 0, 0); // End of day
+        } else {
+          endDateTime.setHours(endDateTime.getHours() + parseInt(duration, 10));
+        }
+
+        // Return formatted start and end times
+        return {
+          start: startDateTime.toISOString().slice(0, 19).replace("T", " "),
+          end: endDateTime.toISOString().slice(0, 19).replace("T", " "),
+        };
+      });
+    });
+
     const payload = {
-      ID: event.PK_ID, // Explicitly set ID to match server expectation
+      ID: event.PK_ID, // Explicitly set ID
       ...formValues,
-      ProposedDates: selectedDates.map((dateItem) => ({
-        date: dateItem.date.toISOString(),
-        timeSlots: dateItem.timeSlots.map((slot) => ({
-          startTime: slot.startTime,
-          duration: slot.duration,
-        })),
-      })),
+      ProposedDates: formattedProposedDates,
     };
 
-    console.log("Payload being sent:", payload);
-
     try {
-      const response = await fetch(url, {
+      const response = await fetch(process.env.NEXT_PUBLIC_API_URL + "/api/event/update/", {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
         credentials: "include",
       });
@@ -76,12 +91,47 @@ export default function EventUpdateForm({ event }) {
       const responseData = await response.json();
       setData(responseData);
       notif.send("Event updated successfully!");
+      router.push("/dashboard");
     } catch (error) {
       console.error("Error updating event:", error);
       setData({ error: error.message });
       notif.send("Failed to update event.");
     }
   };
+
+  const handleDeleteEvent = async () => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this event? This action cannot be undone."
+    );
+    if (!confirmDelete) return;
+
+    try {
+      const response = await fetch(process.env.NEXT_PUBLIC_API_URL + "/api/event/delete/",
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ ID: event.PK_ID }),
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to delete event. Status: ${response.status}`);
+      }
+
+      const responseData = await response.json();
+      console.log("Event deleted successfully:", responseData);
+
+      alert("Event deleted successfully!");
+      router.push("/dashboard");
+    } catch (error) {
+      console.error("Error deleting event:", error);
+      alert("Failed to delete event. Please try again later.");
+    }
+  };
+
 
   return (
     <>
@@ -158,9 +208,12 @@ export default function EventUpdateForm({ event }) {
             />
           </div>
         </div>
-        <div className="flex justify-center">
-          <Button variant="secondary" type="submit" className="w-48">
+        <div className="pb-6 mx-4 flex gap-4 justify-center flex-col md:flex-row lg:flex-row">
+          <Button variant="secondary" type="submit">
             Update Event
+          </Button>
+          <Button onClick={handleDeleteEvent} variant="secondaryoutline">
+            Delete Event
           </Button>
         </div>
         {data && (

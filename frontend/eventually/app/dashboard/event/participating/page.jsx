@@ -6,10 +6,12 @@ import VotedEventList from "@/components/event-participation";
 
 const EventPage = () => {
   return (
-    <main>
+    <main className="min-h-screen">
       <section className="max-w-6xl mx-auto">
         <VotedEventList></VotedEventList>
       </section>
+      {/* Dynamic Section to push footer to bottom */}
+      <section className="flex-grow bg-page-background" />
     </main>
   );
 };

@@ -77,7 +77,7 @@ export default function ProfileDropdown() {
       {/* Dropdown Menu */}
       {isOpen && (
         <div className="absolute right-0 mt-2 w-56 bg-background rounded-lg overflow-hidden shadow-lg z-50">
-          <div className="p-4 bg-primaryred text-foreground bg-secondary rounded-t-lg">
+          <div className="p-4 bg-primaryred text-white bg-secondary rounded-t-lg">
             <p className="font-bold">{user.name}</p>
           </div>
           <ul className="divide-y divide-secondary">
@@ -94,17 +94,18 @@ export default function ProfileDropdown() {
                 href="/profile"
                 className="block px-4 py-2 text-foreground hover:bg-secondary-10"
               >
-                Account Settings
+                Profile
               </a>
             </li>
-            <li>
+            {/* commented out because page is not created
+             <li>
               <a
                 href="/help-support"
                 className="block px-4 py-2 text-foreground hover:bg-secondary-10"
               >
                 Help and Support
               </a>
-            </li>
+            </li> */}
             <li>
               <button
                 onClick={handleLogout}

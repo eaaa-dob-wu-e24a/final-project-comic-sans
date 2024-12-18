@@ -1,12 +1,11 @@
-"use client"; // Ensure this is the very first line
+"use client";
 
 import React, { useState, useEffect, useContext } from "react";
 import GradientCurve from "@/components/gradientcurve";
-import Calendar from "@/components/calendar";
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
 import FormLabel from "@/components/ui/formlabel";
-import SelectedDate from "@/components/selected-date";
+import DateAndTimeSelector from "@/components/date-time-selector";
 import { AuthContext } from "@/contexts/authcontext";
 import { useNotif } from "@/components/notif-context";
 import { useRouter } from "next/navigation";
@@ -53,165 +52,6 @@ export default function CreateEvent() {
     }
   };
 
-  const isToday = (date) => {
-    const today = new Date();
-    return date.toDateString() === today.toDateString();
-  };
-
-  const generateTimeOptions = () => {
-    const times = [];
-    for (let hour = 0; hour < 24; hour++) {
-      for (let minute = 0; minute < 60; minute += 15) {
-        const time = `${String(hour).padStart(2, "0")}:${String(
-          minute
-        ).padStart(2, "0")}`;
-        times.push(time);
-      }
-    }
-    return times;
-  };
-
-  const isPastTime = (time, date) => {
-    const [hour, minute] = time.split(":").map(Number);
-    const now = new Date();
-    const selectedDate = new Date(date);
-    selectedDate.setHours(hour, minute, 0, 0);
-    return selectedDate < now;
-  };
-
-  const allTimes = generateTimeOptions(); // All times for the entire day
-
-  // Calculate the next available time slot
-  const getNextAvailableTime = () => {
-    const now = new Date();
-    const nextMinutes = Math.ceil(now.getMinutes() / 15) * 15; // Round up to the nearest 15 minutes
-    if (nextMinutes === 60) {
-      now.setHours(now.getHours() + 1, 0, 0, 0);
-    } else {
-      now.setMinutes(nextMinutes, 0, 0);
-    }
-    const hour = String(now.getHours()).padStart(2, "0");
-    const minutes = String(now.getMinutes()).padStart(2, "0");
-    return `${hour}:${minutes}`;
-  };
-
-  const handleDateSelect = (date) => {
-    // Check if the date is already in selectedDates
-    const exists = selectedDates.some(
-      (item) => item.date.getTime() === date.getTime()
-    );
-
-    let updatedDates;
-    if (exists) {
-      // If the date is already selected, remove it
-      updatedDates = selectedDates.filter(
-        (item) => item.date.getTime() !== date.getTime()
-      );
-    } else {
-      // Add new date with an initial time slot
-      const defaultStartTime = isToday(date) ? getNextAvailableTime() : "12:00"; // Next slot for today, 12:00 otherwise
-      updatedDates = [
-        ...selectedDates,
-        {
-          date: date,
-          timeSlots: [{ startTime: defaultStartTime, duration: 1 }], // Initial time slot
-        },
-      ];
-    }
-
-    // Sort the dates in ascending order
-    updatedDates.sort((a, b) => a.date - b.date);
-
-    setSelectedDates(updatedDates);
-  };
-
-  const addTimeSlot = (dateIndex) => {
-    const updatedDates = selectedDates.map((dateItem, idx) => {
-      if (idx === dateIndex) {
-        let defaultStartTime = isToday(dateItem.date)
-          ? getNextAvailableTime()
-          : "12:00";
-
-        const disabledTimes = getDisabledTimes(dateIndex);
-
-        // Find index of defaultStartTime in allTimes
-        let startIndex = allTimes.findIndex((t) => t === defaultStartTime);
-        if (startIndex === -1) {
-          // If somehow not found, fallback to noon as start
-          startIndex = allTimes.findIndex((t) => t === "12:00");
-        }
-
-        // Iterate forward from startIndex to find the next available time slot
-        let foundTime = null;
-        for (let i = startIndex; i < allTimes.length; i++) {
-          const candidate = allTimes[i];
-          if (
-            !isPastTime(candidate, dateItem.date) &&
-            !disabledTimes.includes(candidate)
-          ) {
-            foundTime = candidate;
-            break;
-          }
-        }
-
-        // If we found a suitable time, use it; otherwise defaultStartTime remains what it was
-        if (foundTime) {
-          defaultStartTime = foundTime;
-        }
-
-        return {
-          ...dateItem,
-          timeSlots: [
-            ...dateItem.timeSlots,
-            { startTime: defaultStartTime, duration: 1 },
-          ],
-        };
-      }
-      return dateItem;
-    });
-
-    setSelectedDates(updatedDates);
-  };
-
-  const removeTimeSlot = (dateIndex, timeIndex) => {
-    const updatedDates = selectedDates.map((dateItem, idx) => {
-      if (idx === dateIndex) {
-        // Remove the specific time slot
-        const updatedTimeSlots = dateItem.timeSlots.filter(
-          (_, tIdx) => tIdx !== timeIndex
-        );
-        // Return updated date item or filter out if no time slots remain
-        return updatedTimeSlots.length > 0
-          ? { ...dateItem, timeSlots: updatedTimeSlots }
-          : null; // Mark for removal
-      }
-      return dateItem;
-    });
-
-    // Filter out dates with no time slots left
-    setSelectedDates(updatedDates.filter(Boolean));
-  };
-
-  // Handle changes in a specific time slot
-  const handleTimeSlotChange = (dateIndex, timeIndex, field, value) => {
-    const updatedDates = selectedDates.map((dateItem, idx) => {
-      if (idx === dateIndex) {
-        const updatedTimeSlots = dateItem.timeSlots.map((timeItem, tIdx) =>
-          tIdx === timeIndex ? { ...timeItem, [field]: value } : timeItem
-        );
-        return { ...dateItem, timeSlots: updatedTimeSlots };
-      }
-      return dateItem;
-    });
-    setSelectedDates(updatedDates);
-  };
-  const getDisabledTimes = (dateIndex) => {
-    const allTimes = selectedDates[dateIndex]?.timeSlots.map(
-      (slot) => slot.startTime
-    );
-    return allTimes || [];
-  };
-
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -227,9 +67,16 @@ export default function CreateEvent() {
         )}T${startTime}:00`; // "YYYY-MM-DD" format
 
         const startDateTime = new Date(localDateTimeString);
+        let endDateTime;
 
-        const endDateTime = new Date(startDateTime);
-        endDateTime.setHours(endDateTime.getHours() + parseInt(duration, 10));
+        if (duration === "all-day") {
+          // Set end time to midnight (00:00) of the same day
+          endDateTime = new Date(startDateTime);
+          endDateTime.setHours(24, 0, 0, 0); // 24:00:00.000 is equivalent to 00:00:00.000 of the next day
+        } else {
+          endDateTime = new Date(startDateTime);
+          endDateTime.setHours(endDateTime.getHours() + parseInt(duration, 10));
+        }
 
         // Format to save in local time format
         const startLocalTime = `${startDateTime.toLocaleDateString(
@@ -245,8 +92,8 @@ export default function CreateEvent() {
           minute: "2-digit",
         })}`;
 
-        return { 
-          start: startLocalTime, 
+        return {
+          start: startLocalTime,
           end: endLocalTime,
         };
       });
@@ -275,8 +122,8 @@ export default function CreateEvent() {
       if (response.ok) {
         if (user && user.name) {
           // User is logged in
-          notif?.send("Event created successfully");
-          router.push("/dashboard");
+          const joinCode = data.joinCode;
+          router.push(`/join/${joinCode}`); // Redirect to the event page
         } else {
           // User is not logged in
           notif?.send(
@@ -375,7 +222,7 @@ export default function CreateEvent() {
               <textarea
                 id="description"
                 name="description"
-                className="rounded-full shadow-cardshadow text-dark py-2 px-4 w-full focus:border-secondary focus:ring-1 focus:ring-secondary focus:bg-white/80 focus:outline-none"
+                className="rounded-2xl shadow-cardshadow text-dark py-2 px-4 w-full focus:border-secondary focus:ring-1 focus:ring-secondary focus:bg-white/80 focus:outline-none"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Description"
@@ -387,40 +234,10 @@ export default function CreateEvent() {
         </div>
         {/* Calendar and Selected Dates Container */}
         <div className="bg-background p-6 lg:px-32 py-8 rounded-xl drop-shadow">
-          <h2 className="font-bold text-2xl mb-4">Add Times</h2>
-          <div className="calendar-container flex flex-col lg:flex-row gap-10">
-            {/* Calendar */}
-            <div className="w-full lg:w-1/2 align-center">
-              <p className="text-lg font-medium mb-2">Select Dates</p>
-              <Calendar
-                selectedDates={selectedDates}
-                handleDateSelect={handleDateSelect}
-              />
-            </div>
-            {/* -------------------------------------------------Selected Dates--------------------------------------------------------- */}
-            <section className="w-full">
-              <FormLabel variant="lg">Selected Dates</FormLabel>
-              {selectedDates.length === 0 && (
-                <p className="text-gray-500">No dates selected.</p>
-              )}
-              <div className="flex flex-col h-full w-full space-y-2.5 overflow-y-auto max-h-96 my-1 mx-1">
-                {selectedDates.map((item, dateIndex) => (
-                  <SelectedDate
-                    key={dateIndex}
-                    date={item.date}
-                    timeSlots={item.timeSlots}
-                    dateIndex={dateIndex}
-                    addTimeSlot={addTimeSlot}
-                    removeTimeSlot={removeTimeSlot}
-                    handleTimeSlotChange={handleTimeSlotChange}
-                    getDisabledTimes={() => getDisabledTimes(dateIndex)}
-                    allTimes={allTimes}
-                    isPastTime={(time) => isPastTime(time, item.date)}
-                  />
-                ))}
-              </div>
-            </section>
-          </div>
+          <DateAndTimeSelector
+            selectedDates={selectedDates}
+            setSelectedDates={setSelectedDates}
+          />
         </div>
         <div className="flex justify-center">
           <Button variant="secondary" type="submit" className="w-48">

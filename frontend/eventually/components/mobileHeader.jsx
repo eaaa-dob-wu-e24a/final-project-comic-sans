@@ -25,7 +25,7 @@ export default function MobileHeader() {
       <Link href={"/"} className="flex items-center gap-4">
         <Image src="/logo.svg" alt="Eventually" width={20} height={20} />
         {pathname !== "/" && (
-          <h1 className="font-dancing-script text-xl">Eventually</h1>
+          <h1 className="font-dancing-script text-white text-xl">Eventually</h1>
         )}
       </Link>
       <Link href="/create">

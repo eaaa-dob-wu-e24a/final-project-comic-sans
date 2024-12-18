@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState } from "react";
 import { useNotif } from "./notif-context";
 import Button from "./ui/button";
@@ -193,21 +194,23 @@ export default function EventUpdateForm({ event }) {
               <textarea
                 id="Description"
                 name="Description"
-                className="rounded-full shadow-cardshadow text-dark py-2 px-4 w-full focus:border-secondary focus:ring-1 focus:ring-secondary focus:bg-white/80 focus:outline-none"
+                className="rounded-2xl shadow-cardshadow text-dark py-2 px-4 w-full focus:border-secondary focus:ring-1 focus:ring-secondary focus:bg-white/80 focus:outline-none"
                 value={formValues.Description}
                 onChange={handleChange}
                 placeholder="Update your description..."
                 maxLength="500"
               />
             </div>
-
-            {/* -------------------------------------------------Selected Dates--------------------------------------------------------- */}
-            <DateAndTimeSelector
-              selectedDates={selectedDates}
-              setSelectedDates={setSelectedDates}
-            />
           </div>
         </div>
+        <div className="bg-background p-6 lg:px-32 py-8 rounded-xl drop-shadow">
+          {/* -------------------------------------------------Selected Dates--------------------------------------------------------- */}
+          <DateAndTimeSelector
+            selectedDates={selectedDates}
+            setSelectedDates={setSelectedDates}
+          />
+        </div>
+
         <div className="pb-6 mx-4 flex gap-4 justify-center flex-col md:flex-row lg:flex-row">
           <Button variant="secondary" type="submit">
             Update Event

@@ -70,21 +70,33 @@ export default function VotedEventList({ maxEvents }) {
           <div></div>
         )}
       </div>
-      <ul className="flex flex-wrap flex-row gap-4">
-        {events.map((event) => (
-          <DateCard
-            time={
-              event.FinalDate
-                ? event.FinalDate
-                : event.EventDates[0]?.DateTimeStart
-            }
-            title={event.Title}
-            key={event.EventID}
-            id={event.EventID}
-            joincode={event.JoinCode}
-          />
-        ))}
-      </ul>
+
+      {loading ? (
+        <Loading />
+      ) : events.length > 0 ? (
+        <ul className="flex flex-wrap flex-row gap-4">
+          {events.map((event) => (
+            <DateCard
+              time={
+                event.FinalDate
+                  ? event.FinalDate
+                  : event.EventDates[0]?.DateTimeStart
+              }
+              title={event.Title}
+              key={event.EventID}
+              id={event.EventID}
+              joincode={event.JoinCode}
+            />
+          ))}
+        </ul>
+      ) : (
+        // No events found content
+        <div className="flex flex-col items-center justify-center gap-4 p-4">
+          <p className="text-lg text-foreground">
+            You are not participating in any events yet.
+          </p>
+        </div>
+      )}
     </section>
   );
 }

@@ -20,15 +20,16 @@ export default function Calendar({ selectedDates, handleDateSelect }) {
     <DatePicker
       key={calendarKey} // Force re-render when selectedDates changes
       inline
+      selected={selectedDates[0]?.date || null} // pick the first as a 'selected' date if desired
+      highlightDates={[
+        {
+          "react-datepicker__day--selected": selectedDates.map(
+            (item) => item.date
+          ),
+        },
+      ]}
       onSelect={(date) => handleDateSelect(date)}
-      selected={null} // Disable single-date selection
-      dayClassName={(date) =>
-        selectedDates.some((item) => item.date.getTime() === date.getTime())
-          ? "react-datepicker__day--selected" // Apply selected class
-          : undefined
-      }
       minDate={getCurrentDate()} // Prevent selecting past dates
-
       showFullMonthYearPicker // Ensure only the current month is shown
       calendarStartDay={1}
     />

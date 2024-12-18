@@ -85,7 +85,7 @@ export default function SelectedDate({
       {timeSlots.map((timeSlot, timeIndex) => (
         <div
           key={timeIndex}
-          className="flex flex-col sm:flex-row items-start md:items-center justify-between gap-2 md:gap-4 lg:gap-4 w-full"
+          className="flex flex-col sm:flex-row items-start md:items-center justify-between gap-1 md:gap-4 lg:gap-4 w-full"
         >
           {timeIndex === 0 && (
             <div className="flex flex-row lg:flex-col items-start justify-start">
@@ -114,7 +114,7 @@ export default function SelectedDate({
               <input
                 id={`startTime-${dateIndex}-${timeIndex}`}
                 type="text"
-                className="rounded-full w-16 md:w-20 lg:w-20 border px-2 py-1 text-sm text-dark focus:outline-none focus:border-primary cursor-pointer"
+                className="rounded-full w-[4.5rem] md:w-28 lg:w-28 border px-2 py-[0.32rem] text-sm text-dark focus:outline-none focus:border-primary cursor-pointer"
                 value={timeSlot.startTime}
                 readOnly
                 onClick={() => handleDropdownOpen(timeIndex)}
@@ -124,7 +124,7 @@ export default function SelectedDate({
                   ref={dropdownRef}
                   className={`absolute z-10 ${
                     timeIndex === 0 ? "mt-3.5" : "mt-3.75"
-                  } max-h-40 w-16 dm:w-20 lg:w-20 overflow-y-scroll border rounded-lg bg-white text-dark shadow-lg`}
+                  } max-h-40 w-[4.5rem] dm:w-28 lg:w-28 overflow-y-scroll border rounded-lg bg-white text-dark shadow-lg`}
                 >
                   {allTimes.map((time) => (
                     <li
@@ -159,7 +159,7 @@ export default function SelectedDate({
               )}
               <select
                 id={`duration-${dateIndex}-${timeIndex}`}
-                className="block w-16 md:w-20 lg:w-20 rounded-full border px-2 py-1.5 text-sm text-dark leading-5 focus:outline-none focus:border-primary"
+                className="block w-[5.33rem] md:w-28 lg:w-28 rounded-full border px-2 py-1.5 text-sm text-dark leading-5 focus:outline-none focus:border-primary"
                 value={timeSlot.duration}
                 onChange={(e) => handleDurationChange(e, timeIndex)}
                 required
@@ -169,7 +169,7 @@ export default function SelectedDate({
                     {i + 1}h
                   </option>
                 ))}
-                <option value="all-day">All Day</option>{" "}
+                <option value="all-day">All day</option>
               </select>
             </div>
 

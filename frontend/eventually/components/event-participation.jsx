@@ -74,23 +74,25 @@ export default function VotedEventList({ maxEvents }) {
       {loading ? (
         <Loading />
       ) : events.length > 0 ? (
-        <ul className="flex flex-wrap flex-row gap-4">
-          {events.map((event) => (
-            <DateCard
-              time={
-                event.FinalDate
-                  ? event.FinalDate
-                  : event.EventDates[0]?.DateTimeStart
-              }
-              title={event.Title}
-              key={event.EventID}
-              id={event.EventID}
-              joincode={event.JoinCode}
-            />
-          ))}
+        <ul className="flex flex-row flex-wrap gap-4">
+          {events.map((event) => {
+            // Determine which time to display
+            const cardTime = event.FinalDate || null;
+
+            // Render DateCard for each event
+            return (
+              <DateCard
+                time={cardTime}
+                title={event.Title}
+                key={event.EventID}
+                id={event.EventID}
+                joincode={event.JoinCode}
+              />
+            );
+          })}
         </ul>
       ) : (
-        // No events found content
+        // No participating events 
         <div className="flex flex-col items-center justify-center gap-4 p-4">
           <p className="text-lg text-foreground">
             You are not participating in any events yet.
